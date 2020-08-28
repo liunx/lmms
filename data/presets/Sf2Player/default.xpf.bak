@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE lmms-project>
+<lmms-project type="instrumenttracksettings" creatorversion="1.2.2" creator="LMMS" version="1.0">
+  <head/>
+  <instrumenttracksettings type="0" muted="0" name="Sf2 Player" solo="0">
+    <instrumenttrack vol="100" basenote="57" pitch="0" fxch="0" usemasterpitch="1" pan="0" pitchrange="1">
+      <instrument name="sf2player">
+        <sf2player bank="0" chorusSpeed="0.3" gain="1" chorusLevel="2" chorusDepth="8" reverbOn="0" chorusOn="0" reverbWidth="0.5" reverbRoomSize="0.2" patch="0" src="" reverbDamping="0" reverbLevel="0.9" chorusNum="3"/>
+      </instrument>
+      <eldata fcut="14000" fres="0.5" fwet="0" ftype="0">
+        <elvol pdel="0" hold="0.5" lshp="0" lspd_syncmode="0" latt="0" dec="0.5" userwavefile="" ctlenvamt="0" sustain="0.5" lspd_denominator="4" lpdel="0" lspd="0.1" amt="0" att="0" rel="0.1" x100="0" lspd_numerator="4" lamt="0"/>
+        <elcut pdel="0" hold="0.5" lshp="0" lspd_syncmode="0" latt="0" dec="0.5" userwavefile="" ctlenvamt="0" sustain="0.5" lspd_denominator="4" lpdel="0" lspd="0.1" amt="0" att="0" rel="0.1" x100="0" lspd_numerator="4" lamt="0"/>
+        <elres pdel="0" hold="0.5" lshp="0" lspd_syncmode="0" latt="0" dec="0.5" userwavefile="" ctlenvamt="0" sustain="0.5" lspd_denominator="4" lpdel="0" lspd="0.1" amt="0" att="0" rel="0.1" x100="0" lspd_numerator="4" lamt="0"/>
+      </eldata>
+      <chordcreator chordrange="1" chord="0" chord-enabled="0"/>
+      <arpeggiator arp="0" arp-enabled="0" arpmiss="0" arpskip="0" arprange="1" arptime_syncmode="0" arpdir="0" arpcycle="0" arptime_numerator="4" arptime_denominator="4" arpgate="100" arpmode="0" arptime="200"/>
+      <midiport outputchannel="1" fixedoutputnote="-1" outputcontroller="0" writable="0" readable="0" inputchannel="0" fixedinputvelocity="-1" outputprogram="1" inputcontroller="0" basevelocity="63" fixedoutputvelocity="-1"/>
+      <fxchain numofeffects="0" enabled="0"/>
+    </instrumenttrack>
+  </instrumenttracksettings>
+</lmms-project>

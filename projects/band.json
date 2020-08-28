@@ -1,0 +1,73 @@
+{
+    "name": "Coder Band",
+    "bpm": 100,
+    "pitch": 0,
+    "instruments": {
+        "Piano": "piano",
+        "Piano02": "piano",
+        "Violin": "violin",
+        "Bassdrum01": "bassdrum01",
+        "Clap01": "clap01",
+        "Kick01": "kick01"
+    },
+    "beatsbaselines": {
+        "Beats/Baseline 01": [
+            "Kick01",
+            "Clap01"
+        ],
+        "Beats/Baseline 02": [
+            "Bassdrum01",
+            "Clap01"
+        ]
+    },
+    "melody": {
+        "intro": "tinyNotation: 4/4 | C4 D E F | G A B c |",
+        "song": "tinyNotation: 4/4 g8 a g f e d c2 G c8 e c' b8 a4 e8 g2 r8 g8 a g f e d c2 G c8 G c g8 c4 d8 e2 r8"
+    },
+    "rhythm": {
+        "pattern1": "tinyNotation: 4/4 | C8 E G c G c G c |"
+    },
+    "beats": {
+        "beats01": [
+            "1000_1000_1000_1000",
+            "0000_1000_0000_1000"
+        ],
+        "beats02": [
+            "1100_1100_1000_1000",
+            "0011_0011_0000_1000"
+        ]
+    },
+    "tracks": [
+        {
+            "refer": "instruments:Piano",
+            "id": 1,
+            "clip": "melody:song"
+        },
+        {
+            "refer": "instruments:Piano02",
+            "id": 2,
+            "clip": "rhythm:pattern1"
+        },
+        {
+            "refer": "beatsbaselines:Beats/Baseline 01",
+            "id": 3,
+            "clip": "beats:beats01",
+            "pattern": "beats:beats01"
+        },
+        {
+            "refer": "beatsbaselines:Beats/Baseline 02",
+            "id": 4,
+            "clip": "beats:beats01",
+            "pattern": "beats:beats01"
+        }
+    ],
+    "song": {
+        "title": "My Song",
+        "bpm": 100,
+        "tracks": [
+            "01:1000_1000_1000",
+            "02:1111_1111",
+            "03:1111_1111_1111"
+        ]
+    }
+}

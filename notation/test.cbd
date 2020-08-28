@@ -1,0 +1,90 @@
+title: "Poročna koračnica"
+composer: "Richard Wagner"
+tempo: 120
+ts: 2/4
+
+@instrument_start
+p01 = melody01, Piano, 0, F
+p02 = melody02, Piano, 0, F
+p03 = melody03, Piano, 0, F
+p04 = melody04, Piano, 0, F
+@instrument_end
+
+@group_start
+@group_end
+
+@macro_start
+@macro_end
+
+@start
+>>
+p01-> | chord{ g4  g'4 } chord{ g8.  g'8. } chord{ g16  g'16 }  | chord{ g4  g'4 } chord{ g4  g'4 }  | chord{ g2  g'2 }  | chord{ g2  g'2 }  | 
+p02-> | r2 | r2 | r2 | r2 | 
+p03-> |  r2  |  r2  |  r2  |  r2  | 
+p04-> | r2 | r2 | r2 | r2 | 
+>>
+p01-> |  g4 chord{ g8.  c'8. } chord{ g16  c'16 }  | chord{ g4.  c'4. }  r8  |  g4 chord{ g8.  d'8. } chord{ g16  b16 }  | chord{ g4.  c'4. }  r8  | 
+p02-> | r2 | r2 | r2 | r2 | 
+p03-> | chord{ C4  e4 } chord{ C8.  e8. } chord{ C16  e16 }  | chord{ C4.  e4. }  r8  | chord{ C4  e4 } chord{ GG8.  f8. } chord{ GG16  d16 }  | chord{ C4.  e4. }  r8  | 
+p04-> | r2 | r2 | r2 | r2 | 
+>>
+p01-> |  g4 chord{ g8.  c'8. } chord{ c'16  f'16 }  | chord{ c'4  f'4 } chord{ c'8  e'8 }  r16 chord{ g16  d'16 }  | chord{ g4  c'4 }     chord{ f#8.  b8. } chord{ f#16  c'16 }  | chord{ g4.  d'4. }  r8  | 
+p02-> | r2 | r2 | r2 | r2 | 
+p03-> | chord{ C4  e4 } chord{ C8.  e8. } chord{ C16  a16 }  |  a4  g8  r16  f16  |  e4  c8.  c16  | chord{ GG4.  B4. }  r8  | 
+p04-> | r2 |  C2  |  C4  AA8.  AA16  | r2 | 
+>>
+p01-> |  g4 chord{ g8.  c'8. } chord{ g16  c'16 }  | chord{ g4.  c'4. }  r8  |  g4 chord{ g8.  d'8. } chord{ g16  b16 }  | chord{ g4.  c'4. }  r8  | 
+p02-> | r2 | r2 | r2 | r2 | 
+p03-> | chord{ C4  e4 } chord{ C8.  e8. } chord{ C16  e16 }  | chord{ C4.  e4. }  r8  | chord{ C4  e4 } chord{ GG8.  f8. } chord{ GG16  d16 }  | chord{ C4.  e4. }  r8  | 
+p04-> | r2 | r2 | r2 | r2 | 
+>>
+p01-> |  g4 chord{ g8.  c'8. } chord{ g16  e'16 }  | chord{ b4  g'4 } chord{ a8.  e'8. } chord{ a16  c'16 }  |  a4 chord{ f8.  d'8. } chord{ g16  e'16 }  | chord{ e8  c'8 }  c'16  c'16  c'16  c'8  c'8  | 
+p02-> | r2 | r2 | r2 | r2 | 
+p03-> | chord{ C4  e4 } chord{ C8.  e8. } chord{ C16  e16 }  | chord{ EE4  e4 } chord{ AA8.  c8. } chord{ AA16  e16 }  | chord{ FF4  d4 } chord{ GG8.  B8. } chord{ GG16  B16 }  | chord{ C4.  c4. }  r8  | 
+p04-> | r2 | r2 | r2 | r2 | 
+>>
+p01-> | chord{ c'4  f'4 } chord{ b8  e'8 } chord{ a8  d'8 }  | chord{ f4  a4 } chord{ f4  a4 }  | chord{ g4  b4 } chord{ g8.  c'8. } chord{ g16  d'16 }  | chord{ g8  d'8 }  g16  g16  g16  g8  g8  | 
+p02-> | r2 | r2 | r2 | r2 | 
+p03-> |  a4  g8  f8  |  d4  d4  | chord{ GG4  d4 } chord{ GG8.  e8. } chord{ GG16  B16 }  | chord{ GG4.  B4. }  r8  | 
+p04-> | r2 | r2 | r2 | r2 | 
+>>
+p01-> | chord{ c'4  f'4 } chord{ b8  e'8 } chord{ a8  d'8 }  | chord{ f4  a4 } chord{ f4  a4 }  | chord{ e4  a4 } chord{ g#8.  b8. } chord{ a16  c'#16 }  | chord{ a2  c'#2 }  | 
+p02-> | r2 | r2 | r2 | r2 | 
+p03-> |  a4  g8  f8  |  d4  d4  | chord{ AA4  c#4 } chord{ EE8.  e8. } chord{ AA16  e16 }  |  e2  | 
+p04-> | r2 | r2 | r2 |  AA4.  AA8  | 
+>>
+p01-> | chord{ a4  e'4 } chord{ a8  f'#8 } chord{ a8  e'8 }  |  d'4  c'#4  |  e'8  e'-8  d'8  c'#8  | chord{ g#4  c'#4 } chord{ g#4  b4 }  | 
+p02-> | r2 |  b8  g#8  a4  |  g#4  g#4  | r2 | 
+p03-> |  c#4  d8  c#8  |  f#8  f8  e8  c#8  | chord{ B4  d4 }  B8  e8  |  d4  d4  | 
+p04-> |  AA2  |  AA4  AA4  |  EE4.  EE8  |  EE4.  EE8  | 
+>>
+p01-> | chord{ a4  e'4 } chord{ a8  f'#8 } chord{ a8  g'#8 }  | chord{ a4  a'4 } chord{ a4  c'#4 }  | chord{ a4  c'#4 } chord{ f#8.  b8. } chord{ f#16  a16 }  | chord{ g#4  f'#4 } chord{ g#4  e'4 }  | 
+p02-> | r2 | r2 | r2 | r2 | 
+p03-> | chord{ C#4  A4  e4 } chord{ C#8  A8  e8 } chord{ C#8  A8  e8 }  | chord{ F#F#4  c#4 } chord{ F#F#4  c#4 }  | chord{ EE4  e4 } chord{ E-E-8.  A8. } chord{ E-E-16  A16 }  | chord{ B4  d4 } chord{ B4  d4 }  | 
+p04-> | r2 | r2 | r2 |  EE4.  EE8  | 
+>>
+p01-> | chord{ a4  e'4 } chord{ a8  e'8 } chord{ a8  f'8 }  | chord{ c'4.  g'4. } chord{ g8  e'8 }  |  g'8  f'#8  f'8  d'8  | chord{ c'2  e'2 }  | 
+p02-> | r2 | r2 |  b4  b8  b8  | r2 | 
+p03-> | chord{ AA4  c#4 } chord{ AA8  c8 } chord{ AA8  c8 }  |  e4.  c8  | chord{ GG4  d4 } chord{ GG8  d8 } chord{ GG8  f8 }  | chord{ C2  e2  g2 }  | 
+p04-> | r2 |  GG4  GG4  | r2 | r2 | 
+>>
+p01-> | chord{ g4  e'4 } chord{ c'8  e'8 } chord{ c'8  f'#8 }  |  g'4.  f'8  |  e'4  e'16  e'-16  c'#16  e'-16  |  e'4.  g8  | 
+p02-> | r2 |  b4  a4  |  g4  a8  a8  |  g#4.  g8  | 
+p03-> | chord{ C4  e4 } chord{ AA8  e8 } chord{ AA8  d8 }  | chord{ GG4  d4 } chord{ AA4  c4 }  |  e4  f#8  f#8  |  e2  | 
+p04-> | r2 | r2 |  BB4  BB8.  BB16  |  EE4  r4  | 
+>>
+p01-> | chord{ c'2  a'2 }  |  g'8  f'8  e'8.  d'16  | chord{ g4.  c'4. }  r8  |  r4  r8. chord{ g16  c'16  e'16 }  | 
+p02-> | r2 |  b4  g8.  g16  | r2 | r2 | 
+p03-> | chord{ FF2  d2  f2 }  | chord{ d4  f4 } chord{ B8.  f8. } chord{ B16  f16 }  | chord{ C4.  e4. }  r8  |  r4  r8.  c16  | 
+p04-> | r2 |  GG4  GG4  | r2 | r2 | 
+>>
+p01-> | chord{ g2  c'2  e'2 }  | chord{ a4.  c'4.  f'4. } chord{ g8  c'8  e'8 }  | chord{ c'2  e'2  g'2 }  | chord{ c'4  e'4  g'4 }  r4  | 
+p02-> | r2 | r2 | r2 | r2 | 
+p03-> |  c2  |  c4  r4  |  r2  |  r2  | 
+p04-> | r2 | r2 | r2 | r2 | 
+>>
+p01-> | chord{ g2  c'2  e'2 }  | chord{ a4.  c'4.  f'4. } chord{ g8  c'8  e'8 }  | chord{ c'2  e'2  g'2 }  | chord{ c'4  e'4  g'4 }  r4  | 
+p02-> | r2 | r2 | r2 | r2 | 
+p03-> |  c2  |  c4  r4  |  r2  |  r2  | 
+p04-> | r2 | r2 | r2 | r2 | 
+@end

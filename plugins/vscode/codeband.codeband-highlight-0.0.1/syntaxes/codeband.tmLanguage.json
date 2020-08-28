@@ -1,0 +1,120 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"name": "Codeband",
+	"patterns": [
+		{
+			"name": "comment.line.double-slash.codeband",
+			"match": "^\\s*#.*$",
+			"comment": ""
+		},
+		{
+			"name": "comment.block.codeband",
+			"begin": "^\\s*/'",
+			"end": "'/",
+			"comment": ""
+		},
+		{
+			"name": "string.quoted.double.codeband",
+			"begin": "\"",
+			"end": "\"",
+			"patterns": [
+				{
+					"name": "constant.character.escape.codeband",
+					"match": "\\\\."
+				}
+			],
+			"comment": "文字列"
+		},
+		{
+			"name": "constant.language",
+			"match": "#[0-9a-fA-F]{6}\\b",
+			"comment": "RGB"
+		},
+		{
+			"name": "entity.name.type.codeband",
+			"match": "@(start|end|macro_start|macro_end|instrument_start|instrument_end|group_start|group_end)",
+			"comment": "music start/end"
+		},
+		{
+			"name": "keyword.codeband",
+			"match": "(title|ts|tempo)",
+			"comment": ""
+		},
+		{
+			"name": "keyword.control.codeband",
+			"match": ">>",
+			"comment": ""
+		},
+		{
+			"name": "keyword.control.codeband",
+			"match": "[a-zA-Z]+[0-9]*->",
+			"comment": ""
+		},
+		{
+			"name": "keyword.control.codeband",
+			"match": "[a-zA-Z]+[0-9]+\\+>",
+			"comment": ""
+		},
+		{
+			"name": "keyword.control.codeband",
+			"match": "(?i:([a-zA-Z0-9]+[ ]+)=)",
+			"comment": ""
+		},
+		{
+			"name": "meta",
+			"match": "[^\\s]+::",
+			"comment": ""
+		},
+		{
+			"name": "variable.codeband",
+			"match": ":.*?:(\\s*)$",
+			"comment": "ユースケース図"
+		},
+		{
+		"name": "variable.codeband",
+		"match": "\\|",
+		"comment": ""
+		},
+		{
+		"name": "variable.codeband",
+		"match": "\\b(?i:(T|F))\\b",
+		"comment": ""
+		},
+		{
+			"name": "entity.name.tag.codeband",
+			"match": "^\\s*\\.+.*\\.*",
+			"comment": "シーケンス図の遅延"
+		},
+		{
+			"name": "string.other.codeband",
+			"match": "(\\[[^\\]]+?\\])",
+			"comment": "コンポーネント"
+		},
+		{
+			"name": "string.other.codeband",
+			"match": "(\\([^\\]]+?\\))",
+			"comment": "ユースケース"
+		},
+		{
+			"name": "string.other.codeband",
+			"match": "(\\[\\*\\])",
+			"comment": "ステートの開始と終了"
+		},
+		{
+			"name": "string.other.codeband",
+			"match": "(\\(\\))",
+			"comment": "ロリポップ"
+		},
+		{
+			"name" : "keyword.codeband",
+			"match" : "^\\s*[-#~+]",
+			"comment": "クラスの可視性"
+		},
+		{
+			"name" : "support.type",
+			"match" : "\\b(?i:(Piano|AcousticGuitar|Trumpet|Violin|ElectricBass|StringInstrument|Oboe|ChurchBells|Horn|PipeOrgan|Percussion))\\b",
+			"comment": ""
+		}
+	],
+	"scopeName": "text.codeband"
+}

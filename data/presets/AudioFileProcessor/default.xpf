@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE lmms-project>
+<lmms-project creator="LMMS" version="1.0" type="instrumenttracksettings" creatorversion="1.2.2">
+  <head/>
+  <instrumenttracksettings name="bassdrum01.ogg" muted="0" solo="0" type="0">
+    <instrumenttrack pitch="0" fxch="0" basenote="57" pitchrange="1" vol="100" pan="0" usemasterpitch="1">
+      <instrument name="audiofileprocessor">
+        <audiofileprocessor interp="1" src="drums/bassdrum01.ogg" amp="100" sframe="0" stutter="0" lframe="0" reversed="0" eframe="1" looped="0"/>
+      </instrument>
+      <eldata fwet="0" fres="0.5" ftype="0" fcut="14000">
+        <elvol x100="0" amt="0" lspd_numerator="4" dec="0.5" lshp="0" lpdel="0" lspd_syncmode="0" lspd_denominator="4" att="0" hold="0.5" ctlenvamt="0" pdel="0" rel="0.1" lspd="0.1" userwavefile="" latt="0" sustain="0.5" lamt="0"/>
+        <elcut x100="0" amt="0" lspd_numerator="4" dec="0.5" lshp="0" lpdel="0" lspd_syncmode="0" lspd_denominator="4" att="0" hold="0.5" ctlenvamt="0" pdel="0" rel="0.1" lspd="0.1" userwavefile="" latt="0" sustain="0.5" lamt="0"/>
+        <elres x100="0" amt="0" lspd_numerator="4" dec="0.5" lshp="0" lpdel="0" lspd_syncmode="0" lspd_denominator="4" att="0" hold="0.5" ctlenvamt="0" pdel="0" rel="0.1" lspd="0.1" userwavefile="" latt="0" sustain="0.5" lamt="0"/>
+      </eldata>
+      <chordcreator chord-enabled="0" chordrange="1" chord="0"/>
+      <arpeggiator arptime="200" arpgate="100" arp="0" arp-enabled="0" arprange="1" arpmode="0" arpdir="0" arptime_denominator="4" arptime_numerator="4" arpskip="0" arptime_syncmode="0" arpmiss="0" arpcycle="0"/>
+      <midiport writable="0" fixedoutputnote="-1" readable="0" fixedoutputvelocity="-1" inputchannel="0" fixedinputvelocity="-1" inputcontroller="0" outputchannel="1" outputprogram="1" basevelocity="63" outputcontroller="0"/>
+      <fxchain numofeffects="0" enabled="0"/>
+    </instrumenttrack>
+  </instrumenttracksettings>
+</lmms-project>

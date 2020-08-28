@@ -1,0 +1,37 @@
+{
+	"name": "codeband-highlight",
+	"displayName": "Codeband Highlight",
+	"description": "Codeband Syntax Higilight for Visual Studio Code",
+	"version": "0.0.1",
+	"publisher": "Liunx",
+	"icon": "uml_highlight_icon.png",
+	"engines": {
+		"vscode": "^1.5.0"
+	},
+	"categories": [
+		"Languages"
+	],
+	"homepage": "https://github.com/liunx/codeband",
+	"contributes": {
+		"languages": [
+			{
+				"id": "codeband",
+				"aliases": [
+					"codeband",
+					"CodeBand"
+				],
+				"extensions": [
+					".cbd"
+				],
+				"configuration": "./language-configuration.json"
+			}
+		],
+		"grammars": [
+			{
+				"language": "codeband",
+				"scopeName": "text.codeband",
+				"path": "./syntaxes/codeband.tmLanguage.json"
+			}
+		]
+	}
+}

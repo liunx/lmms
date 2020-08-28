@@ -1,0 +1,119 @@
+{
+    "name": "West Journey BGM",
+    "bpm": 120,
+    "pitch": 0,
+    "instruments": {
+        "Piano": "piano",
+        "Guitar BGM 01": "eguitar-jazz",
+        "Guitar BGM 02": "eguitar-clean",
+        "Main01": "tremolo-strings",
+        "Main02": "trumpet",
+        "Intro01": "xxx",
+        "Bass": "synth-bass1",
+        "Bassdrum01": "bassdrum01",
+        "Clap01": "clap01",
+        "Acid01": "acid01",
+        "Kick01": "kick01"
+    },
+    "beatsbaselines": {
+        "Beats/Baseline 01": [
+            "Acid01",
+            "Clap01"
+        ],
+        "Beats/Baseline 02": [
+            "Bassdrum01",
+            "Clap01"
+        ]
+    },
+    "melody": {
+        "intro": [
+            2,
+            "tinyNotation: 4/4 | a8 a e a c' a e a | a8 a e a c' a e a |"
+        ],
+        "part01": [
+            6,
+            "tinyNotation: 4/4 | e2 a4. b8 |  c'4  a f'4. d'8 | e'1 e2 a4. b8  | c'4  a f'4. e'8 | d'1"
+        ],
+        "part02": [
+            5,
+            "tinyNotation: 4/4 e4 d4. c4 e2. d4 c4. B4 d2. f4 e4. d4 g4. f4 e2."
+        ],
+        "part03": [
+            4,
+            " r8 A8 d8 f8 d4 A4 r8 A8 d8 f8 g2 r8 A8 d8 f8 g2 r8 A8 d8 f8 a4 f4 g4 a#4 a2"
+        ]
+    },
+    "rhythm": {
+        "bass01": [
+            2,
+            "tinyNotation: 4/4 | A4. c8 e4 A4 | A4. c8 e4 A4 |"
+        ]
+    },
+    "beats": {
+        "beats01": [
+            "0000_0000_0011_1000",
+            "0011_1000_0000_0000"
+        ],
+        "beats02": [
+            "1100_1100_1000_1000",
+            "0011_0011_0000_1000"
+        ]
+    },
+    "tracks": [
+        {
+            "id": 10,
+            "refer": "instruments:Main02",
+            "pitch": -12,
+            "clip": "melody:part01"
+        },
+        {
+            "id": 11,
+            "refer": "instruments:Bass",
+            "pitch": -36,
+            "clip": "rhythm:bass01"
+        },
+        {
+            "id": 12,
+            "refer": "instruments:Intro01",
+            "pitch": 0,
+            "clip": "melody:part03"
+        },
+        {
+            "id": 13,
+            "refer": "instruments:Main01",
+            "pitch": -12,
+            "clip": "melody:part02"
+        },
+        {
+            "id": 20,
+            "refer": "instruments:Guitar BGM 01",
+            "pitch": -12,
+            "clip": "melody:intro"
+        },
+        {
+            "id": 21,
+            "refer": "instruments:Guitar BGM 02",
+            "pitch": -24,
+            "clip": "melody:intro"
+        },
+        {
+            "id": 30,
+            "refer": "beatsbaselines:Beats/Baseline 01",
+            "pitch": 0,
+            "clip": "beats:beats01",
+            "pattern": "beats:beats01"
+        }
+    ],
+    "song": {
+        "title": "My Song",
+        "bpm": 140,
+        "tracks": [
+            "10:0000_0000_f000_0000",
+            "11:0000_f0f0_f0f0_f0f0_f0f0",
+            "12:000f_f000_0000",
+            "13:0000_0000_0000_0000_f000",
+            "20:9090_9090_9090_9090",
+            "21:9090_9090_9090_9090"
+        ]
+    }
+}

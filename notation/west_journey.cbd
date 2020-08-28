@@ -1,0 +1,51 @@
+title : Demo Song
+tempo : 120
+ts: 4/4
+
+# shortname = fullname, instrument, pitch, muted(True/False)
+m1 = melody01, Piano, 0, F
+m2 = melody02, AcousticGuitar, 0, F
+m4 = melody03, Trumpet, -12, F
+m5 = melody04, Violin, 0, F
+m3 = rhythm01, ElectricBass, -12, F
+
+__start__
+>>
+m1> | a8 a e a c' a e a | a8 a e a c' a e a | a8 a e a c' a e a | a8 a e a c' a e a |
+
+>>
+m1> | a8 a e a c' a e a | a8 a e a c' a e a | a8 a e a c' a e a | a8 a e a c' a e a |
+m3> | A4. A8 A4 E4    | A4. A8 A4 E4  | A4. A8 A4 E4    | A4. A8 A4 E4  |
+
+>>
+m1> | a8 a e a c' a e a | a8 a e a c' a e a | a8 a e a c' a e a | a8 a e a c' a e a |
+m2> | d4 A4 r8 A8 d8 f8 | d4 A4 r8 A8 d8 f8 | g2 r8 A8 d8 f8 | g2 r8 A8 d8 f8 |
+m3> | A4. A8 A4 E4    | A4. A8 A4 E4  | A4. A8 A4 E4    | A4. A8 A4 E4  |
+
+>>
+m1> | a8 a e a c' a e a | a8 a e a c' a e a | a8 a e a c' a e a | a8 a e a c' a e a |
+m2> |  a4  f4 g4 a#4 a2 |
+m3> | A4. A8 A4 E4    | A4. A8 A4 E4  | A4. A8 A4 E4    | A4. A8 A4 E4  |
+m4> | r1 | r1 | e2 a4. b8  | c'4 a4  f'4. d'8 |
+
+>>
+m1> | a8 a e a c' a e a | a8 a e a c' a e a | a8 a e a c' a e a | a8 a e a c' a e a |
+m3> | A4. A8 A4 E4    | A4. A8 A4 E4  | A4. A8 A4 E4    | A4. A8 A4 E4  |
+m4> | e'2 r2 | e2 a4. b8  | c'4  a f'4. e'8 | d'2 e'4 e'4 |
+
+>>
+m1> | a8 a e a c' a e a | a8 a e a c' a e a | a8 a e a c' a e a | a8 a e a c' a e a |
+m3> | A4. A8 A4 E4    | A4. A8 A4 E4  | A4. A8 A4 E4    | A4. A8 A4 E4  |
+m5> | e4 d4. c8 e2. r4 | d4 c4. B8 d2. r4 |
+
+>>
+m1> | a8 a e a c' a e a | a8 a e a c' a e a | a8 a e a c' a e a | a8 a e a c' a e a |
+m3> | A4. A8 A4 E4    | A4. A8 A4 E4  | A4. A8 A4 E4    | A4. A8 A4 E4  |
+m4> | r1 | r1 | r1 | e2 a4. b8  |
+m5> | f4 e4. d8 g4. f8 e2. r4 |
+
+>>
+m1> | a8 a e a c' a e a | a8 a e a c' a e a | a8 a e a c' a e a | a8 a e a c' a e a |
+m3> | A4. A8 A4 E4    | A4. A8 A4 E4  | A4. A8 A4 E4    | A4. A8 A4 E4  |
+m4> | c'4 a4  f'4. d'8 | e'2 r2 | e2 a4. b8  | c'4  a f'4. e'8 | d'2 e'4 e'4 |
+__end__
