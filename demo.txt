@@ -1,0 +1,23 @@
+@this is meta info
+title : "Poročna koračnica"
+composer : "Richard Wagner"
+tempo : 120
+timesign : /4
+
+@this is tracks
+track01: [melody01, Piano, 0, F]
+track02: [melody02, Piano, 0, F]
+track03: [melody03, Piano, 0, F]
+track04: [melody04, Piano, 0, F]
+
+
+C: { C#4 chord{E4 G4} chord{E4 G4} chord{E4 G4} }
+F: { F4 chord{A4 c4} chord{A4 c4} chord{A4 c4} }
+G: { G4 chord{B4 d4} chord{B4 d4} chord{B4 d4} }
+
+--
+track01 -> [ $C | >> $F | $G << ]
+track02 -> [ r2 | r2 | r2 ]
+--
+track01 -> [ $C | >> $F | $G << ]
+track02 -> [ r2 | r2 | r2 ]
