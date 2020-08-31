@@ -23,7 +23,6 @@ G:
 
 --
 track01 -> [ $C | >> $F | $G << ]
-track02 -> [ r2 | r2 | r2 ]
 --
 track01 -> [ $C | >> $F | $G <<  ]
-track02 -> [ r2 | r2 | r2 ]
+track02 -> [ r2 | r2 | a4 b4 c4 e4 ]

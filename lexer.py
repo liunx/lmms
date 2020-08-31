@@ -201,10 +201,13 @@ class MyLexer(object):
         # LSQUARE [NOTE | REST | BAR | CHORD | TRIP | LBRACE | RBRACE | REF] RSQUARE
         elif self.states_compare(assign=1, play=0, square=1, parent=0, brace=0):
             keywords = ['CHORD', 'TRIP']
-            allows = ['NOTE', 'REST', 'RSQUARE', 'REF', 'BAR'] + keywords
+            allows = ['NOTE', 'REST', 'RSQUARE', 'BAR'] + keywords
             if token.type not in allows:
                 self.show_error(token)
             if token.type == 'RSQUARE':
+                _id = self.queue.pop(0)
+                self.result['clips'][_id] = copy.copy(self.queue)
+                self.queue = []
                 self.in_square = 0
                 self.in_assign = 0
             elif token.type in keywords:
@@ -214,7 +217,13 @@ class MyLexer(object):
                 if nx.type != 'LBRACE':
                     self.show_error(nx)
                 else:
+                    self._notes = [token.value]
                     self.in_brace = 1
+            elif token.type in ['NOTE', 'REST']:
+                self.queue.append(token.value)
+            elif token.type in ['BAR']:
+                pass
+
         # LSQUARE [NOTE | REST | BAR | CHORD | TRIP | LBRACE | REF | START | STOP ] RSQUARE
         elif self.states_compare(assign=0, play=1, square=1, parent=0, brace=0):
             keywords = ['CHORD', 'TRIP']
@@ -239,7 +248,11 @@ class MyLexer(object):
             if token.type not in ['NOTE', 'RBRACE']:
                 self.show_error(token)
             if token.type == 'RBRACE':
+                self.queue.append(copy.copy(self._notes))
+                self._notes = []
                 self.in_brace = 0
+            else:
+                self._notes.append(token.value)
         # (SEGMENT) | (ID [ COLON | PLAY ])
         elif self.states_compare(assign=0, play=0, square=0, parent=0, brace=0):
             if token.type not in ['ID', 'SEGMENT']:
