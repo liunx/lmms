@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 import sys
 import copy
+import pprint
+import re
 import ply.lex as lex
 
 
@@ -122,6 +124,7 @@ class MyLexer(object):
         self.in_play = 0
         self.last_token = None
         self.lexer.input(data)
+        self.pp = pprint.PrettyPrinter(indent=2)
         self.result = {
             'info': {},
             'tracks': {},
@@ -129,6 +132,15 @@ class MyLexer(object):
             'playbacks': {}
         }
         self.queue = []
+        self.timesign_table = {
+            '4/4': 32,
+            '3/4': 24,
+            '6/8': 24,
+            '2/4': 16,
+            '3/8': 12
+        }
+        self.time_signature = '4/4'
+        self.playback = 0
         while True:
             tok = self.lexer.token()
             if not tok:
@@ -146,13 +158,20 @@ class MyLexer(object):
         print(' ' * (col - 1) + '^' * len(token.value))
         sys.exit(1)
 
+    def error_msg(self, token, msg):
+        col = self.find_column(token)
+        l = self.find_line(token)
+        print('[Error@line: {}, pos: {}] {}'.format(token.lineno, col, msg))
+        print(l)
+        print(' ' * (col - 1) + '^' * len(token.value))
+
     def states_compare(self, assign=0, play=0, square=0, parent=0, brace=0):
         a = [
             self.in_assign,
             self.in_play,
             self.in_square,
             self.in_parenthesis,
-            self.in_brace
+            self.in_brace,
         ]
         b = [assign, play, square, parent, brace]
         if a == b:
@@ -164,9 +183,44 @@ class MyLexer(object):
         print("assign: {0}, play: {1}, square: {2}, parenthesis: {3}, brace: {4}.".format(
             self.in_assign, self.in_play, self.in_square, self.in_parenthesis, self.in_brace))
 
+    def result_show(self):
+        self.pp.pprint(self.result)
+
+    # notation methods
+    def measure_check(self, token):
+        pass
+
+    def note_len(self, note):
+        num = int(re.findall('\d+', note)[0])
+        if num not in [1, 2, 4, 8, 16, 32]:
+            return -1
+        n1 = 32 / num
+        curr = n1
+        dots = note.count('.')
+        for i in range(dots):
+            n1 += curr / 2
+            curr = curr / 2
+        print(n1)
+        return n1
+
+    def notation_check(self, note, token):
+        if token.type in ['NOTE', 'REST']:
+            nl = self.note_len(note)
+            if nl < 0:
+                self.error_msg(token, "Note length is invalid!")
+                sys.exit(1)
+            if self.states_compare(assign=1, square=1,  brace=1):
+                if self._notes[1:]:
+                    pass
+
+    def notation_segment(self, token):
+        playbacks = self.result['playbacks']
+        if not playbacks:
+            return
+
     def parser(self, token):
         # ID COLON [ID | NUMBER | FRACTION | STRING | LPAREN | LSQUARE ]
-        if self.states_compare(assign=1, play=0, square=0, parent=0, brace=0):
+        if self.states_compare(assign=1):
             allows = ['ID', 'NUMBER', 'STRING',
                       'LPAREN', 'LSQUARE', 'FRACTION']
             if token.type not in allows:
@@ -180,13 +234,13 @@ class MyLexer(object):
                 self.result['info'][_id] = token.value
                 self.in_assign = 0
         # ID PLAY LSQUARE
-        elif self.states_compare(assign=0, play=1, square=0, parent=0, brace=0):
+        elif self.states_compare(play=1):
             if token.type == 'LSQUARE':
                 self.in_square = 1
             else:
                 self.show_error(token)
         # LPAREN [ID | COMMA | STRING | NUMBER ] RPAREN
-        elif self.states_compare(assign=1, play=0, square=0, parent=1, brace=0):
+        elif self.states_compare(assign=1, parent=1):
             allows = ['ID', 'STRING', 'COMMA', 'NUMBER', 'RPAREN']
             if token.type not in allows:
                 self.show_error(token)
@@ -199,7 +253,7 @@ class MyLexer(object):
             else:
                 self.queue.append(token.value)
         # LSQUARE [NOTE | REST | BAR | CHORD | TRIP | LBRACE | RBRACE | REF] RSQUARE
-        elif self.states_compare(assign=1, play=0, square=1, parent=0, brace=0):
+        elif self.states_compare(assign=1, square=1):
             keywords = ['CHORD', 'TRIP']
             allows = ['NOTE', 'REST', 'RSQUARE', 'BAR'] + keywords
             if token.type not in allows:
@@ -225,13 +279,17 @@ class MyLexer(object):
                 pass
 
         # LSQUARE [NOTE | REST | BAR | CHORD | TRIP | LBRACE | REF | START | STOP ] RSQUARE
-        elif self.states_compare(assign=0, play=1, square=1, parent=0, brace=0):
+        elif self.states_compare(play=1, square=1):
             keywords = ['CHORD', 'TRIP']
             allows = ['NOTE', 'REST', 'RSQUARE', 'REF',
-                      'BAR', 'START', 'STOP'] + keywords
+                      'BAR'] + keywords
             if token.type not in allows:
                 self.show_error(token)
             if token.type == 'RSQUARE':
+                if self.playback > 0:
+                    _id = self.queue.pop(0)
+                    self.result['playbacks'][_id] = copy.copy(self.queue)
+                self.queue = []
                 self.in_square = 0
                 self.in_play = 0
             elif token.type in keywords:
@@ -242,7 +300,19 @@ class MyLexer(object):
                     self.show_error(nx)
                 else:
                     self.in_brace = 1
-            pass
+            elif token.type in ['NOTE', 'REST']:
+                self.notation_check(token.value, token)
+                self.queue.append(token.value)
+            elif token.type in ['REF']:
+                clips = self.result['clips']
+                clip = token.value.replace('$', '')
+                if clip not in clips:
+                    self.show_error(token)
+                else:
+                    self.notation_check(clips[clip], token)
+                    self.queue.extend(clips[clip])
+            elif token.type in ['BAR']:
+                pass
         # LBRACE [NOTE] RBRACE
         elif self.in_brace > 0:
             if token.type not in ['NOTE', 'RBRACE']:
@@ -252,10 +322,11 @@ class MyLexer(object):
                 self._notes = []
                 self.in_brace = 0
             else:
+                self.notation_check(token.value, token)
                 self._notes.append(token.value)
         # (SEGMENT) | (ID [ COLON | PLAY ])
-        elif self.states_compare(assign=0, play=0, square=0, parent=0, brace=0):
-            if token.type not in ['ID', 'SEGMENT']:
+        elif self.states_compare():
+            if token.type not in ['ID', 'SEGMENT', 'START', 'STOP']:
                 self.show_error(token)
             if token.type == 'ID':
                 nx = self.lexer.next()
@@ -265,9 +336,18 @@ class MyLexer(object):
                     self.in_assign = 1
                 elif nx.type == 'PLAY':
                     self.in_play = 1
+                    # check the track exists
+                    if token.value not in self.result['tracks']:
+                        self.show_error(token)
                 else:
                     self.show_error(nx)
                 self.queue.append(token.value)
+            elif token.type == 'SEGMENT':
+                self.notation_segment(token)
+            elif token.type in ['START']:
+                self.playback = 1
+            elif token.type in ['STOP']:
+                self.playback = 0
         else:
             print("[Warning]: Unknown states!")
             self.states_show()
@@ -278,4 +358,4 @@ if __name__ == '__main__':
     m.build(debug=False)
     with open(sys.argv[1]) as f:
         m.process(f.read())
-    print(m.result)
+    m.result_show()

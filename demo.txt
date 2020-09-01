@@ -21,8 +21,9 @@ F:
 G:
 [ G4 chord{B4 d4} chord{B4 d4} chord{B4 d4} ]
 
+>>
+track01 -> [ $C | $F | $G  | chord{c4 e4}]
 --
-track01 -> [ $C | >> $F | $G << ]
---
-track01 -> [ $C | >> $F | $G <<  ]
+track01 -> [ $C | $F | $G ]
 track02 -> [ r2 | r2 | a4 b4 c4 e4 ]
+<<
