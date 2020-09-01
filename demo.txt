@@ -15,15 +15,15 @@ track04:
 (melody04, Piano, 0, F)
 
 C:
-[ C#4 chord{E4 G4} chord{E4 G4} chord{E4 G4} ]
+[ C#4 chord{E4 G4} chord{E4 G4} | chord{E4 G4} ]
 F:
 [ F4 chord{A4 c4} chord{A4 c4} chord{A4 c4} ]
 G:
 [ G4 chord{B4 d4} chord{B4 d4} chord{B4 d4} ]
 
 >>
-track01 -> [ $C | $F | $G  | chord{c4 e4}]
+track01 -> [ $C | $F | $G  | chord{c2 e2}]
 --
-track01 -> [ $C | $F | $G ]
+@track01 -> [ $C | $F | $G ]
 track02 -> [ r2 | r2 | a4 b4 c4 e4 ]
 <<

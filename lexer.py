@@ -164,6 +164,7 @@ class MyLexer(object):
         print('[Error@line: {}, pos: {}] {}'.format(token.lineno, col, msg))
         print(l)
         print(' ' * (col - 1) + '^' * len(token.value))
+        sys.exit(1)
 
     def states_compare(self, assign=0, play=0, square=0, parent=0, brace=0):
         a = [
@@ -191,16 +192,15 @@ class MyLexer(object):
         pass
 
     def note_len(self, note):
-        num = int(re.findall('\d+', note)[0])
+        num = int(re.findall(r'\d+', note)[0])
         if num not in [1, 2, 4, 8, 16, 32]:
             return -1
         n1 = 32 / num
         curr = n1
         dots = note.count('.')
-        for i in range(dots):
+        for _ in range(dots):
             n1 += curr / 2
             curr = curr / 2
-        print(n1)
         return n1
 
     def notation_check(self, note, token):
@@ -208,15 +208,21 @@ class MyLexer(object):
             nl = self.note_len(note)
             if nl < 0:
                 self.error_msg(token, "Note length is invalid!")
-                sys.exit(1)
-            if self.states_compare(assign=1, square=1,  brace=1):
-                if self._notes[1:]:
-                    pass
+            if self.in_brace > 0:
+                if len(self._notes) > 1:
+                    n = self._notes[-1]
+                    a = re.sub('[a-gA-G]', '', n)
+                    b = re.sub('[a-gA-G]', '', token.value)
+                    if a != b:
+                        self.error_msg(token, "chord/trip must keep the same note length!")
+        elif token.type in ['REF']:
+            pass
 
     def notation_segment(self, token):
         playbacks = self.result['playbacks']
         if not playbacks:
             return
+        print(playbacks)
 
     def parser(self, token):
         # ID COLON [ID | NUMBER | FRACTION | STRING | LPAREN | LSQUARE ]
@@ -274,6 +280,7 @@ class MyLexer(object):
                     self._notes = [token.value]
                     self.in_brace = 1
             elif token.type in ['NOTE', 'REST']:
+                self.notation_check(token.value, token)
                 self.queue.append(token.value)
             elif token.type in ['BAR']:
                 pass
@@ -299,6 +306,7 @@ class MyLexer(object):
                 if nx.type != 'LBRACE':
                     self.show_error(nx)
                 else:
+                    self._notes = [token.value]
                     self.in_brace = 1
             elif token.type in ['NOTE', 'REST']:
                 self.notation_check(token.value, token)
@@ -318,6 +326,8 @@ class MyLexer(object):
             if token.type not in ['NOTE', 'RBRACE']:
                 self.show_error(token)
             if token.type == 'RBRACE':
+                if len(self._notes) == 1:
+                    self.error_msg(token, "chord/trip is empty!")
                 self.queue.append(copy.copy(self._notes))
                 self._notes = []
                 self.in_brace = 0
@@ -358,4 +368,4 @@ if __name__ == '__main__':
     m.build(debug=False)
     with open(sys.argv[1]) as f:
         m.process(f.read())
-    m.result_show()
+    #m.result_show()
