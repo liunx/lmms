@@ -188,9 +188,6 @@ class MyLexer(object):
         self.pp.pprint(self.result)
 
     # notation methods
-    def measure_check(self, token):
-        pass
-
     def note_len(self, note):
         num = int(re.findall(r'\d+', note)[0])
         if num not in [1, 2, 4, 8, 16, 32]:
@@ -218,11 +215,47 @@ class MyLexer(object):
         elif token.type in ['REF']:
             pass
 
+    def track_measure(self, track):
+        pos = 0
+        for n in track:
+            if type(n) is list:
+                n = n[-1]
+            pos += self.note_len(n)
+        return pos
+
+    def fill_rest(self, measure):
+        rests = []
+        m = measure
+        for i in [32, 16, 8, 4, 2, 1]:
+            q = int(m // i)
+            r = int(m % i)
+            if q > 0:
+                rests += ['r1'] * q
+            if r == 0:
+                break
+            m = r
+        return rests
+
     def notation_segment(self, token):
         playbacks = self.result['playbacks']
+        tracks = self.result['tracks']
         if not playbacks:
             return
-        print(playbacks)
+        m = {}
+        max_ = 0
+        for k in tracks.keys():
+            if k not in playbacks:
+                playbacks[k] = []
+                m[k] = 0
+            else:
+                pos = self.track_measure(playbacks[k])
+                m[k] = pos
+                if max_ < pos:
+                    max_ = pos
+        for k, v in m.items():
+            if v < max_:
+                rests = self.fill_rest(max_ - v)
+                playbacks[k].extend(rests)
 
     def parser(self, token):
         # ID COLON [ID | NUMBER | FRACTION | STRING | LPAREN | LSQUARE ]
@@ -295,7 +328,11 @@ class MyLexer(object):
             if token.type == 'RSQUARE':
                 if self.playback > 0:
                     _id = self.queue.pop(0)
-                    self.result['playbacks'][_id] = copy.copy(self.queue)
+                    if _id in self.result['playbacks']:
+                        p = self.result['playbacks'][_id]
+                        p = p.extend(self.queue)
+                    else:
+                        self.result['playbacks'][_id] = list(self.queue)
                 self.queue = []
                 self.in_square = 0
                 self.in_play = 0
@@ -368,4 +405,4 @@ if __name__ == '__main__':
     m.build(debug=False)
     with open(sys.argv[1]) as f:
         m.process(f.read())
-    #m.result_show()
+    m.result_show()

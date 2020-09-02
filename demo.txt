@@ -13,6 +13,10 @@ track03:
 (melody03, Piano, 0, F)
 track04:
 (melody04, Piano, 0, F)
+track05:
+(melody04, Piano, 0, F)
+track06:
+(melody04, Piano, 0, F)
 
 C:
 [ C#4 chord{E4 G4} chord{E4 G4} | chord{E4 G4} ]
@@ -23,7 +27,9 @@ G:
 
 >>
 track01 -> [ $C | $F | $G  | chord{c2 e2}]
+track02 -> [ c1]
+track03 -> [c1 d2 e4 g1 ]
 --
-@track01 -> [ $C | $F | $G ]
+track01 -> [ a1 | b1 | c1 ]
 track02 -> [ r2 | r2 | a4 b4 c4 e4 ]
 <<
