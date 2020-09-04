@@ -6,17 +6,17 @@ timesign : 4/4
 
 @this is tracks
 track01:
-(melody01, Piano, 0, F)
+(melody01, AcousticGrandPiano, 0, F)
 track02:
-(melody02, Piano, 0, F)
+(melody02, AcousticGrandPiano, 0, F)
 track03:
-(melody03, Piano, 0, F)
+(melody03, AcousticGrandPiano, 0, F)
 track04:
-(melody04, Piano, 0, F)
+(melody04, AcousticGrandPiano, 0, F)
 track05:
-(melody04, Piano, 0, F)
+(melody04, AcousticGrandPiano, 0, F)
 track06:
-(melody04, Piano, 0, F)
+(melody04, AcousticGrandPiano, 0, F)
 
 C:
 [ C#4 chord{E4 G4} chord{E4 G4} | chord{E4 G4} ]
