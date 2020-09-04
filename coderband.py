@@ -4,11 +4,11 @@ import os
 import argparse
 import subprocess
 from mcore import MCore
+from parser import MyLexer
 
 root = os.path.dirname(sys.argv[0])
 
 def cbdparser(fp):
-    from parser import MyLexer
     m = MyLexer()
     m.build(debug=False)
     with open(fp) as f:
@@ -37,7 +37,8 @@ def play(args):
                 tempo = int(res['info']['tempo'])
             except:
                 print("Warning: tempo not found!")
-            mc = MCore(res)
+            mc = MCore()
+            mc.cbd(res)
             mid = os.path.basename(fp).replace('.cbd', '.mid')
             midfp = '{}/midi/{}'.format(root,mid)
             mc.writemidi(midfp)
@@ -46,8 +47,28 @@ def play(args):
             print("Don't support this file type!")
             sys.exit(1)
 
-def write(args):
-    print(args)
+def convert(args):
+    ifp = args.input[0]
+    ofp = args.output
+    _, suffix = os.path.splitext(ifp)
+    mc = MCore()
+    if suffix == '.cbd':
+        res = cbdparser(ifp)
+        mc.cbd(res)
+    elif suffix == '.xml':
+        mc.xml(ifp)
+    elif suffix in ['.mid', '.midi']:
+        mc.midi(ifp)
+    else:
+        print("Error: Unsupported file type!")
+        sys.exit(1)
+    _, suffix = os.path.splitext(ofp)
+    if suffix == '.cbd':
+        mc.writecbd(ofp)
+    elif suffix == '.xml':
+        mc.writexml(ofp)
+    elif suffix in ['midi', 'mid']:
+        mc.writemidi(ofp)
 
 def sing(args):
     print(args)
@@ -66,8 +87,10 @@ def getopts():
     sub = subparsers.add_parser('sing', help="sing  notation")
     sub.set_defaults(func=sing)
     # write
-    sub = subparsers.add_parser('write', help="write to *.cbd, *.mid, *.xml file")
-    sub.set_defaults(func=write)
+    sub = subparsers.add_parser('convert', help="convert from *.cbd/*.xml to *.cbd, *.mid, *.xml file")
+    sub.add_argument('input', type=str, nargs=1)
+    sub.add_argument('-o', '--output', type=str, required=True)
+    sub.set_defaults(func=convert)
     # parset args
     args = parser.parse_args()
     try:

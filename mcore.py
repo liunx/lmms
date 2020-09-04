@@ -2,7 +2,7 @@
 import os
 import sys
 import json
-from music21 import stream, chord, tinyNotation, instrument
+from music21 import stream, chord, tinyNotation, instrument, converter
 
 
 class ChordState(tinyNotation.State):
@@ -18,7 +18,9 @@ class ChordState(tinyNotation.State):
 
 class MCore:
     instruments = {}
-    def __init__(self, cbd):
+    def __init__(self):
+        pass
+    def cbd(self, cbd):
         info = cbd['info']
         tracks = cbd['tracks']
         playbacks = cbd['playbacks']
@@ -70,5 +72,17 @@ class MCore:
         tnc.bracketStateMapping['chord'] = ChordState
         return tnc.parse().stream
 
+    def xml(self, fp):
+        self.staff = converter.parse(fp)
+
+    def midi(self, fp):
+        self.staff = converter.parse(fp)
+
     def writemidi(self, fp):
         self.staff.write('midi', fp=fp)
+
+    def writexml(self, fp):
+        self.staff.write('musicxml', fp=fp)
+
+    def writecbd(self, fp):
+        pass

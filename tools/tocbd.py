@@ -3,7 +3,7 @@
 import argparse
 import sys
 from fractions import Fraction
-from music21 import *
+from music21 import chord, note, meter, converter
 
 timeSignatureMap = {
     '4/4': 'r1',
