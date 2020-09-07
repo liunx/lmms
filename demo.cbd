@@ -5,31 +5,28 @@ tempo : 120
 timesign : 4/4
 
 @this is tracks
-track01:
-(melody01, AcousticGrandPiano, 0, F)
-track02:
-(melody02, AcousticGrandPiano, 0, F)
-track03:
-(melody03, AcousticGrandPiano, 0, F)
-track04:
-(melody04, AcousticGrandPiano, 0, F)
-track05:
-(melody04, AcousticGrandPiano, 0, F)
-track06:
-(melody04, AcousticGrandPiano, 0, F)
+track01: (melody01, AcousticGrandPiano, 0, F)
+track02: (melody02, Oboe, 0, F)
+track03: (melody03, ElectricGrandPiano, 0, F)
 
-C:
-[ C#4 chord{E4 G4} chord{E4 G4} | chord{E4 G4} ]
-F:
-[ F4 chord{A4 c4} chord{A4 c4} chord{A4 c4} ]
-G:
-[ G4 chord{B4 d4} chord{B4 d4} chord{B4 d4} ]
+C: [ C4 E4 G4 c4 ]
 
 >>
-track01 -> [ $C | $F | $G  | chord{c2 e2}]
-track02 -> [ c1]
-track03 -> [c1 d2 e4 g1 ]
+track01-> [ c2 c4. c8 | c2 c2 | c1~ | c1 ]
+track02-> [ c1~ | c1~ | c1~ | c1 ]
+track03-> [ $C | $C | $C | $C ]
 --
-track01 -> [ a1 | b1 | c1 ]
-track02 -> [ r2 | r2 | a4 b4 c4 e4 ]
+track01-> [ G2 c4. c8 | c1 | G2 d4. B8 | c1 ]
+track02-> [ G2 c2 | c1 | G2 d4. B8 | c1 ]
+--
+track01-> [ G2 c4. e8 | g2 e4 c4 | d2 c4. d8 | d1 ]
+track02-> [ G2 c4. e8 | g2 e4 c4 | d2 c4. d8 | d1 ]
+--
+track01-> [ G2 c4. c8 | c1 | G2 d4. B8 | c1 ]
+track02-> [ G2 c2 | c1 | G2 d4. B8 | c1 ]
+--
+track01-> [ G2 c4. e8 | g2 e4 c4 | f2 e4. d8 | c1 ]
+track02-> [ G2 c4. e8 | g2 e4 c4 | f2 e4. d8 | c1 ]
+--
+track02-> [ f2 e4. d8 | A2 A2 | A2 B4. c8 | d1 ]
 <<

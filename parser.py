@@ -68,7 +68,7 @@ class MyLexer(object):
         return t
 
     def t_NOTE(self, t):
-        r'([cdefgab][\']{0,2}[#-]{0,1}[123468]{1,2}[.]{0,3}|[CDEFGAB]{1,3}[#-]{0,1}[123468]{1,2}[.]{0,3})'
+        r'([cdefgab][\']{0,2}[#-]{0,1}[123468]{1,2}[.]{0,3}[~]{0,1}|[CDEFGAB]{1,3}[#-]{0,1}[123468]{1,2}[.]{0,3}[~]{0,1})'
         return t
 
     def t_REST(self, t):
@@ -270,7 +270,10 @@ class MyLexer(object):
                 self.in_square = 1
             else:
                 _id = self.queue.pop()
-                self.result['info'][_id] = token.value
+                if token.type == 'STRING':
+                    self.result['info'][_id] = token.value.replace('"', '')
+                else:
+                    self.result['info'][_id] = token.value
                 self.in_assign = 0
         # ID PLAY LSQUARE
         elif self.states_compare(play=1):
@@ -395,6 +398,7 @@ class MyLexer(object):
                 self.playback = 1
             elif token.type in ['STOP']:
                 self.playback = 0
+                self.notation_segment(token)
         else:
             print("[Warning]: Unknown states!")
             self.states_show()

@@ -64,7 +64,7 @@ def convert(args):
         sys.exit(1)
     _, suffix = os.path.splitext(ofp)
     if suffix == '.cbd':
-        mc.writecbd(ofp)
+        mc.writecbd(ofp, step=4)
     elif suffix == '.xml':
         mc.writexml(ofp)
     elif suffix in ['midi', 'mid']:
@@ -76,6 +76,7 @@ def sing(args):
 def getopts():
     parser = argparse.ArgumentParser()
     parser.add_argument('-v', '--version', type=str)
+    parser.add_argument('-d', '--debug', default=False, action='store_true')
     subparsers = parser.add_subparsers(title="Available Commands")
     # play
     sub = subparsers.add_parser('play', help="play *.cbd, *.mid, *.xml file")
@@ -87,16 +88,18 @@ def getopts():
     sub = subparsers.add_parser('sing', help="sing  notation")
     sub.set_defaults(func=sing)
     # write
-    sub = subparsers.add_parser('convert', help="convert from *.cbd/*.xml to *.cbd, *.mid, *.xml file")
+    sub = subparsers.add_parser('conv', help="convert from *.cbd/*.xml to *.cbd, *.mid, *.xml file")
     sub.add_argument('input', type=str, nargs=1)
     sub.add_argument('-o', '--output', type=str, required=True)
     sub.set_defaults(func=convert)
     # parset args
     args = parser.parse_args()
     try:
-        args.func(args)
+        func = args.func
     except AttributeError:
         parser.print_help()
+        sys.exit(1)
+    func(args)
 
 if __name__ == '__main__':
     getopts()
