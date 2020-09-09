@@ -1,10 +1,34 @@
 {
-    "piano": {
+    "AcousticGrandPiano": {
         "preset": "data/presets/Sf2Player/default.xpf",
-        "name": "Piano",
+        "name": "",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "0",
+        "beats": false
+    },
+    "BrightGrandPiano": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "",
         "plugin": "Sf2Player",
         "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
         "patch": "1",
+        "beats": false
+    },
+    "ElectricGrandPiano": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "2",
+        "beats": false
+    },
+    "Oboe": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "68",
         "beats": false
     },
     "violin": {

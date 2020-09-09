@@ -50,25 +50,33 @@ def play(args):
 def convert(args):
     ifp = args.input[0]
     ofp = args.output
-    _, suffix = os.path.splitext(ifp)
+    _, input_suffix = os.path.splitext(ifp)
     mc = MCore()
-    if suffix == '.cbd':
+    if input_suffix == '.cbd':
         res = cbdparser(ifp)
         mc.cbd(res)
-    elif suffix == '.xml':
+    elif input_suffix in ['.xml', '.musicxml']:
         mc.xml(ifp)
-    elif suffix in ['.mid', '.midi']:
+    elif input_suffix in ['.mid', '.midi']:
         mc.midi(ifp)
     else:
-        print("Error: Unsupported file type!")
+        print("Error: Unsupported input file type!")
         sys.exit(1)
-    _, suffix = os.path.splitext(ofp)
-    if suffix == '.cbd':
+    _, output_suffix = os.path.splitext(ofp)
+    if output_suffix == '.cbd':
         mc.writecbd(ofp, step=4)
-    elif suffix == '.xml':
+    elif output_suffix in ['.xml', '.musicxml']:
         mc.writexml(ofp)
-    elif suffix in ['midi', 'mid']:
+    elif output_suffix in ['midi', 'mid']:
         mc.writemidi(ofp)
+    elif output_suffix == '.mmp':
+        if input_suffix not in ['.cbd']:
+            print("Error: Ony support input file type of *.cbd!")
+            sys.exit(1)
+        mc.writelmms(ofp)
+    else:
+        print("Error: Unsupported output file type!")
+        sys.exit(1)
 
 def sing(args):
     print(args)
@@ -88,7 +96,7 @@ def getopts():
     sub = subparsers.add_parser('sing', help="sing  notation")
     sub.set_defaults(func=sing)
     # write
-    sub = subparsers.add_parser('conv', help="convert from *.cbd/*.xml to *.cbd, *.mid, *.xml file")
+    sub = subparsers.add_parser('conv', help="convert from {*.cbd, *.xml, *mid} to {*.cbd, *.mid, *.xml, *.mmp} file")
     sub.add_argument('input', type=str, nargs=1)
     sub.add_argument('-o', '--output', type=str, required=True)
     sub.set_defaults(func=convert)

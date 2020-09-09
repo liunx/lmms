@@ -2,8 +2,14 @@
 import os
 import sys
 import json
+from lmms import Lmms
 from music21 import stream, chord, tinyNotation, instrument, \
     converter, meter, note, metadata
+
+
+class Struct:
+    def __init__(self, **args):
+        self.__dict__.update(args)
 
 
 class ChordState(tinyNotation.State):
@@ -35,32 +41,34 @@ class MCore:
         '32nd': 32,
     }
     instruments = {}
+    track2notes = {}
     def __init__(self):
         pass
     def cbd(self, cbd):
-        info = cbd['info']
-        tracks = cbd['tracks']
-        playbacks = cbd['playbacks']
-        root = os.path.dirname(sys.argv[0])
-        with open(root + '/data/generic_midi.json') as f:
+        self.info = cbd['info']
+        self.tracks = cbd['tracks']
+        self.playbacks = cbd['playbacks']
+        self.root = os.path.dirname(sys.argv[0])
+        with open(self.root + '/data/generic_midi.json') as f:
             self.instruments = json.load(f)
         # convert to stream
         staff = stream.Score()
         md = metadata.Metadata()
-        md.composer = info['composer']
-        md.title = info['title']
+        md.composer = self.info['composer']
+        md.title = self.info['title']
         staff.append(md)
-        ts = info['timesign']
+        ts = self.info['timesign']
         timesign = meter.TimeSignature(ts)
         staff.append(timesign)
         # name, instrument, pitch, muted
         title = 'tinyNotation: {} '.format(ts) 
-        for k, v in tracks.items():
+        for k, v in self.tracks.items():
             if v[3] == 'T':
                 continue
-            notes = playbacks[k]
+            notes = self.playbacks[k]
             notation = self._notation(notes)
             part = self.tinynote(title + notation)
+            self.track2notes[k] = part
             pitch = int(v[2])
             if pitch:
                 part.transpose(pitch, inPlace=True)
@@ -234,3 +242,47 @@ class MCore:
         # write to file
         with open(fp, 'w') as f:
             f.writelines(lines)
+
+    def pianoroll(self, part):
+        roll = []
+        for m in  part:
+            if type(m) != stream.Measure:
+                continue
+            for n in m:
+                d = {}
+                if type(n) == note.Note:
+                    d = {'type': 'Note', 'key': n.pitch.midi, 'pos': float(n.offset), 'len': float(n.quarterLength)}
+                elif type(n) == chord.Chord:
+                    d = {'type': 'Chord', 'keys': [p.midi for p in n.pitches], 'pos': float(n.offset), 'len': float(n.quarterLength)}
+                if d:
+                    roll.append(d)
+            roll.append({'type': 'Measure'})
+        return roll
+
+    def json_load(self, fp):
+        d = {}
+        with open(fp) as f:
+            d = json.load(f)
+        return d
+
+    def json_store(self, fp, data):
+        with open(fp, 'w') as f:
+            json.dump(data, fp)
+
+    def writelmms(self, fp):
+        proj = '/data/projects/templates/default.mpt'
+        instruments = self.json_load(self.root + '/data/lmms.json')
+        lmms = Lmms(self.root + proj)
+        lmms.changebpm(self.info['tempo'])
+        for k, v in self.tracks.items():
+            inst = instruments.get(v[1])
+            if not inst:
+                print("Error: Instrument {} not found!".format(v[1]))
+                sys.exit(1)
+            inst['name'] = v[0]
+            inst = Struct(**inst)
+            node = lmms.addinstrument(inst)
+            part = self.track2notes.get(k)
+            notes = self.pianoroll(part)
+            lmms.addnotes(node['pattern'], notes, 0, 0, 100)
+        lmms.write(fp)

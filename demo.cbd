@@ -21,6 +21,7 @@ track02-> [ G2 c2 | c1 | G2 d4. B8 | c1 ]
 --
 track01-> [ G2 c4. e8 | g2 e4 c4 | d2 c4. d8 | d1 ]
 track02-> [ G2 c4. e8 | g2 e4 c4 | d2 c4. d8 | d1 ]
+track03-> [ $C | $C | $C | $C ]
 --
 track01-> [ G2 c4. c8 | c1 | G2 d4. B8 | c1 ]
 track02-> [ G2 c2 | c1 | G2 d4. B8 | c1 ]
