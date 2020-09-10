@@ -1,53 +1,213 @@
 {
-    "AcousticGrandPiano": {
+    "APiano": {
         "preset": "data/presets/Sf2Player/default.xpf",
-        "name": "",
+        "name": "Acoustic Grand Piano",
         "plugin": "Sf2Player",
         "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
         "patch": "0",
         "beats": false
     },
-    "BrightGrandPiano": {
+    "BPiano": {
         "preset": "data/presets/Sf2Player/default.xpf",
-        "name": "",
+        "name": "Bright Acoustic Piano",
         "plugin": "Sf2Player",
         "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
         "patch": "1",
         "beats": false
     },
-    "ElectricGrandPiano": {
+    "EPiano": {
         "preset": "data/presets/Sf2Player/default.xpf",
-        "name": "",
+        "name": "Electric Grand Piano",
         "plugin": "Sf2Player",
         "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
         "patch": "2",
         "beats": false
     },
-    "Oboe": {
+    "HPiano": {
         "preset": "data/presets/Sf2Player/default.xpf",
-        "name": "",
+        "name": "Honky-tonk Piano",
         "plugin": "Sf2Player",
         "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
-        "patch": "68",
+        "patch": "3",
         "beats": false
     },
-    "violin": {
+    "EPiano1": {
         "preset": "data/presets/Sf2Player/default.xpf",
-        "name": "Violin",
+        "name": "Electric Piano 1",
         "plugin": "Sf2Player",
         "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
-        "patch": "40",
+        "patch": "4",
         "beats": false
     },
-    "harp": {
+    "EPiano2": {
         "preset": "data/presets/Sf2Player/default.xpf",
-        "name": "Harp",
+        "name": "Electric Piano 2",
         "plugin": "Sf2Player",
         "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
-        "patch": "46",
+        "patch": "5",
         "beats": false
     },
-    "eguitar-jazz": {
+    "Harpsichord": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Harpsichord",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "6",
+        "beats": false
+    },
+    "Clavi": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Clavi",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "7",
+        "beats": false
+    },
+    "Celesta": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Celesta",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "8",
+        "beats": false
+    },
+    "Glockenspiel": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Glockenspiel",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "9",
+        "beats": false
+    },
+    "MusicBox": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Music Box",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "10",
+        "beats": false
+    },
+    "Vibraphone": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Vibraphone",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "11",
+        "beats": false
+    },
+    "Marimba": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Marimba",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "12",
+        "beats": false
+    },
+    "Xylophone": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Xylophone",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "13",
+        "beats": false
+    },
+    "TubularBells": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Tubular Bells",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "14",
+        "beats": false
+    },
+    "Dulcimer": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Dulcimer",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "15",
+        "beats": false
+    },
+    "DrawbarOrgan": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Drawbar Organ",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "16",
+        "beats": false
+    },
+    "PercussiveOrgan": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Percussive Organ",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "17",
+        "beats": false
+    },
+    "RockOrgan": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Rock Organ",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "18",
+        "beats": false
+    },
+    "ChurchOrgan": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Church Organ",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "19",
+        "beats": false
+    },
+    "ReedOrgan": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Reed Organ",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "20",
+        "beats": false
+    },
+    "Accordion": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Accordion",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "21",
+        "beats": false
+    },
+    "Harmonica": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Harmonica",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "22",
+        "beats": false
+    },
+    "TangoAccordion": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Tango Accordion",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "23",
+        "beats": false
+    },
+    "NGuitar": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Acoustic Guitar (nylon)",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "24",
+        "beats": false
+    },
+    "SGuitar": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Acoustic Guitar (steel)",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "25",
+        "beats": false
+    },
+    "EJGuitar": {
         "preset": "data/presets/Sf2Player/default.xpf",
         "name": "Electric Guitar (jazz)",
         "plugin": "Sf2Player",
@@ -55,7 +215,7 @@
         "patch": "26",
         "beats": false
     },
-    "eguitar-clean": {
+    "ECGuitar": {
         "preset": "data/presets/Sf2Player/default.xpf",
         "name": "Electric Guitar (clean)",
         "plugin": "Sf2Player",
@@ -63,7 +223,87 @@
         "patch": "27",
         "beats": false
     },
-    "synth-bass1": {
+    "EMGuitar": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Electric Guitar (muted)",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "28",
+        "beats": false
+    },
+    "OGuitar": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Overdriven Guitar",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "29",
+        "beats": false
+    },
+    "DGuitar": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Distortion Guitar",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "30",
+        "beats": false
+    },
+    "HGuitar": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Guitar harmonics",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "31",
+        "beats": false
+    },
+    "ABass": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Acoustic Bass",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "32",
+        "beats": false
+    },
+    "EFBass": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Electric Bass (finger)",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "33",
+        "beats": false
+    },
+    "EPBass": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Electric Bass (pick)",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "34",
+        "beats": false
+    },
+    "FBass": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Fretless Bass",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "35",
+        "beats": false
+    },
+    "SlBass1": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Slap Bass 1",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "36",
+        "beats": false
+    },
+    "SlBass2": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Slap Bass 2",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "37",
+        "beats": false
+    },
+    "SyBass1": {
         "preset": "data/presets/Sf2Player/default.xpf",
         "name": "Synth Bass 1",
         "plugin": "Sf2Player",
@@ -71,7 +311,47 @@
         "patch": "38",
         "beats": false
     },
-    "tremolo-strings": {
+    "SyBass2": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Synth Bass 2",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "39",
+        "beats": false
+    },
+    "Violin": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Violin",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "40",
+        "beats": false
+    },
+    "Viola": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Viola",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "41",
+        "beats": false
+    },
+    "Cello": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Cello",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "42",
+        "beats": false
+    },
+    "Contrabass": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Contrabass",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "43",
+        "beats": false
+    },
+    "TStrings": {
         "preset": "data/presets/Sf2Player/default.xpf",
         "name": "Tremolo Strings",
         "plugin": "Sf2Player",
@@ -79,15 +359,95 @@
         "patch": "44",
         "beats": false
     },
-    "VoiceAahs": {
+    "PStrings": {
         "preset": "data/presets/Sf2Player/default.xpf",
-        "name": "VoiceAahs",
+        "name": "Pizzicato Strings",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "45",
+        "beats": false
+    },
+    "OrchestralHarp": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Orchestral Harp",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "46",
+        "beats": false
+    },
+    "Timpani": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Timpani",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "47",
+        "beats": false
+    },
+    "SEnsemble1": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "String Ensemble 1",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "48",
+        "beats": false
+    },
+    "SEnsemble2": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "String Ensemble 2",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "49",
+        "beats": false
+    },
+    "SyStrings1": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "SynthStrings 1",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "50",
+        "beats": false
+    },
+    "SyStrings2": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "SynthStrings 2",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "51",
+        "beats": false
+    },
+    "ChoirAahs": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Choir Aahs",
         "plugin": "Sf2Player",
         "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
         "patch": "52",
         "beats": false
     },
-    "trumpet": {
+    "VoiceOohs": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Voice Oohs",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "53",
+        "beats": false
+    },
+    "SynthVoice": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Synth Voice",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "54",
+        "beats": false
+    },
+    "OrchestraHit": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Orchestra Hit",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "55",
+        "beats": false
+    },
+    "Trumpet": {
         "preset": "data/presets/Sf2Player/default.xpf",
         "name": "Trumpet",
         "plugin": "Sf2Player",
@@ -95,46 +455,948 @@
         "patch": "56",
         "beats": false
     },
-    "xxx": {
+    "Trombone": {
         "preset": "data/presets/Sf2Player/default.xpf",
-        "name": "VoiceAahs",
+        "name": "Trombone",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "57",
+        "beats": false
+    },
+    "Tuba": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Tuba",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "58",
+        "beats": false
+    },
+    "MutedTrumpet": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Muted Trumpet",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "59",
+        "beats": false
+    },
+    "FrenchHorn": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "French Horn",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "60",
+        "beats": false
+    },
+    "BrassSection": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Brass Section",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "61",
+        "beats": false
+    },
+    "SyBrass1": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "SynthBrass 1",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "62",
+        "beats": false
+    },
+    "SyBrass2": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "SynthBrass 2",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "63",
+        "beats": false
+    },
+    "SSax": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Soprano Sax",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "64",
+        "beats": false
+    },
+    "ASax": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Alto Sax",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "65",
+        "beats": false
+    },
+    "TSax": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Tenor Sax",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "66",
+        "beats": false
+    },
+    "BSax": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Baritone Sax",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "67",
+        "beats": false
+    },
+    "Oboe": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Oboe",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "68",
+        "beats": false
+    },
+    "EnglishHorn": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "English Horn",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "69",
+        "beats": false
+    },
+    "Bassoon": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Bassoon",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "70",
+        "beats": false
+    },
+    "Clarinet": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Clarinet",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "71",
+        "beats": false
+    },
+    "Piccolo": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Piccolo",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "72",
+        "beats": false
+    },
+    "Flute": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Flute",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "73",
+        "beats": false
+    },
+    "Recorder": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Recorder",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "74",
+        "beats": false
+    },
+    "PanFlute": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Pan Flute",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "75",
+        "beats": false
+    },
+    "BlownBottle": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Blown Bottle",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "76",
+        "beats": false
+    },
+    "Shakuhachi": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Shakuhachi",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "77",
+        "beats": false
+    },
+    "Whistle": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Whistle",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "78",
+        "beats": false
+    },
+    "Ocarina": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Ocarina",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "79",
+        "beats": false
+    },
+    "Lead1": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Lead 1 (square)",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "80",
+        "beats": false
+    },
+    "Lead2": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Lead 2 (sawtooth)",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "81",
+        "beats": false
+    },
+    "Lead3": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Lead 3 (calliope)",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "82",
+        "beats": false
+    },
+    "Lead4": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Lead 4 (chiff)",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "83",
+        "beats": false
+    },
+    "Lead5": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Lead 5 (charang)",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "84",
+        "beats": false
+    },
+    "Lead6": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Lead 6 (voice)",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "85",
+        "beats": false
+    },
+    "Lead7": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Lead 7 (fifths)",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "86",
+        "beats": false
+    },
+    "Lead8": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Lead 8 (bass + lead)",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "87",
+        "beats": false
+    },
+    "Pad1": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Pad 1 (new age)",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "88",
+        "beats": false
+    },
+    "Pad2": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Pad 2 (warm)",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "89",
+        "beats": false
+    },
+    "Pad3": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Pad 3 (polysynth)",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "90",
+        "beats": false
+    },
+    "Pad4": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Pad 4 (choir)",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "91",
+        "beats": false
+    },
+    "Pad5": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Pad 5 (bowed)",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "92",
+        "beats": false
+    },
+    "Pad6": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Pad 6 (metallic)",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "93",
+        "beats": false
+    },
+    "Pad7": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Pad 7 (halo)",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "94",
+        "beats": false
+    },
+    "Pad8": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Pad 8 (sweep)",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "95",
+        "beats": false
+    },
+    "FX1": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "FX 1 (rain)",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "96",
+        "beats": false
+    },
+    "FX2": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "FX 2 (soundtrack)",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "97",
+        "beats": false
+    },
+    "FX3": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "FX 3 (crystal)",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "98",
+        "beats": false
+    },
+    "FX4": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "FX 4 (atmosphere)",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "99",
+        "beats": false
+    },
+    "FX5": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "FX 5 (brightness)",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "100",
+        "beats": false
+    },
+    "FX6": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "FX 6 (goblins)",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "101",
+        "beats": false
+    },
+    "FX7": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "FX 7 (echoes)",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "102",
+        "beats": false
+    },
+    "FX8": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "FX 8 (sci-fi)",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "103",
+        "beats": false
+    },
+    "Sitar": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Sitar",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "104",
+        "beats": false
+    },
+    "Banjo": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Banjo",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "105",
+        "beats": false
+    },
+    "Shamisen": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Shamisen",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "106",
+        "beats": false
+    },
+    "Koto": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Koto",
         "plugin": "Sf2Player",
         "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
         "patch": "107",
         "beats": false
     },
-    "kicker": {
-        "preset": "data/presets/Kicker/default.xpf",
-        "name": "Beat",
-        "plugin": "Kicker",
+    "Kalimba": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Kalimba",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "108",
+        "beats": false
+    },
+    "Bagpipe": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Bag pipe",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "109",
+        "beats": false
+    },
+    "Fiddle": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Fiddle",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "110",
+        "beats": false
+    },
+    "Shanai": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Shanai",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "111",
+        "beats": false
+    },
+    "TinkleBell": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Tinkle Bell",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "112",
+        "beats": false
+    },
+    "Agogo": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Agogo",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "113",
+        "beats": false
+    },
+    "SteelDrums": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Steel Drums",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "114",
+        "beats": false
+    },
+    "Woodblock": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Woodblock",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "115",
+        "beats": false
+    },
+    "TaikoDrum": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Taiko Drum",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "116",
+        "beats": false
+    },
+    "MelodicTom": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Melodic Tom",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "117",
+        "beats": false
+    },
+    "SynthDrum": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Synth Drum",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "118",
+        "beats": false
+    },
+    "ReverseCymbal": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Reverse Cymbal",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "119",
+        "beats": false
+    },
+    "GuitarFretNoise": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Guitar Fret Noise",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "120",
+        "beats": false
+    },
+    "BreathNoise": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Breath Noise",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "121",
+        "beats": false
+    },
+    "Seashore": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Seashore",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "122",
+        "beats": false
+    },
+    "BirdTweet": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Bird Tweet",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "123",
+        "beats": false
+    },
+    "TelephoneRing": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Telephone Ring",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "124",
+        "beats": false
+    },
+    "Helicopter": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Helicopter",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "125",
+        "beats": false
+    },
+    "Applause": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Applause",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "126",
+        "beats": false
+    },
+    "Gunshot": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Gunshot",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "127",
+        "beats": false
+    },
+    "AcousticBassDrum": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Acoustic Bass Drum",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "34",
         "beats": true
     },
-    "bassdrum01": {
-        "preset": "data/presets/AudioFileProcessor/default.xpf",
-        "name": "Bass",
-        "plugin": "AudioFileProcessor",
-        "src": "data/samples/drums/bassdrum01.ogg",
+    "BassDrum1": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Bass Drum 1",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "35",
         "beats": true
     },
-    "clap01": {
-        "preset": "data/presets/AudioFileProcessor/default.xpf",
-        "name": "Bass",
-        "plugin": "AudioFileProcessor",
-        "src": "data/samples/drums/clap01.ogg",
+    "SideStick": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Side Stick",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "36",
         "beats": true
     },
-    "kick01": {
-        "preset": "data/presets/AudioFileProcessor/default.xpf",
-        "name": "Bass",
-        "plugin": "AudioFileProcessor",
-        "src": "data/samples/drums/kick01.ogg",
+    "AcousticSnare": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Acoustic Snare",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "37",
         "beats": true
     },
-    "acid01": {
-        "preset": "data/presets/AudioFileProcessor/default.xpf",
-        "name": "Bass",
-        "plugin": "AudioFileProcessor",
-        "src": "data/samples/basses/bass_acid01.ogg",
+    "HandClap": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Hand Clap",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "38",
+        "beats": true
+    },
+    "ElectricSnare": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Electric Snare",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "39",
+        "beats": true
+    },
+    "LowFloorTom": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Low Floor Tom",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "40",
+        "beats": true
+    },
+    "ClosedHiHat": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Closed Hi Hat",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "41",
+        "beats": true
+    },
+    "HighFloorTom": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "High Floor Tom",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "42",
+        "beats": true
+    },
+    "PedalHiHat": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Pedal Hi-Hat",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "43",
+        "beats": true
+    },
+    "LowTom": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Low Tom",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "44",
+        "beats": true
+    },
+    "OpenHiHat": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Open Hi-Hat",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "45",
+        "beats": true
+    },
+    "LowMidTom": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Low-Mid Tom",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "46",
+        "beats": true
+    },
+    "HiMidTom": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Hi-Mid Tom",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "47",
+        "beats": true
+    },
+    "CrashCymbal1": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Crash Cymbal 1",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "48",
+        "beats": true
+    },
+    "HighTom": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "High Tom",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "49",
+        "beats": true
+    },
+    "RideCymbal1": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Ride Cymbal 1",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "50",
+        "beats": true
+    },
+    "ChineseCymbal": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Chinese Cymbal",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "51",
+        "beats": true
+    },
+    "RideBell": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Ride Bell",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "52",
+        "beats": true
+    },
+    "Tambourine": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Tambourine",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "53",
+        "beats": true
+    },
+    "SplashCymbal": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Splash Cymbal",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "54",
+        "beats": true
+    },
+    "Cowbell": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Cowbell",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "55",
+        "beats": true
+    },
+    "CrashCymbal2": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Crash Cymbal 2",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "56",
+        "beats": true
+    },
+    "Vibraslap": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Vibraslap",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "57",
+        "beats": true
+    },
+    "RideCymbal2": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Ride Cymbal 2",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "58",
+        "beats": true
+    },
+    "HiBongo": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Hi Bongo",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "59",
+        "beats": true
+    },
+    "LowBongo": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Low Bongo",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "60",
+        "beats": true
+    },
+    "MuteHiConga": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Mute Hi Conga",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "61",
+        "beats": true
+    },
+    "OpenHiConga": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Open Hi Conga",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "62",
+        "beats": true
+    },
+    "LowConga": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Low Conga",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "63",
+        "beats": true
+    },
+    "HighTimbale": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "High Timbale",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "64",
+        "beats": true
+    },
+    "LowTimbale": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Low Timbale",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "65",
+        "beats": true
+    },
+    "HighAgogo": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "High Agogo",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "66",
+        "beats": true
+    },
+    "LowAgogo": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Low Agogo",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "67",
+        "beats": true
+    },
+    "Cabasa": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Cabasa",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "68",
+        "beats": true
+    },
+    "Maracas": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Maracas",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "69",
+        "beats": true
+    },
+    "ShortWhistle": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Short Whistle",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "70",
+        "beats": true
+    },
+    "LongWhistle": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Long Whistle",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "71",
+        "beats": true
+    },
+    "ShortGuiro": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Short Guiro",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "72",
+        "beats": true
+    },
+    "LongGuiro": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Long Guiro",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "73",
+        "beats": true
+    },
+    "Claves": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Claves",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "74",
+        "beats": true
+    },
+    "HiWoodBlock": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Hi Wood Block",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "75",
+        "beats": true
+    },
+    "LowWoodBlock": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Low Wood Block",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "76",
+        "beats": true
+    },
+    "MuteCuica": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Mute Cuica",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "77",
+        "beats": true
+    },
+    "OpenCuica": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Open Cuica",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "78",
+        "beats": true
+    },
+    "MuteTriangle": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Mute Triangle",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "79",
+        "beats": true
+    },
+    "OpenTriangle": {
+        "preset": "data/presets/Sf2Player/default.xpf",
+        "name": "Open Triangle",
+        "plugin": "Sf2Player",
+        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "patch": "80",
         "beats": true
     }
 }

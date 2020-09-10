@@ -5,9 +5,9 @@ tempo : 120
 timesign : 4/4
 
 @this is tracks
-track01: (melody01, AcousticGrandPiano, 0, F)
+track01: (melody01, APiano, 0, F)
 track02: (melody02, Oboe, 0, F)
-track03: (melody03, ElectricGrandPiano, 0, F)
+track03: (melody03, EPiano, 0, F)
 
 C: [ C4 E4 G4 c4 ]
 

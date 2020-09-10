@@ -1,41 +1,41 @@
 {
-    "AcousticGrandPiano": [
-        "AcousticGrandPiano",
+    "APiano": [
+        "Acoustic Grand Piano",
         0,
         0,
         0,
         0
     ],
-    "BrightAcousticPiano": [
-        "BrightAcousticPiano",
+    "BPiano": [
+        "Bright Acoustic Piano",
         0,
         1,
         0,
         0
     ],
-    "ElectricGrandPiano": [
-        "ElectricGrandPiano",
+    "EPiano": [
+        "Electric Grand Piano",
         0,
         2,
         0,
         0
     ],
-    "Honky-tonkPiano": [
-        "Honky-tonkPiano",
+    "HPiano": [
+        "Honky-tonk Piano",
         0,
         3,
         0,
         0
     ],
-    "ElectricPiano1": [
-        "ElectricPiano1",
+    "EPiano1": [
+        "Electric Piano 1",
         0,
         4,
         0,
         0
     ],
-    "ElectricPiano2": [
-        "ElectricPiano2",
+    "EPiano2": [
+        "Electric Piano 2",
         0,
         5,
         0,
@@ -70,7 +70,7 @@
         0
     ],
     "MusicBox": [
-        "MusicBox",
+        "Music Box",
         0,
         10,
         0,
@@ -98,7 +98,7 @@
         0
     ],
     "TubularBells": [
-        "TubularBells",
+        "Tubular Bells",
         0,
         14,
         0,
@@ -112,35 +112,35 @@
         0
     ],
     "DrawbarOrgan": [
-        "DrawbarOrgan",
+        "Drawbar Organ",
         0,
         16,
         0,
         0
     ],
     "PercussiveOrgan": [
-        "PercussiveOrgan",
+        "Percussive Organ",
         0,
         17,
         0,
         0
     ],
     "RockOrgan": [
-        "RockOrgan",
+        "Rock Organ",
         0,
         18,
         0,
         0
     ],
     "ChurchOrgan": [
-        "ChurchOrgan",
+        "Church Organ",
         0,
         19,
         0,
         0
     ],
     "ReedOrgan": [
-        "ReedOrgan",
+        "Reed Organ",
         0,
         20,
         0,
@@ -161,119 +161,119 @@
         0
     ],
     "TangoAccordion": [
-        "TangoAccordion",
+        "Tango Accordion",
         0,
         23,
         0,
         0
     ],
-    "AcousticGuitar(nylon)": [
-        "AcousticGuitar(nylon)",
+    "NGuitar": [
+        "Acoustic Guitar (nylon)",
         0,
         24,
         0,
         0
     ],
-    "AcousticGuitar(steel)": [
-        "AcousticGuitar(steel)",
+    "SGuitar": [
+        "Acoustic Guitar (steel)",
         0,
         25,
         0,
         0
     ],
-    "ElectricGuitar(jazz)": [
-        "ElectricGuitar(jazz)",
+    "EJGuitar": [
+        "Electric Guitar (jazz)",
         0,
         26,
         0,
         0
     ],
-    "ElectricGuitar(clean)": [
-        "ElectricGuitar(clean)",
+    "ECGuitar": [
+        "Electric Guitar (clean)",
         0,
         27,
         0,
         0
     ],
-    "ElectricGuitar(muted)": [
-        "ElectricGuitar(muted)",
+    "EMGuitar": [
+        "Electric Guitar (muted)",
         0,
         28,
         0,
         0
     ],
-    "OverdrivenGuitar": [
-        "OverdrivenGuitar",
+    "OGuitar": [
+        "Overdriven Guitar",
         0,
         29,
         0,
         0
     ],
-    "DistortionGuitar": [
-        "DistortionGuitar",
+    "DGuitar": [
+        "Distortion Guitar",
         0,
         30,
         0,
         0
     ],
-    "Guitarharmonics": [
-        "Guitarharmonics",
+    "HGuitar": [
+        "Guitar harmonics",
         0,
         31,
         0,
         0
     ],
-    "AcousticBass": [
-        "AcousticBass",
+    "ABass": [
+        "Acoustic Bass",
         0,
         32,
         0,
         0
     ],
-    "ElectricBass(finger)": [
-        "ElectricBass(finger)",
+    "EFBass": [
+        "Electric Bass (finger)",
         0,
         33,
         0,
         0
     ],
-    "ElectricBass(pick)": [
-        "ElectricBass(pick)",
+    "EPBass": [
+        "Electric Bass (pick)",
         0,
         34,
         0,
         0
     ],
-    "FretlessBass": [
-        "FretlessBass",
+    "FBass": [
+        "Fretless Bass",
         0,
         35,
         0,
         0
     ],
-    "SlapBass1": [
-        "SlapBass1",
+    "SlBass1": [
+        "Slap Bass 1",
         0,
         36,
         0,
         0
     ],
-    "SlapBass2": [
-        "SlapBass2",
+    "SlBass2": [
+        "Slap Bass 2",
         0,
         37,
         0,
         0
     ],
-    "SynthBass1": [
-        "SynthBass1",
+    "SyBass1": [
+        "Synth Bass 1",
         0,
         38,
         0,
         0
     ],
-    "SynthBass2": [
-        "SynthBass2",
+    "SyBass2": [
+        "Synth Bass 2",
         0,
         39,
         0,
@@ -307,22 +307,22 @@
         0,
         0
     ],
-    "TremoloStrings": [
-        "TremoloStrings",
+    "TStrings": [
+        "Tremolo Strings",
         0,
         44,
         0,
         0
     ],
-    "PizzicatoStrings": [
-        "PizzicatoStrings",
+    "PStrings": [
+        "Pizzicato Strings",
         0,
         45,
         0,
         0
     ],
     "OrchestralHarp": [
-        "OrchestralHarp",
+        "Orchestral Harp",
         0,
         46,
         0,
@@ -335,57 +335,57 @@
         0,
         0
     ],
-    "StringEnsemble1": [
-        "StringEnsemble1",
+    "SEnsemble1": [
+        "String Ensemble 1",
         0,
         48,
         0,
         0
     ],
-    "StringEnsemble2": [
-        "StringEnsemble2",
+    "SEnsemble2": [
+        "String Ensemble 2",
         0,
         49,
         0,
         0
     ],
-    "SynthStrings1": [
-        "SynthStrings1",
+    "SyStrings1": [
+        "SynthStrings 1",
         0,
         50,
         0,
         0
     ],
-    "SynthStrings2": [
-        "SynthStrings2",
+    "SyStrings2": [
+        "SynthStrings 2",
         0,
         51,
         0,
         0
     ],
     "ChoirAahs": [
-        "ChoirAahs",
+        "Choir Aahs",
         0,
         52,
         0,
         0
     ],
     "VoiceOohs": [
-        "VoiceOohs",
+        "Voice Oohs",
         0,
         53,
         0,
         0
     ],
     "SynthVoice": [
-        "SynthVoice",
+        "Synth Voice",
         0,
         54,
         0,
         0
     ],
     "OrchestraHit": [
-        "OrchestraHit",
+        "Orchestra Hit",
         0,
         55,
         0,
@@ -413,63 +413,63 @@
         0
     ],
     "MutedTrumpet": [
-        "MutedTrumpet",
+        "Muted Trumpet",
         0,
         59,
         0,
         0
     ],
     "FrenchHorn": [
-        "FrenchHorn",
+        "French Horn",
         0,
         60,
         0,
         0
     ],
     "BrassSection": [
-        "BrassSection",
+        "Brass Section",
         0,
         61,
         0,
         0
     ],
-    "SynthBrass1": [
-        "SynthBrass1",
+    "SyBrass1": [
+        "SynthBrass 1",
         0,
         62,
         0,
         0
     ],
-    "SynthBrass2": [
-        "SynthBrass2",
+    "SyBrass2": [
+        "SynthBrass 2",
         0,
         63,
         0,
         0
     ],
-    "SopranoSax": [
-        "SopranoSax",
+    "SSax": [
+        "Soprano Sax",
         0,
         64,
         0,
         0
     ],
-    "AltoSax": [
-        "AltoSax",
+    "ASax": [
+        "Alto Sax",
         0,
         65,
         0,
         0
     ],
-    "TenorSax": [
-        "TenorSax",
+    "TSax": [
+        "Tenor Sax",
         0,
         66,
         0,
         0
     ],
-    "BaritoneSax": [
-        "BaritoneSax",
+    "BSax": [
+        "Baritone Sax",
         0,
         67,
         0,
@@ -483,7 +483,7 @@
         0
     ],
     "EnglishHorn": [
-        "EnglishHorn",
+        "English Horn",
         0,
         69,
         0,
@@ -525,14 +525,14 @@
         0
     ],
     "PanFlute": [
-        "PanFlute",
+        "Pan Flute",
         0,
         75,
         0,
         0
     ],
     "BlownBottle": [
-        "BlownBottle",
+        "Blown Bottle",
         0,
         76,
         0,
@@ -559,169 +559,169 @@
         0,
         0
     ],
-    "Lead1(square)": [
-        "Lead1(square)",
+    "Lead1": [
+        "Lead 1 (square)",
         0,
         80,
         0,
         0
     ],
-    "Lead2(sawtooth)": [
-        "Lead2(sawtooth)",
+    "Lead2": [
+        "Lead 2 (sawtooth)",
         0,
         81,
         0,
         0
     ],
-    "Lead3(calliope)": [
-        "Lead3(calliope)",
+    "Lead3": [
+        "Lead 3 (calliope)",
         0,
         82,
         0,
         0
     ],
-    "Lead4(chiff)": [
-        "Lead4(chiff)",
+    "Lead4": [
+        "Lead 4 (chiff)",
         0,
         83,
         0,
         0
     ],
-    "Lead5(charang)": [
-        "Lead5(charang)",
+    "Lead5": [
+        "Lead 5 (charang)",
         0,
         84,
         0,
         0
     ],
-    "Lead6(voice)": [
-        "Lead6(voice)",
+    "Lead6": [
+        "Lead 6 (voice)",
         0,
         85,
         0,
         0
     ],
-    "Lead7(fifths)": [
-        "Lead7(fifths)",
+    "Lead7": [
+        "Lead 7 (fifths)",
         0,
         86,
         0,
         0
     ],
-    "Lead8(bass+lead)": [
-        "Lead8(bass+lead)",
+    "Lead8": [
+        "Lead 8 (bass + lead)",
         0,
         87,
         0,
         0
     ],
-    "Pad1(newage)": [
-        "Pad1(newage)",
+    "Pad1": [
+        "Pad 1 (new age)",
         0,
         88,
         0,
         0
     ],
-    "Pad2(warm)": [
-        "Pad2(warm)",
+    "Pad2": [
+        "Pad 2 (warm)",
         0,
         89,
         0,
         0
     ],
-    "Pad3(polysynth)": [
-        "Pad3(polysynth)",
+    "Pad3": [
+        "Pad 3 (polysynth)",
         0,
         90,
         0,
         0
     ],
-    "Pad4(choir)": [
-        "Pad4(choir)",
+    "Pad4": [
+        "Pad 4 (choir)",
         0,
         91,
         0,
         0
     ],
-    "Pad5(bowed)": [
-        "Pad5(bowed)",
+    "Pad5": [
+        "Pad 5 (bowed)",
         0,
         92,
         0,
         0
     ],
-    "Pad6(metallic)": [
-        "Pad6(metallic)",
+    "Pad6": [
+        "Pad 6 (metallic)",
         0,
         93,
         0,
         0
     ],
-    "Pad7(halo)": [
-        "Pad7(halo)",
+    "Pad7": [
+        "Pad 7 (halo)",
         0,
         94,
         0,
         0
     ],
-    "Pad8(sweep)": [
-        "Pad8(sweep)",
+    "Pad8": [
+        "Pad 8 (sweep)",
         0,
         95,
         0,
         0
     ],
-    "FX1(rain)": [
-        "FX1(rain)",
+    "FX1": [
+        "FX 1 (rain)",
         0,
         96,
         0,
         0
     ],
-    "FX2(soundtrack)": [
-        "FX2(soundtrack)",
+    "FX2": [
+        "FX 2 (soundtrack)",
         0,
         97,
         0,
         0
     ],
-    "FX3(crystal)": [
-        "FX3(crystal)",
+    "FX3": [
+        "FX 3 (crystal)",
         0,
         98,
         0,
         0
     ],
-    "FX4(atmosphere)": [
-        "FX4(atmosphere)",
+    "FX4": [
+        "FX 4 (atmosphere)",
         0,
         99,
         0,
         0
     ],
-    "FX5(brightness)": [
-        "FX5(brightness)",
+    "FX5": [
+        "FX 5 (brightness)",
         0,
         100,
         0,
         0
     ],
-    "FX6(goblins)": [
-        "FX6(goblins)",
+    "FX6": [
+        "FX 6 (goblins)",
         0,
         101,
         0,
         0
     ],
-    "FX7(echoes)": [
-        "FX7(echoes)",
+    "FX7": [
+        "FX 7 (echoes)",
         0,
         102,
         0,
         0
     ],
-    "FX8(sci-fi)": [
-        "FX8(sci-fi)",
+    "FX8": [
+        "FX 8 (sci-fi)",
         0,
         103,
         0,
@@ -763,7 +763,7 @@
         0
     ],
     "Bagpipe": [
-        "Bagpipe",
+        "Bag pipe",
         0,
         109,
         0,
@@ -784,7 +784,7 @@
         0
     ],
     "TinkleBell": [
-        "TinkleBell",
+        "Tinkle Bell",
         0,
         112,
         0,
@@ -798,7 +798,7 @@
         0
     ],
     "SteelDrums": [
-        "SteelDrums",
+        "Steel Drums",
         0,
         114,
         0,
@@ -812,42 +812,42 @@
         0
     ],
     "TaikoDrum": [
-        "TaikoDrum",
+        "Taiko Drum",
         0,
         116,
         0,
         0
     ],
     "MelodicTom": [
-        "MelodicTom",
+        "Melodic Tom",
         0,
         117,
         0,
         0
     ],
     "SynthDrum": [
-        "SynthDrum",
+        "Synth Drum",
         0,
         118,
         0,
         0
     ],
     "ReverseCymbal": [
-        "ReverseCymbal",
+        "Reverse Cymbal",
         0,
         119,
         0,
         0
     ],
     "GuitarFretNoise": [
-        "GuitarFretNoise",
+        "Guitar Fret Noise",
         0,
         120,
         0,
         0
     ],
     "BreathNoise": [
-        "BreathNoise",
+        "Breath Noise",
         0,
         121,
         0,
@@ -861,14 +861,14 @@
         0
     ],
     "BirdTweet": [
-        "BirdTweet",
+        "Bird Tweet",
         0,
         123,
         0,
         0
     ],
     "TelephoneRing": [
-        "TelephoneRing",
+        "Telephone Ring",
         0,
         124,
         0,
@@ -896,133 +896,133 @@
         0
     ],
     "AcousticBassDrum": [
-        "AcousticBassDrum",
+        "Acoustic Bass Drum",
         10,
         34,
         0,
         0
     ],
     "BassDrum1": [
-        "BassDrum1",
+        "Bass Drum 1",
         10,
         35,
         0,
         0
     ],
     "SideStick": [
-        "SideStick",
+        "Side Stick",
         10,
         36,
         0,
         0
     ],
     "AcousticSnare": [
-        "AcousticSnare",
+        "Acoustic Snare",
         10,
         37,
         0,
         0
     ],
     "HandClap": [
-        "HandClap",
+        "Hand Clap",
         10,
         38,
         0,
         0
     ],
     "ElectricSnare": [
-        "ElectricSnare",
+        "Electric Snare",
         10,
         39,
         0,
         0
     ],
     "LowFloorTom": [
-        "LowFloorTom",
+        "Low Floor Tom",
         10,
         40,
         0,
         0
     ],
     "ClosedHiHat": [
-        "ClosedHiHat",
+        "Closed Hi Hat",
         10,
         41,
         0,
         0
     ],
     "HighFloorTom": [
-        "HighFloorTom",
+        "High Floor Tom",
         10,
         42,
         0,
         0
     ],
-    "PedalHi-Hat": [
-        "PedalHi-Hat",
+    "PedalHiHat": [
+        "Pedal Hi-Hat",
         10,
         43,
         0,
         0
     ],
     "LowTom": [
-        "LowTom",
+        "Low Tom",
         10,
         44,
         0,
         0
     ],
-    "OpenHi-Hat": [
-        "OpenHi-Hat",
+    "OpenHiHat": [
+        "Open Hi-Hat",
         10,
         45,
         0,
         0
     ],
-    "Low-MidTom": [
-        "Low-MidTom",
+    "LowMidTom": [
+        "Low-Mid Tom",
         10,
         46,
         0,
         0
     ],
-    "Hi-MidTom": [
-        "Hi-MidTom",
+    "HiMidTom": [
+        "Hi-Mid Tom",
         10,
         47,
         0,
         0
     ],
     "CrashCymbal1": [
-        "CrashCymbal1",
+        "Crash Cymbal 1",
         10,
         48,
         0,
         0
     ],
     "HighTom": [
-        "HighTom",
+        "High Tom",
         10,
         49,
         0,
         0
     ],
     "RideCymbal1": [
-        "RideCymbal1",
+        "Ride Cymbal 1",
         10,
         50,
         0,
         0
     ],
     "ChineseCymbal": [
-        "ChineseCymbal",
+        "Chinese Cymbal",
         10,
         51,
         0,
         0
     ],
     "RideBell": [
-        "RideBell",
+        "Ride Bell",
         10,
         52,
         0,
@@ -1036,7 +1036,7 @@
         0
     ],
     "SplashCymbal": [
-        "SplashCymbal",
+        "Splash Cymbal",
         10,
         54,
         0,
@@ -1050,7 +1050,7 @@
         0
     ],
     "CrashCymbal2": [
-        "CrashCymbal2",
+        "Crash Cymbal 2",
         10,
         56,
         0,
@@ -1064,70 +1064,70 @@
         0
     ],
     "RideCymbal2": [
-        "RideCymbal2",
+        "Ride Cymbal 2",
         10,
         58,
         0,
         0
     ],
     "HiBongo": [
-        "HiBongo",
+        "Hi Bongo",
         10,
         59,
         0,
         0
     ],
     "LowBongo": [
-        "LowBongo",
+        "Low Bongo",
         10,
         60,
         0,
         0
     ],
     "MuteHiConga": [
-        "MuteHiConga",
+        "Mute Hi Conga",
         10,
         61,
         0,
         0
     ],
     "OpenHiConga": [
-        "OpenHiConga",
+        "Open Hi Conga",
         10,
         62,
         0,
         0
     ],
     "LowConga": [
-        "LowConga",
+        "Low Conga",
         10,
         63,
         0,
         0
     ],
     "HighTimbale": [
-        "HighTimbale",
+        "High Timbale",
         10,
         64,
         0,
         0
     ],
     "LowTimbale": [
-        "LowTimbale",
+        "Low Timbale",
         10,
         65,
         0,
         0
     ],
     "HighAgogo": [
-        "HighAgogo",
+        "High Agogo",
         10,
         66,
         0,
         0
     ],
     "LowAgogo": [
-        "LowAgogo",
+        "Low Agogo",
         10,
         67,
         0,
@@ -1148,28 +1148,28 @@
         0
     ],
     "ShortWhistle": [
-        "ShortWhistle",
+        "Short Whistle",
         10,
         70,
         0,
         0
     ],
     "LongWhistle": [
-        "LongWhistle",
+        "Long Whistle",
         10,
         71,
         0,
         0
     ],
     "ShortGuiro": [
-        "ShortGuiro",
+        "Short Guiro",
         10,
         72,
         0,
         0
     ],
     "LongGuiro": [
-        "LongGuiro",
+        "Long Guiro",
         10,
         73,
         0,
@@ -1183,42 +1183,42 @@
         0
     ],
     "HiWoodBlock": [
-        "HiWoodBlock",
+        "Hi Wood Block",
         10,
         75,
         0,
         0
     ],
     "LowWoodBlock": [
-        "LowWoodBlock",
+        "Low Wood Block",
         10,
         76,
         0,
         0
     ],
     "MuteCuica": [
-        "MuteCuica",
+        "Mute Cuica",
         10,
         77,
         0,
         0
     ],
     "OpenCuica": [
-        "OpenCuica",
+        "Open Cuica",
         10,
         78,
         0,
         0
     ],
     "MuteTriangle": [
-        "MuteTriangle",
+        "Mute Triangle",
         10,
         79,
         0,
         0
     ],
     "OpenTriangle": [
-        "OpenTriangle",
+        "Open Triangle",
         10,
         80,
         0,
