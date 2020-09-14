@@ -68,11 +68,11 @@ class MyLexer(object):
         return t
 
     def t_NOTE(self, t):
-        r'([cdefgab][\']{0,2}[#-]{0,1}[123468]{1,2}[.]{0,3}[~]{0,1}|[CDEFGAB]{1,3}[#-]{0,1}[123468]{1,2}[.]{0,3}[~]{0,1})'
+        r'([cdefgab][\']{0,2}[#-]{0,4}[123468]{1,2}[.]{0,4}[~]{0,1}|[CDEFGAB]{1,3}[#-]{0,1}[123468]{1,2}[.]{0,4}[~]{0,1})'
         return t
 
     def t_REST(self, t):
-        r'[Rr][123468]{1,2}'
+        r'[Rr][123468]{1,2}[.]{0,4}'
         return t
 
     def t_ID(self, t):
@@ -208,8 +208,8 @@ class MyLexer(object):
             if self.in_brace > 0:
                 if len(self._notes) > 1:
                     n = self._notes[-1]
-                    a = re.sub('[a-gA-G]', '', n)
-                    b = re.sub('[a-gA-G]', '', token.value)
+                    a = re.sub('[a-gA-G\-\'\#]', '', n)
+                    b = re.sub('[a-gA-G\-\'\#]', '', token.value)
                     if a != b:
                         self.error_msg(token, "chord/trip must keep the same note length!")
         elif token.type in ['REF']:

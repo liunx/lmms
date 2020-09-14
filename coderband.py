@@ -55,7 +55,7 @@ def convert(args):
     if input_suffix == '.cbd':
         res = cbdparser(ifp)
         mc.cbd(res)
-    elif input_suffix in ['.xml', '.musicxml']:
+    elif input_suffix in ['.mxl', '.xml', '.musicxml']:
         mc.xml(ifp)
     elif input_suffix in ['.mid', '.midi']:
         mc.midi(ifp)
