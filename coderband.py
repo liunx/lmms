@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import sys
 import os
+import tempfile
 import argparse
 import subprocess
 from mcore import MCore
@@ -40,9 +41,10 @@ def play(args):
             mc = MCore()
             mc.cbd(res)
             mid = os.path.basename(fp).replace('.cbd', '.mid')
-            midfp = '{}/midi/{}'.format(root,mid)
+            _, midfp = tempfile.mkstemp(suffix='.mid')
             mc.writemidi(midfp)
             playmidi(midfp, args.vol, tempo)
+            os.unlink(midfp)
         else:
             print("Don't support this file type!")
             sys.exit(1)
