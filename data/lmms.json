@@ -1024,18 +1024,18 @@
         "beats": false
     },
     "AcousticBassDrum": {
-        "preset": "data/presets/Sf2Player/default.xpf",
+        "preset": "data/presets/AudioFileProcessor/default.xpf",
         "name": "Acoustic Bass Drum",
-        "plugin": "Sf2Player",
-        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "plugin": "AudioFileProcessor",
+        "src": "/usr/share/lmms/samples/drums/bassdrum_acoustic01.ogg",
         "patch": "34",
         "beats": true
     },
     "BassDrum1": {
-        "preset": "data/presets/Sf2Player/default.xpf",
+        "preset": "data/presets/AudioFileProcessor/default.xpf",
         "name": "Bass Drum 1",
-        "plugin": "Sf2Player",
-        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "plugin": "AudioFileProcessor",
+        "src": "/usr/share/lmms/samples/drums/bassdrum01.ogg",
         "patch": "35",
         "beats": true
     },
@@ -1056,10 +1056,10 @@
         "beats": true
     },
     "HandClap": {
-        "preset": "data/presets/Sf2Player/default.xpf",
+        "preset": "data/presets/AudioFileProcessor/default.xpf",
         "name": "Hand Clap",
-        "plugin": "Sf2Player",
-        "src": "/usr/share/sounds/sf2/FluidR3_GM.sf2",
+        "plugin": "AudioFileProcessor",
+        "src": "/usr/share/lmms/samples/drums/clap01.ogg",
         "patch": "38",
         "beats": true
     },

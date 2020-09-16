@@ -83,6 +83,13 @@ def convert(args):
 def sing(args):
     print(args)
 
+def show(args):
+    if args.drumkit:
+        mc = MCore()
+        mc.show_percussion()
+    elif args.query:
+        mc = MCore()
+
 def getopts():
     parser = argparse.ArgumentParser()
     parser.add_argument('-v', '--version', type=str)
@@ -102,6 +109,10 @@ def getopts():
     sub.add_argument('input', type=str, nargs=1)
     sub.add_argument('-o', '--output', type=str, required=True)
     sub.set_defaults(func=convert)
+    # show
+    sub = subparsers.add_parser('show', help="show useful info")
+    sub.add_argument('-d', '--drumkit', default=False, action='store_true', help="show availabe percussion instruments.")
+    sub.set_defaults(func=show)
     # parset args
     args = parser.parse_args()
     try:

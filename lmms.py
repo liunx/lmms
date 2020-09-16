@@ -71,6 +71,7 @@ class Lmms:
     presets = {}
     unit = 12
     steps = 16
+    quarterlength = 48
     beattracks = 1
 
     def __init__(self, project):
@@ -167,6 +168,11 @@ class Lmms:
             elif n['type'] == 'Measure':
                 offset = offset + (self.unit * self.steps)
 
+    def addbeatnote(self, pattern, offset):
+            elem = etree.Element('note', pos="0", len="-192", key="57", vol="100", pan="0")
+            elem.attrib['pos'] = str(int(self.quarterlength * offset))
+            pattern.append(elem)
+
     def addbeatnotes(self, pattern, notes):
         offset = 0
         for n in notes:
@@ -201,7 +207,7 @@ class Lmms:
 
     def addbbtco(self, track, offset, count):
         for i in range(count):
-            pos = str((i + offset) * self.unit * self.steps)
+            pos = str(int((i + offset) * self.unit * self.steps))
             bbtco = etree.Element(
                 'bbtco', color="4286611584", pos=pos, name="", muted="0", len="192", usestyle="1")
             track.append(bbtco)
