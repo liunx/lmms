@@ -62,7 +62,7 @@ class MyLexer(object):
         return t
 
     def t_NUMBER(self, t):
-        r'[0-9]*[/]{0,1}[0-9]+'
+        r'[\+\-]{0,1}[0-9]*[/]{0,1}[0-9]+'
         if t.value.find('/') > -1:
             t.type = 'FRACTION'
         return t
