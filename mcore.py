@@ -296,7 +296,7 @@ class MCore:
                 continue
             # midi channel 10
             if v[1] == 10:
-                prog = v[2]
+                prog = v[2] + 1
                 d[prog] = k
         return d
 
