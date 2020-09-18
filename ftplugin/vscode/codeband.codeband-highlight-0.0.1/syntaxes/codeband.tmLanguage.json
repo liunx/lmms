@@ -4,13 +4,7 @@
 	"patterns": [
 		{
 			"name": "comment.line.double-slash.codeband",
-			"match": "^\\s*#.*$",
-			"comment": ""
-		},
-		{
-			"name": "comment.block.codeband",
-			"begin": "^\\s*/'",
-			"end": "'/",
+			"match": "^\\s*@.*$",
 			"comment": ""
 		},
 		{
@@ -26,23 +20,18 @@
 			"comment": "文字列"
 		},
 		{
-			"name": "constant.language",
-			"match": "#[0-9a-fA-F]{6}\\b",
-			"comment": "RGB"
-		},
-		{
 			"name": "entity.name.type.codeband",
-			"match": "@(start|end|macro_start|macro_end|instrument_start|instrument_end|group_start|group_end)",
+			"match": "(>>|<<)",
 			"comment": "music start/end"
 		},
 		{
 			"name": "keyword.codeband",
-			"match": "(title|ts|tempo)",
+			"match": "(title|timesign|tempo|composer)",
 			"comment": ""
 		},
 		{
 			"name": "keyword.control.codeband",
-			"match": ">>",
+			"match": "[a-zA-Z][a-zA-Z_0-9]*:",
 			"comment": ""
 		},
 		{
@@ -51,68 +40,29 @@
 			"comment": ""
 		},
 		{
-			"name": "keyword.control.codeband",
-			"match": "[a-zA-Z]+[0-9]+\\+>",
-			"comment": ""
-		},
-		{
-			"name": "keyword.control.codeband",
-			"match": "(?i:([a-zA-Z0-9]+[ ]+)=)",
-			"comment": ""
-		},
-		{
-			"name": "meta",
-			"match": "[^\\s]+::",
-			"comment": ""
-		},
-		{
 			"name": "variable.codeband",
-			"match": ":.*?:(\\s*)$",
-			"comment": "ユースケース図"
-		},
-		{
-		"name": "variable.codeband",
-		"match": "\\|",
-		"comment": ""
-		},
-		{
-		"name": "variable.codeband",
-		"match": "\\b(?i:(T|F))\\b",
-		"comment": ""
+			"match": "\\|",
+			"comment": ""
 		},
 		{
 			"name": "entity.name.tag.codeband",
-			"match": "^\\s*\\.+.*\\.*",
-			"comment": "シーケンス図の遅延"
+			"match": "(\\[|\\]|\\(|\\))",
+			"comment": ""
 		},
 		{
-			"name": "string.other.codeband",
-			"match": "(\\[[^\\]]+?\\])",
-			"comment": "コンポーネント"
+			"name": "support.type",
+			"match": "(chord|trip|\\{|\\})",
+			"comment": ""
 		},
 		{
-			"name": "string.other.codeband",
-			"match": "(\\([^\\]]+?\\))",
-			"comment": "ユースケース"
+			"name": "support.type",
+			"match": "\\$[a-zA-Z][a-zA-Z_0-9]*",
+			"comment": ""
 		},
 		{
-			"name": "string.other.codeband",
-			"match": "(\\[\\*\\])",
-			"comment": "ステートの開始と終了"
-		},
-		{
-			"name": "string.other.codeband",
-			"match": "(\\(\\))",
-			"comment": "ロリポップ"
-		},
-		{
-			"name" : "keyword.codeband",
-			"match" : "^\\s*[-#~+]",
-			"comment": "クラスの可視性"
-		},
-		{
-			"name" : "support.type",
-			"match" : "\\b(?i:(Piano|AcousticGuitar|Trumpet|Violin|ElectricBass|StringInstrument|Oboe|ChurchBells|Horn|PipeOrgan|Percussion))\\b",
+			"name": "support.type",
+			"match": "(APiano|BPiano|EPiano|HPiano|EPiano1|EPiano2|Harpsichord|Clavi|Celesta|Glockenspiel|MusicBox|Vibraphone|Marimba|Xylophone|TubularBells|Dulcimer|DrawbarOrgan|PercussiveOrgan|RockOrgan|ChurchOrgan|ReedOrgan|Accordion|Harmonica|TangoAccordion|NGuitar|SGuitar|EJGuitar|ECGuitar|EMGuitar|OGuitar|DGuitar|HGuitar|ABass|EFBass|EPBass|FBass|SlBass1|SlBass2|SyBass1|SyBass2|Violin|Viola|Cello|Contrabass|TStrings|PStrings|OrchestralHarp|Timpani|SEnsemble1|SEnsemble2|SyStrings1|SyStrings2|ChoirAahs|VoiceOohs|SynthVoice|OrchestraHit|Trumpet|Trombone|Tuba|MutedTrumpet|FrenchHorn|BrassSection|SyBrass1|SyBrass2|SSax|ASax|TSax|BSax|Oboe|EnglishHorn|Bassoon|Clarinet|Piccolo|Flute|Recorder|PanFlute|BlownBottle|Shakuhachi|Whistle|Ocarina|Lead1|Lead2|Lead3|Lead4|Lead5|Lead6|Lead7|Lead8|Pad1|Pad2|Pad3|Pad4|Pad5|Pad6|Pad7|Pad8|FX1|FX2|FX3|FX4|FX5|FX6|FX7|FX8|Sitar|Banjo|Shamisen|Koto|Kalimba|Bagpipe|Fiddle|Shanai|TinkleBell|Agogo|SteelDrums|Woodblock|TaikoDrum|MelodicTom|SynthDrum|ReverseCymbal|GuitarFretNoise|BreathNoise|Seashore|BirdTweet|TelephoneRing|Helicopter|Applause|Gunshot|AcousticBassDrum|BassDrum1|SideStick|AcousticSnare|HandClap|ElectricSnare|LowFloorTom|ClosedHiHat|HighFloorTom|PedalHiHat|LowTom|OpenHiHat|LowMidTom|HiMidTom|CrashCymbal1|HighTom|RideCymbal1|ChineseCymbal|RideBell|Tambourine|SplashCymbal|Cowbell|CrashCymbal2|Vibraslap|RideCymbal2|HiBongo|LowBongo|MuteHiConga|OpenHiConga|LowConga|HighTimbale|LowTimbale|HighAgogo|LowAgogo|Cabasa|Maracas|ShortWhistle|LongWhistle|ShortGuiro|LongGuiro|Claves|HiWoodBlock|LowWoodBlock|MuteCuica|OpenCuica|MuteTriangle|OpenTriangle|Percussion)",
+
 			"comment": ""
 		}
 	],
