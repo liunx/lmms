@@ -69,7 +69,7 @@ def convert(args):
         mc.writecbd(ofp, step=4)
     elif output_suffix in ['.xml', '.musicxml']:
         mc.writexml(ofp)
-    elif output_suffix in ['midi', 'mid']:
+    elif output_suffix in ['.midi', '.mid']:
         mc.writemidi(ofp)
     elif output_suffix == '.mmp':
         if input_suffix not in ['.cbd']:
