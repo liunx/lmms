@@ -1,0 +1,19 @@
+title : "rhythm01"
+composer: "Coder Band"
+tempo : 90
+name: major
+id: "1870656c"
+key: C
+style: "Pop"
+timesign : 4/4
+duration: 4/4
+
+@this is tracks
+treble: (treble, APiano, 0, F)
+base: (base, APiano, 0, F)
+
+
+>>
+treble-> [ r4 chord{E4 G4 c4} chord{E4 G4 c4} chord{E4 G4 c4} ]
+base->   [ C1 ]
+<<

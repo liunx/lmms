@@ -1,0 +1,19 @@
+title : "rock01"
+name: rock01
+id: "97adec8a"
+type: beats
+composer: "Coder Band"
+tempo: 90
+style: "rock"
+timesign : 4/4
+
+@tracks
+rhythm01: (melody01, Percussion, 0, F)
+
+@patterns
+rock01: [ CC8 r8 DD8 CC8 CC8 r8 DD8 r8 ]
+
+@playback
+>>
+rhythm01-> [ $rock01 ]
+<<

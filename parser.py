@@ -115,6 +115,9 @@ class MyLexer(object):
     def build(self, **kwargs):
         self.lexer = lex.lex(module=self, **kwargs)
 
+    def init(self, data):
+        self.init_data = data
+
     # Test it output
     def process(self, data):
         self.in_parenthesis = 0
@@ -188,21 +191,29 @@ class MyLexer(object):
         self.pp.pprint(self.result)
 
     # notation methods
-    def note_len(self, note):
-        num = int(re.findall(r'\d+', note)[0])
-        if num not in [1, 2, 4, 8, 16, 32]:
-            return -1
+    def calclen(self, s):
+        num = 0
+        dot = 0
+        # Rest & Notation
+        m = re.match(r'([a-grA-GR\'#-]+)(\d+)([.]*)', s)
+        if m:
+            num = int(m.group(2))
+            dot = m.group(3).count('.')
+        # Symbol
+        m = re.match(r'([\w0-9#-]+)_(\d+)([.]*)', s)
+        if m:
+            num = int(m.group(2))
+            dot = m.group(3).count('.')
         n1 = 32 / num
         curr = n1
-        dots = note.count('.')
-        for _ in range(dots):
+        for _ in range(dot):
             n1 += curr / 2
             curr = curr / 2
         return n1
 
     def notation_check(self, note, token):
         if token.type in ['NOTE', 'REST']:
-            nl = self.note_len(note)
+            nl = self.calclen(note)
             if nl < 0:
                 self.error_msg(token, "Note length is invalid!")
             if self.in_brace > 0:
@@ -220,20 +231,24 @@ class MyLexer(object):
         for n in track:
             if type(n) is list:
                 n = n[-1]
-            pos += self.note_len(n)
+            # skip ref to patterns
+            if n.startswith('$'):
+                continue
+            pos += self.calclen(n)
         return pos
 
     def fill_rest(self, measure):
         rests = []
         m = measure
-        for i in [32, 16, 8, 4, 2, 1]:
+        for i, j in zip([32, 16, 8, 4, 2, 1], [1, 2, 4, 8, 16, 32]):
             q = int(m // i)
             r = int(m % i)
             if q > 0:
-                rests += ['r1'] * q
+                rests += [f'r{j}'] * q
             if r == 0:
                 break
             m = r
+        rests.reverse()
         return rests
 
     def notation_segment(self, token):
@@ -354,11 +369,13 @@ class MyLexer(object):
             elif token.type in ['REF']:
                 clips = self.result['clips']
                 clip = token.value.replace('$', '')
-                if clip not in clips:
-                    self.show_error(token)
-                else:
+                if clip in clips:
                     self.notation_check(clips[clip], token)
                     self.queue.extend(clips[clip])
+                elif clip in self.init_data:
+                    self.queue.append(token.value)
+                else:
+                    self.show_error(token)
             elif token.type in ['BAR']:
                 pass
         # LBRACE [NOTE] RBRACE
