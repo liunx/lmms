@@ -3,6 +3,7 @@ title : "Beats Patterns Test"
 composer: "Coder Band"
 tempo : 90
 timesign : 4/4
+key: C
 
 @this is tracks
 beats: (melody01, Percussion, 0, F)
@@ -11,5 +12,5 @@ rhythm: (melody01, APiano, 0, F)
 @playback
 >>
 beats-> [ $rock01 $rock01 $rock02 $rock02 ]
-rhythm-> [ $major $major $major $major ]
+rhythm-> [ !I up $rhythm01 down ]
 <<

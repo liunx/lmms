@@ -31,11 +31,14 @@ class MyLexer(object):
         'STOP',
         'REF',
         'REST',
+        'ROMANUM'
     ]
 
     reserved = {
         'chord': 'CHORD',
         'trip': 'TRIP',
+        'up': 'UP',
+        'down': 'DOWN',
     }
 
     tokens = tokens + list(reserved.values())
@@ -56,6 +59,10 @@ class MyLexer(object):
 
     # A regular expression rule with some action code
     # Note addition of self parameter since we're in a class
+
+    def t_ROMANUM(self, t):
+        r'\![b]{0,1}[IiVv]{1,3}[a-z0-9]*'
+        return t
 
     def t_REF(self, t):
         r'\$[a-zA-Z_][a-zA-Z_0-9]*'
@@ -129,7 +136,8 @@ class MyLexer(object):
         self.lexer.input(data)
         self.pp = pprint.PrettyPrinter(indent=2)
         self.result = {
-            'info': {},
+            # default key to C
+            'info': {'key': 'C'},
             'tracks': {},
             'clips': {},
             'playbacks': {}
@@ -233,6 +241,10 @@ class MyLexer(object):
                 n = n[-1]
             # skip ref to patterns
             if n.startswith('$'):
+                continue
+            elif n.startswith('!'):
+                continue
+            elif n.startswith('~'):
                 continue
             pos += self.calclen(n)
         return pos
@@ -339,8 +351,9 @@ class MyLexer(object):
         # LSQUARE [NOTE | REST | BAR | CHORD | TRIP | LBRACE | REF | START | STOP ] RSQUARE
         elif self.states_compare(play=1, square=1):
             keywords = ['CHORD', 'TRIP']
+            regulations = ['UP', 'DOWN']
             allows = ['NOTE', 'REST', 'RSQUARE', 'REF',
-                      'BAR'] + keywords
+                      'BAR', 'ROMANUM'] + keywords + regulations
             if token.type not in allows:
                 self.show_error(token)
             if token.type == 'RSQUARE':
@@ -375,7 +388,11 @@ class MyLexer(object):
                 elif clip in self.init_data:
                     self.queue.append(token.value)
                 else:
-                    self.show_error(token)
+                    self.error_msg(token, "Unknown refer!")
+            elif token.type in ['ROMANUM']:
+                self.queue.append(token.value)
+            elif token.type in regulations:
+                self.queue.append('~' + token.value)
             elif token.type in ['BAR']:
                 pass
         # LBRACE [NOTE] RBRACE

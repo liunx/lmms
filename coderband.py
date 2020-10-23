@@ -7,6 +7,7 @@ import argparse
 import subprocess
 from mcore import MCore
 from parser import MyLexer
+from maker import Maker
 
 realpath = os.path.realpath(sys.argv[0])
 basedir = os.path.dirname(realpath)
@@ -71,8 +72,10 @@ def convert(args):
     _, input_suffix = os.path.splitext(ifp)
     do_init()
     mc = MCore(init_data)
+    maker = Maker(init_data)
     if input_suffix == '.cbd':
         res = cbdparser(ifp)
+        maker.process(res)
         mc.cbd(res)
     elif input_suffix in ['.mxl', '.xml', '.musicxml']:
         mc.xml(ifp)
