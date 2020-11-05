@@ -31,7 +31,10 @@ class MyLexer(object):
         'STOP',
         'REF',
         'REST',
-        'ROMANUM'
+        'ROMAN',
+        'STYLE',
+        'INSTRUCT',
+        'EMOTION',
     ]
 
     reserved = {
@@ -60,8 +63,20 @@ class MyLexer(object):
     # A regular expression rule with some action code
     # Note addition of self parameter since we're in a class
 
-    def t_ROMANUM(self, t):
-        r'\![b]{0,1}[IiVv]{1,3}[a-z0-9]*'
+    def t_ROMAN(self, t):
+        r'\![b]{0,1}[IiVvN]{1,3}[a-z0-9]*'
+        return t
+
+    def t_STYLE(self, t):
+        r'\$\$[a-zA-Z_][a-zA-Z_0-9]*'
+        return t
+
+    def t_INSTRUCT(self, t):
+        r'\!\![a-zA-Z_][a-zA-Z_0-9]*'
+        return t
+
+    def t_EMOTION(self, t):
+        r'\*[a-zA-Z_][a-zA-Z_0-9]*'
         return t
 
     def t_REF(self, t):
@@ -246,6 +261,8 @@ class MyLexer(object):
                 continue
             elif n.startswith('~'):
                 continue
+            elif n.startswith('*'):
+                continue
             pos += self.calclen(n)
         return pos
 
@@ -353,7 +370,7 @@ class MyLexer(object):
             keywords = ['CHORD', 'TRIP']
             regulations = ['UP', 'DOWN']
             allows = ['NOTE', 'REST', 'RSQUARE', 'REF',
-                      'BAR', 'ROMANUM'] + keywords + regulations
+                      'BAR', 'ROMAN', 'STYLE', 'INSTRUCT', 'EMOTION'] + keywords + regulations
             if token.type not in allows:
                 self.show_error(token)
             if token.type == 'RSQUARE':
@@ -389,7 +406,7 @@ class MyLexer(object):
                     self.queue.append(token.value)
                 else:
                     self.error_msg(token, "Unknown refer!")
-            elif token.type in ['ROMANUM']:
+            elif token.type in ['ROMAN', 'STYLE', 'INSTRUCT', 'EMOTION']:
                 self.queue.append(token.value)
             elif token.type in regulations:
                 self.queue.append('~' + token.value)

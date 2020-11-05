@@ -11,6 +11,5 @@ rhythm: (melody01, APiano, 0, F)
 
 @playback
 >>
-beats-> [ $rock01 $rock01 $rock02 $rock02 ]
-rhythm-> [ !I up $rhythm01 down ]
+rhythm-> [ $$pop !I !IV !V7 !i !Isus4 !!ts_44 !!key_D *up ]
 <<
