@@ -20,6 +20,7 @@ class Core:
         77: 'LowWoodBlock', 78: 'MuteCuica', 79: 'OpenCuica', 80: 'MuteTriangle', 81: 'OpenTriangle'}
 
     def __init__(self, data):
+        self.total_len = 0
         self.noteset = []
         self.roman_numerals = []
         self.instructions = []
@@ -94,32 +95,30 @@ class Core:
             d = {'offset': offset, 'emotion': n[1:]}
             self.emotions.append(d)
         else:
-            print("[Err]: Unknown keyword {}!".format(n))
+            raise ValueError("Unknown keyword: {}!".format(n))
 
     def to_noteset(self, data):
         offset = 0
-        i = 0
+        _len = 0
         for n in data:
             # chord | trip
             if type(n) == list:
                 if n[0] == 'chord':
-                    n.pop(0)
                     _len = self.note_len(n[0])
-                    for _n in n:
+                    for _n in n[1:]:
                         d = self.to_note(_n, offset)
                         d['len'] = _len
                         self.noteset.append(d)
                     offset += _len
                 elif n[0] == 'trip':
-                    n.pop(0)
                     _len = self.note_len(n[0]) * 2 / 3
-                    for _n in n:
+                    for _n in n[1:]:
                         d = self.to_note(_n, offset)
                         d['len'] = _len
                         self.noteset.append(d)
                         offset += _len
                 else:
-                    print("[Err]: Unknown keyword! {}".format(n[0]))
+                    raise ValueError("Unknown keyword: {}!".format(n[0]))
             else:
                 # skip keywords
                 if not self.is_note(n):
@@ -127,13 +126,15 @@ class Core:
                     continue
                 # skip Rest note
                 if n[0].upper() == 'R':
-                    offset += self.note_len(n)
+                    _len = self.note_len(n)
+                    offset += _len
                     continue
                 d = self.to_note(n, offset)
                 _len = self.note_len(n)
                 offset += _len
                 d['len'] = _len
                 self.noteset.append(d)
+        self.total_len = offset
 
     def _tie(self, nset, i):
         _len = len(self.noteset)
@@ -170,6 +171,35 @@ class Core:
             _noteset.append(i)
         self.noteset = _noteset
 
+    def update_roman_numeral(self):
+        # get the total length of notesets
+        if not self.total_len > 0:
+            return
+        _len = len(self.roman_numerals)
+        i = 0
+        while i < _len:
+            rn = self.roman_numerals[i]
+            if rn['roman_numeral'] == 'N':
+                rn['drop'] = 1
+                i += 1
+                continue
+            if (i + 1) == _len:
+                rn['len'] = self.total_len - rn['offset']
+                break
+            _rn = self.roman_numerals[i + 1]
+            rn['len'] = _rn['offset'] - rn['offset']
+            i += 1
+        # rm dropped set
+        l = []
+        for i in self.roman_numerals:
+            if 'drop' in i:
+                continue
+            l.append(i)
+        self.roman_numerals = l
+
+    def analysis(self, data):
+        raise NotImplementedError
+
 
 class Beats(Core):
     def __init__(self, data):
@@ -202,30 +232,10 @@ class Melody(Core):
     def __init__(self, data):
         super().__init__(data)
 
-    def update_melody(self):
-        # get the total length of notesets
-        if not self.noteset:
-            return
-        n = self.noteset[-1]
-        total_len = n['offset'] + n['len']
-        _len = len(self.roman_numerals)
-        i = 0
-        while i < _len:
-            rn = self.roman_numerals[i]
-            if rn['roman_numeral'] == 'N':
-                rn['drop'] = 1
-                continue
-            if (i + 1) == _len:
-                rn['len'] = total_len - rn['offset']
-                break
-            _rn = self.roman_numerals[i + 1]
-            rn['len'] = _rn['offset'] - rn['offset']
-            i += 1
-
     def analysis(self, data):
         self.to_noteset(data)
         self.update_tie()
-        self.update_melody()
+        self.update_roman_numeral()
 
 
 class Rhythm(Core):
@@ -262,6 +272,26 @@ class Rhythm(Core):
         self.update_rhythm()
 
 
+class Analysis(Core):
+    def __init__(self, data):
+        super().__init__(data)
+
+    def analysis(self, data):
+        self.to_noteset(data)
+        self.update_tie()
+        self.update_roman_numeral()
+
+    def get_result(self):
+        d = {}
+        d['noteset'] = self.noteset
+        d['styles'] = self.styles
+        d['roman_numerals'] = self.roman_numerals
+        d['emotions'] = self.emotions
+        d['instructions'] = self.instructions
+        d['total_len'] = self.total_len
+        return d
+
+
 if __name__ == "__main__":
     data = ['C4~', ['chord', 'E4~', 'G4~'], [
         'chord', 'E4~', 'G4~'], ['chord', 'E4', 'G4']]
@@ -274,7 +304,8 @@ if __name__ == "__main__":
         'c8', 'c1', 'G2', 'd4.', 'B8', 'c1', 'G2', 'c4.', 'e8', 'g2', 'e4', 'c4', 'f2', 'e4.',
         'd8', 'c1', 'r1', 'r1', 'r1', 'r1']
     data6 = ['!I', 'R1', '!II', 'R1', '!III', '!IV', '!V', '!VI', '!VII']
-    data7 = ['$$pop', 'r1', '!I', 'r1', '*happy', '!IV', '!V7', '!i', '!Isus4', '!!ts_44', '!!to_D']
+    data7 = ['$$pop', 'r1', '!I', 'r1', '*happy', '!IV',
+             '!V7', '!i', '!Isus4', '!!ts_44', '!!to_D']
     #rym = Rhythm(data)
     #bt = Beats(data4)
     ml = Melody(data7)
