@@ -56,6 +56,8 @@ def play(args):
             except:
                 print("Warning: tempo not found!")
             mc = MCore(init_data)
+            maker = Maker(init_data)
+            maker.process(res)
             mc.cbd(res)
             mid = os.path.basename(fp).replace('.cbd', '.mid')
             _, midfp = tempfile.mkstemp(suffix='.mid')

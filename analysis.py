@@ -5,6 +5,7 @@ import music21 as m21
 
 
 class Core:
+    meter_len = 192
     notes = {'C': 60, 'D': 62, 'E': 64, 'F': 65, 'G': 67, 'A': 69, 'B': 71}
     percussion = {
         35: 'AcousticBassDrum', 36: 'BassDrum1', 37: 'SideStick', 38: 'AcousticSnare',
@@ -57,7 +58,7 @@ class Core:
             return 0
         num = int(m.group(2))
         dot = m.group(3).count('.')
-        n1 = 48 / num
+        n1 = self.meter_len / num
         curr = n1
         for _ in range(dot):
             n1 += curr / 2
@@ -68,7 +69,7 @@ class Core:
         d = {}
         d['offset'] = offset
         midi = self.note_midi(note)
-        d['pitch'] = midi
+        d['midi'] = midi
         if note.count('~') > 0:
             d['tie'] = 1
         else:
@@ -104,14 +105,14 @@ class Core:
             # chord | trip
             if type(n) == list:
                 if n[0] == 'chord':
-                    _len = self.note_len(n[0])
+                    _len = self.note_len(n[-1])
                     for _n in n[1:]:
                         d = self.to_note(_n, offset)
                         d['len'] = _len
                         self.noteset.append(d)
                     offset += _len
                 elif n[0] == 'trip':
-                    _len = self.note_len(n[0]) * 2 / 3
+                    _len = self.note_len(n[-1]) * 2 / 3
                     for _n in n[1:]:
                         d = self.to_note(_n, offset)
                         d['len'] = _len
