@@ -2,6 +2,7 @@ title : "Shai Yu"
 composer: "Liunx"
 tempo : 110
 timesign : 4/4
+key: "C"
 
 hpiano: (melody01, Oboe, 0, F)
 lpiano: (melody01, BPiano, 0, F)
@@ -15,6 +16,7 @@ Dm: []
 
 @playback
 >>
-hpiano-> [ c4 chord{c4 e4 g4} e4 ]
-lpiano-> [ $$rock r1 | !I r1 | !V r1 | !IV r1 ]
+@lpiano-> [ $$rock r1 | !I r1 | !V r1 | !IV r1 ]
+hpiano-> [ r2. e4 | g8 g8 g8 g4 g8 e8 f8 | g2. r4 | c'8 c'8 c'8 c'4 c'8 e8 a8 ]
+lpiano-> [ $C | $C | $G | $F ]
 <<

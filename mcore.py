@@ -4,6 +4,9 @@ import sys
 import json
 import re
 from lmms import Lmms
+from fractions import Fraction
+from  parameters import Param
+from common import Note
 from music21 import stream, chord, tinyNotation, instrument, \
     converter, meter, note, metadata
 
@@ -24,23 +27,7 @@ class ChordState(tinyNotation.State):
         return ch
 
 
-class MCore:
-    time_signature_map = {
-        '4/4': 'r1',
-        '3/4': 'r2.',
-        '2/4': 'r2',
-        '3/8': 'r4.',
-        '6/8': 'r2.',
-    }
-
-    notation_length_map = {
-        'whole': 1,
-        'half': 2,
-        'quarter': 4,
-        'eighth': 8,
-        '16th': 16,
-        '32nd': 32,
-    }
+class MCore(Note):
     instruments = {}
     track2notes = {}
     lmms_beatsbaselines = 1
@@ -153,103 +140,170 @@ class MCore:
             pass
         return _note
 
-    def to_rest(self, n):
-        ql = n.quarterLength
-        if ql == 0:
-            return ''
-        _note = 'r'
-        # length
-        _len = self.notation_length_map[n.duration.type]
-        _note = f'{_note}{_len}'
-        # dots
-        _note = f'{_note}' + '.' * n.duration.dots
-        return _note
+    def _tinynote(self, note, note_len):
+        note_name = re.sub('\d+.*', '', note)
+        notes1, left_len1 = self.quarter_notes(note_name, note_len)
+        if left_len1 == 0:
+            return notes1
+        notes2, left_len2 = self.quarter_notes(note_name, note_len)
+        if left_len2 == 0:
+            return notes2
+        raise ValueError('Can not handle the note: {}!'.format(note_name))
 
-    def addnotation(self, m):
-        s = ""
-        for n in m:
-            if type(n) == chord.Chord:
-                s = s + 'chord{ '
-                for nt in n.notes:
-                    ns = self.to_note(nt)
-                    s = s + f'{ns} '
-                s = s + '} '
-            elif type(n) == note.Note:
-                ns = self.to_note(n)
-                s = s + f'{ns} '
-            elif type(n) == note.Rest:
-                ns = self.to_rest(n)
-                s = s + f'{ns} '
-            else:
-                # TODO
-                pass
-        return s
+    def divide_note(self, note, current_len, left_len):
+        if left_len == 0:
+            return note, None
+        new_len = current_len - left_len
+        if note.startswith('r'):
+            l_note = self.fill_rests(new_len)
+            r_note = self.fill_rests(left_len)
+        else:
+            l_note = self._tinynote(note, new_len)
+            r_note = self._tinynote(note, left_len)
+            l_note[-1] = '{}~'.format(l_note[-1])
+            if note.endswith('~'):
+                r_note[-1] = '{}~'.format(r_note[-1])
+        return l_note, r_note
 
-    def addmeasures(self, stream_, count, offset):
+    def divide_chord(self, chord, current_len, left_len):
+        if left_len == 0:
+            return chord, None
+        new_len = current_len - left_len
+        l_chord = ['chord']
+        r_chord = ['chord']
+        for note in chord:
+            l_note = self._tinynote(note, new_len)
+            r_note = self._tinynote(note, left_len)
+            l_note[-1] = '{}~'.format(l_note[-1])
+            if note.endswith('~'):
+                r_note[-1] = '{}~'.format(r_note[-1])
+            l_chord += l_note
+            r_chord += r_note
+        return l_chord, r_chord
+
+    def divide_bars(self, track, bar_len):
         l = []
-        i = 1
-        for p in stream_.parts:
-            if not p.measure(offset):
-                continue
-            s = 'track{:02}-> [ '.format(i)
-            for n in range(count):
-                m = p.measure(offset + n)
-                if not m:
-                    r = self.time_signature_map[self.ts]
-                    s = s + f'{r} '
+        ll = []
+        offset = 0
+        _track = track.copy()
+        while True:
+            if len(_track) == 0:
+                if ll:
+                    l.append(ll)
+                break
+            note = _track.pop(0)
+            if type(note) == list:
+                if note[0] == 'chord':
+                    note_len = self.note_len(note[-1])
+                    offset += note_len
+                    if offset == bar_len:
+                        ll.append(note)
+                        l.append(ll)
+                        offset = 0
+                        ll = []
+                    elif offset > bar_len:
+                        l_chord, r_chord = self.divide_chord(note[1:], note_len, offset - bar_len)
+                        ll += [l_chord]
+                        l.append(ll)
+                        offset = 0
+                        ll = []
+                        if r_chord:
+                            _track = [r_chord] + _track
+                    else:
+                        ll.append(note)
+                elif note[0] == 'trip':
+                    _track = note[1:] + _track
+                    continue
+            else:
+                note_len = self.note_len(note)
+                offset += note_len
+                if offset == bar_len:
+                    ll.append(note)
+                    l.append(ll)
+                    offset = 0
+                    ll = []
+                elif offset > bar_len:
+                    l_note, r_note = self.divide_note(note, note_len, offset - bar_len)
+                    ll += l_note
+                    l.append(ll)
+                    ll = []
+                    offset = 0
+                    if r_note:
+                        _track = r_note + _track
                 else:
-                    nt = self.addnotation(m)
-                    s = s + nt
-                if n == count - 1:
-                    s = s + ']'
-                else:
-                    s = s + '| '
-            if s[-1] != ']':
-                print(s)
-            l.append(s)
-            l.append('\n')
-            i = i + 1
-        _offset = offset + count
-        return _offset, l
+                    ll.append(note)
+        return l
 
-    def writecbd(self, fp, step=4):
+    def format_playbacks(self, indent):
+        l = []
+        bar_len = self.bar_length_table[self.info['timesign']]
+        _playbacks = {}
+        for k, v in self.playbacks.items():
+            bars = self.divide_bars(v, bar_len)
+            _playbacks[k] = bars
+        keys = list(_playbacks.keys())
+        i = 0
+        while True:
+            ll = []
+            for k in keys:
+                bars = _playbacks[k]
+                if len(bars) > i:
+                    bars = bars[i:i+indent]
+                    if not bars:
+                        continue
+                    s = '{}-> ['.format(k)
+                    _first = 1
+                    for bar in bars:
+                        if _first:
+                            _first = 0
+                        else:
+                            s += ' |'
+                        for n in bar:
+                            if type(n) == list:
+                                if n[0] == 'chord':
+                                    ss = ' chord{'
+                                    for nn in n[1:]:
+                                        ss += ' {}'.format(nn)
+                                    ss += ' }'
+                                    s += ss
+                                elif n[0] == 'trip':
+                                    ss = ' trip{'
+                                    for nn in n[1:]:
+                                        ss += ' {}'.format(nn)
+                                    ss += ' }'
+                                    s += ss
+                            else:
+                                s += ' {}'.format(n)
+                    s += ' ]\n'
+                    ll.append(s)
+            if not ll:
+                # remove last '--'
+                l.pop(-1)
+                break
+            l += ll
+            l.append('--\n')
+            i += indent
+
+        return l
+
+    def writecbd(self, fp, indent=4):
         lines = []
         lines.append('@Generated by Coderband!!!\n')
-        for md in self.staff.getElementsByClass('Metadata'):
-            lines.append(f'title: "{md.title}"\n')
-            lines.append(f'composer: "{md.composer}"\n')
-            lines.append('tempo: 120\n')
-            break
-        for t in self.staff.recurse().getElementsByClass(meter.TimeSignature):
-            lines.append(f'timesign: {t.ratioString}\n')
-            self.ts = t.ratioString
-            break
+        lines.append('title: "{}"\n'.format(self.info['title']))
+        lines.append('composer: "{}"\n'.format(self.info['composer']))
+        lines.append('tempo: {}\n'.format(self.info['tempo']))
+        lines.append('timesign: {}\n'.format(self.info['timesign']))
+        lines.append('key: "{}"\n'.format(self.info['key']))
         lines.append('\n')
-        for i in range(len(self.staff.parts)):
-            p = self.staff.parts[i]
-            inst = p.getInstrument()
-            if inst.instrumentName:
-                prog = inst.midiProgram
-                keys = list(self.instruments.keys())
-                instname = keys[prog]
-                lines.append('track{:02}: (melody{:02}, {}, 0, F)\n'.format(i + 1, i + 1, instname))
-            else:
-                lines.append('track{:02}: (melody{:02}, APiano, 0, F)\n'.format(i + 1, i + 1))
+        lines.append('@Instruments\n')
+        for k, v in self.tracks.items():
+            lines.append('{}: ({}, {}, {}, {})\n'.format(k, v[0], v[1], v[2], v[3]))
         lines.append('\n')
         # measure count
         offset = 1
+        lines.append('@Playbacks\n')
         lines.append('>>\n')
-        mcount = len(self.staff.parts[0].measureOffsetMap())
-        div = mcount // step
-        for i in range(div):
-            offset, l = self.addmeasures(self.staff, step, offset)
-            if i < (div - 1):
-                l.append('--\n')
-            lines = lines + l
-        dmod = mcount % step
-        if dmod > 0:
-            _, l = self.addmeasures(self.staff, dmod, offset)
-            lines = lines + l
+        lines += self.format_playbacks(indent)
         lines.append('<<\n')
         # write to file
         with open(fp, 'w') as f:

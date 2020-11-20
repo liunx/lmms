@@ -141,7 +141,7 @@ class Core:
         _len = len(self.noteset)
         while i < _len:
             _nset = self.noteset[i]
-            if _nset['pitch'] == nset['pitch'] and (nset['offset'] + nset['len']) == _nset['offset']:
+            if _nset['midi'] == nset['midi'] and (nset['offset'] + nset['len']) == _nset['offset']:
                 if _nset['tie'] > 0:
                     self._tie(_nset, i)
                     nset['tie'] = 0
@@ -177,6 +177,8 @@ class Core:
         if not self.total_len > 0:
             return
         _len = len(self.roman_numerals)
+        if _len == 0:
+            return
         i = 0
         while i < _len:
             rn = self.roman_numerals[i]

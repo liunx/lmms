@@ -88,7 +88,7 @@ def convert(args):
         sys.exit(1)
     _, output_suffix = os.path.splitext(ofp)
     if output_suffix == '.cbd':
-        mc.writecbd(ofp, step=4)
+        mc.writecbd(ofp, indent=4)
     elif output_suffix in ['.xml', '.musicxml']:
         mc.writexml(ofp)
     elif output_suffix in ['.midi', '.mid']:

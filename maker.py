@@ -2,9 +2,10 @@ import re
 import copy
 import music21 as m21
 from analysis import Analysis
+from common import Note
 
 
-class Maker:
+class Maker(Note):
     time_signature_table = {
         '4/4': 192, '3/4': 142, '2/4': 96, '5/4': 240,
         '6/4': 288, '3/8': 72, '6/8': 156, '7/8': 168,
@@ -147,92 +148,6 @@ class Maker:
             d[v] = ll
         return d
 
-    def is_intersect(self, n1, n2):
-        offset1 = n1['offset']
-        len1 = n1['len']
-        offset2 = n2['offset']
-        len2 = n2['len']
-        if max(offset1, offset2) < min(offset1 + len1, offset2 + len2):
-            return True
-        else:
-            return False
-
-    def track_divide(self, noteset, tracks):
-        new_track = []
-        left_notes = []
-        for note in noteset:
-            if not new_track:
-                new_track.append(note)
-                continue
-            if self.is_intersect(new_track[-1], note):
-                left_notes.append(note)
-            else:
-                new_track.append(note)
-        if left_notes:
-            self.track_divide(left_notes, tracks)
-        else:
-            tracks.append(new_track)
-
-    def fill_rests(self, note_len):
-        rests = []
-        l1 = [192, 128, 96, 64, 48, 32, 24, 16, 12, 8, 6, 4, 3]
-        l2 = [['r1'], ['trip', 'r1'], ['r2'], ['trip', 'r2'], ['r4'], ['trip', 'r4'],
-              ['r8'], ['trip', 'r8'], ['r16'], ['trip', 'r16'], ['r32'], ['trip', 'r32'], ['r64']]
-        current_len = note_len
-        for _len, name in zip(l1, l2):
-            quotient = int(current_len // _len)
-            reminder = int(current_len % _len)
-            if quotient > 0:
-                rests += name * quotient
-            current_len = reminder
-            if reminder == 0:
-                break
-        if current_len > 0:
-            raise ValueError("Can not fill the gap: {}!".format(note_len))
-
-        return rests
-
-    def midi_to_note_name(self, midi):
-        note_names = ['c', 'c#', 'd', 'd#', 'e', 'f', 'f#', 'g', 'g#', 'a', 'a#', 'b']
-        note_name = 'c'
-        idx = midi % 12
-        n = note_names[idx]
-        if midi >= 60:
-            alter = (midi - 60) // 12
-            note_name =  n[0] + "'" * alter + n[1:]
-        else:
-            alter = (60 - midi) // 12
-            note_name =  n[0].upper() * alter + n[1:]
-        return note_name
-
-    def to_tinynote(self, note):
-        l1 = [192, 128, 96, 64, 48, 32, 24, 16, 12, 8, 6, 4, 3]
-        l2 = ['{}1{}', 'trip {{ {}1{} }}', '{}2{}', 'trip {{ {}2{} }}', '{}4{}', 'trip {{ {}4{} }}',
-              '{}8{}', 'trip {{ {}8{} }}', '{}16{}', 'trip {{ {}16{} }}', '{}32{}', 'trip {{ {}32{} }}', '{}64{}']
-        notes = []
-        current_len = note['len']
-        note_name = self.midi_to_note_name(note['midi'])
-        for _len, _type in zip(l1, l2):
-            quotient = int(current_len // _len)
-            reminder = int(current_len % _len)
-            if reminder > 0:
-                if quotient > 0:
-                    for i in range(quotient):
-                        notes.append(_type.format(note_name, '~'))
-            elif reminder == 0:
-                current_len = 0
-                if quotient > 0:
-                    for i in range(quotient):
-                        notes.append(_type.format(note_name, '~'))
-                    # strip out last ~
-                    notes[-1] = notes[-1].replace('~', '')
-                break
-            current_len = reminder
-
-        if current_len > 0:
-            raise ValueError("Can not fill the gap: {}!".format(note['len']))
-        return notes
-
     def to_tinynotes(self, noteset):
         l = []
         _noteset = self.reform_noteset(noteset)
@@ -277,4 +192,3 @@ class Maker:
             al = Analysis(v)
             self.compose(al.get_result(), k)
         self.update_playbacks()
-        print(self.playbacks)
