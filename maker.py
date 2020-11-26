@@ -3,31 +3,13 @@ import copy
 import music21 as m21
 from analysis import Analysis
 from common import Note
+from creator import Rhythm, Melody, Beats
 
 
 class Maker(Note):
-    time_signature_table = {
-        '4/4': 192, '3/4': 142, '2/4': 96, '5/4': 240,
-        '6/4': 288, '3/8': 72, '6/8': 156, '7/8': 168,
-        '9/8': 216, '12/8': 288}
 
     def __init__(self, data):
         self.init_data = data
-        self.styles = []
-        self.roman_numerals = []
-        self.instructions = []
-        self.emotions = []
-        self.all_tracks = {}
-        # TODO
-        self.global_timesigns = []
-        # TODO
-        self.global_pitches = []
-
-    def get_timesigns(self, data):
-        pass
-
-    def make_beats(self, data):
-        pass
 
     def get_dimension(self, testlist, dim=0):
         if isinstance(testlist, list):
@@ -41,99 +23,6 @@ class Maker(Note):
                 return -1
             else:
                 return dim
-
-    def find_offsets(self, data, offset, meter):
-        l = []
-        for d in data:
-            _offset = d['offset']
-            if _offset >= offset and _offset < (offset + meter):
-                l.append(d)
-        return l
-
-    def cut_set(self, rn, offset, meter):
-        head = None
-        tail = None
-        head_len = offset + meter - rn['offset']
-        if rn['len'] > head_len:
-            tail_len = rn['len'] - head_len
-            tail = dict(rn)
-            tail['offset'] = offset + meter
-            tail['len'] = tail_len
-            head = dict(rn)
-            head['len'] = head_len
-        return (head, tail)
-
-    def fill_rhythm(self, data, rn, timesign, meter, noteset, offset):
-        rf = m21.roman.RomanNumeral(
-            rn['roman_numeral'], self.current_info['key'])
-        # find the basic unit of beat per meter
-        d = {'midi': rf.root().midi, 'len': rn['len'], 'offset': offset}
-        noteset.append(d)
-
-    def expand_roman_numerals(self, data, offset, timesign, meter, noteset):
-        roman_numerals = data['roman_numerals']
-        if not roman_numerals:
-            return None
-        rns = self.find_offsets(roman_numerals, offset, meter)
-        if not rns:
-            return None
-        for rn in rns:
-            if rn['offset'] + rn['len'] > offset + meter:
-                # cut down in meter size
-                head, tail = self.cut_set(rn, offset, meter)
-                if tail:
-                    roman_numerals.insert(0, tail)
-                self.fill_rhythm(data, head, timesign, meter, noteset, offset)
-            else:
-                self.fill_rhythm(data, rn, timesign, meter, noteset, offset)
-            roman_numerals.remove(rn)
-
-    def make_rhythm(self, data):
-        # checking time signature
-        ts = self.info['timesign']
-        meter = self.time_signature_table[ts]
-        noteset = []
-        offset = 0
-        self.current_info = {}
-        self.current_info['key'] = 'C'
-        while offset < data['total_len']:
-            # update time signature
-            if self.get_timesigns:
-                sets = self.find_offsets(self.global_timesigns, offset, meter)
-                if sets:
-                    _set = sets[0]
-                    ts = _set['timesign']
-                    self.current_info['timesign'] = ts
-                    meter = self.time_signature_table[ts]
-                    self.current_info['meter'] = meter
-            # update tracks
-            self.expand_roman_numerals(data, offset, ts, meter, noteset)
-            offset += meter
-        return noteset
-
-    def compose(self, data, track_name):
-        _attrib = self.tracks[track_name]
-        track_attrib = dict(
-            zip(['name', 'instrument', 'pitch', 'muted'], _attrib))
-        data['track_attrib'] = track_attrib
-        noteset = []
-        if track_attrib['instrument'] == 'Percussion':
-            noteset = self.make_beats(data)
-        else:
-            noteset = self.make_rhythm(data)
-        d = []
-        if data['noteset']:
-            if self.get_dimension(data['noteset']) > 1:
-                d.extend(data['noteset'])
-            else:
-                d.append(data['noteset'])
-        if noteset:
-            if self.get_dimension(noteset) > 1:
-                d.extend(noteset)
-            else:
-                d.append(noteset)
-        if d:
-            self.all_tracks[track_name] = d
 
     def reform_noteset(self, noteset):
         d = {}
@@ -171,24 +60,88 @@ class Maker(Note):
                 current_len = offset + notes[0]['len']
         return l
 
-    def update_playbacks(self):
-        tracks = self.tracks.copy()
-        self.tracks.clear()
-        self.playbacks.clear()
-        for k, v in self.all_tracks.items():
-            for i in range(len(v)):
-                track = tracks[k].copy()
+    def update_global_info(self, staff):
+        # TODO
+        info = {}
+        staff['global'] = info
+
+    def update_cbd_playtracks(self, staff, cbd):
+        tracks = cbd['tracks']
+        playtracks = cbd['playtracks']
+        _tracks = tracks.copy()
+        tracks.clear()
+        playtracks.clear()
+        for k, v in staff['playtracks'].items():
+            noteset = v['noteset']
+            if not noteset:
+                continue
+            dim = self.get_dimension(noteset)
+            if dim <= 1:
+                noteset = [noteset]
+            for i in range(len(noteset)):
+                track = _tracks[k].copy()
                 key = f'{k}{i+1}'
                 track[0] = key
-                self.tracks[key] = track
-                play_track = self.to_tinynotes(v[i])
-                self.playbacks[key] = play_track
+                tracks[key] = track
+                play_track = self.to_tinynotes(noteset[i])
+                playtracks[key] = play_track
+
+    def divide_roman_numeral(self, rn):
+        rns = []
+        start = int(rn['offset'])
+        stop = int(rn['offset'] + rn['len'])
+        meter = rn['meter_len']
+        offsets = [start]
+        for i in range(start + 1, stop):
+            if i % meter == 0:
+                offsets.append(i)
+        offsets.append(stop)
+        if len(offsets) == 2:
+            return [rn]
+        for i in range(len(offsets) - 1):
+            offset1 = offsets[i]
+            offset2 = offsets[i+1]
+            _rn = rn.copy()
+            _rn['offset'] = offset1
+            _rn['len'] = offset2 - offset1
+            rns.append(_rn)
+            i += 1
+        return rns
+
+    def segment_roman_numerals(self, staff):
+        playtracks = staff['playtracks']
+        for k, v in playtracks.items():
+            rns = v['roman_numerals']
+            if not rns:
+                continue
+            ts = staff['timesign']
+            _rns = []
+            meter_len = self.bar_length_table[ts]
+            for rn in rns:
+                rn['timesign'] = ts
+                rn['meter_len'] = meter_len
+                _rns += self.divide_roman_numeral(rn)
+            v['roman_numerals'] = _rns
 
     def process(self, cbd):
-        self.info = cbd['info']
-        self.tracks = cbd['tracks']
-        self.playbacks = cbd['playbacks']
-        for k, v in self.playbacks.items():
+        staff = {}
+        staff['key'] = cbd['info']['key']
+        staff['title'] = cbd['info']['title']
+        staff['composer'] = cbd['info']['composer']
+        staff['tempo'] = cbd['info']['tempo']
+        staff['timesign'] = cbd['info']['timesign']
+        staff['tracks'] = cbd['tracks']
+        playtracks = {}
+        for k, v in cbd['playtracks'].items():
             al = Analysis(v)
-            self.compose(al.get_result(), k)
-        self.update_playbacks()
+            playtracks[k] = al.get_result()
+        staff['playtracks'] = playtracks
+        self.segment_roman_numerals(staff)
+        # do pipelines
+        beats = Beats(staff)
+        rhythm = Rhythm(staff)
+        melody = Melody(staff)
+        beats.process()
+        rhythm.process()
+        melody.process()
+        self.update_cbd_playtracks(staff, cbd)

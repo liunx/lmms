@@ -41,7 +41,7 @@ class MCore(Note):
     def cbd(self, cbd):
         self.info = cbd['info']
         self.tracks = cbd['tracks']
-        self.playbacks = cbd['playbacks']
+        self.playtracks = cbd['playtracks']
         # convert to stream
         staff = stream.Score()
         md = metadata.Metadata()
@@ -56,7 +56,7 @@ class MCore(Note):
         for k, v in self.tracks.items():
             if v[3] == 'T':
                 continue
-            notes = self.playbacks[k]
+            notes = self.playtracks[k]
             notation = self._notation(notes)
             part = self.tinynote(title + notation)
             self.track2notes[k] = part
@@ -234,19 +234,19 @@ class MCore(Note):
                     ll.append(note)
         return l
 
-    def format_playbacks(self, indent):
+    def format_playtracks(self, indent):
         l = []
         bar_len = self.bar_length_table[self.info['timesign']]
-        _playbacks = {}
-        for k, v in self.playbacks.items():
+        _playtracks = {}
+        for k, v in self.playtracks.items():
             bars = self.divide_bars(v, bar_len)
-            _playbacks[k] = bars
-        keys = list(_playbacks.keys())
+            _playtracks[k] = bars
+        keys = list(_playtracks.keys())
         i = 0
         while True:
             ll = []
             for k in keys:
-                bars = _playbacks[k]
+                bars = _playtracks[k]
                 if len(bars) > i:
                     bars = bars[i:i+indent]
                     if not bars:
@@ -303,7 +303,7 @@ class MCore(Note):
         offset = 1
         lines.append('@Playbacks\n')
         lines.append('>>\n')
-        lines += self.format_playbacks(indent)
+        lines += self.format_playtracks(indent)
         lines.append('<<\n')
         # write to file
         with open(fp, 'w') as f:

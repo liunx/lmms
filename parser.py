@@ -155,7 +155,7 @@ class MyLexer(object):
             'info': {'key': 'C'},
             'tracks': {},
             'clips': {},
-            'playbacks': {}
+            'playtracks': {}
         }
         self.queue = []
         self.timesign_table = {
@@ -166,7 +166,7 @@ class MyLexer(object):
             '3/8': 12
         }
         self.time_signature = '4/4'
-        self.playback = 0
+        self.playtrack = 0
         while True:
             tok = self.lexer.token()
             if not tok:
@@ -281,25 +281,25 @@ class MyLexer(object):
         return rests
 
     def notation_segment(self, token):
-        playbacks = self.result['playbacks']
+        playtracks = self.result['playtracks']
         tracks = self.result['tracks']
-        if not playbacks:
+        if not playtracks:
             return
         m = {}
         max_ = 0
         for k in tracks.keys():
-            if k not in playbacks:
-                playbacks[k] = []
+            if k not in playtracks:
+                playtracks[k] = []
                 m[k] = 0
             else:
-                pos = self.track_measure(playbacks[k])
+                pos = self.track_measure(playtracks[k])
                 m[k] = pos
                 if max_ < pos:
                     max_ = pos
         for k, v in m.items():
             if v < max_:
                 rests = self.fill_rest(max_ - v)
-                playbacks[k].extend(rests)
+                playtracks[k].extend(rests)
 
     def parser(self, token):
         # ID COLON [ID | NUMBER | FRACTION | STRING | LPAREN | LSQUARE ]
@@ -374,13 +374,13 @@ class MyLexer(object):
             if token.type not in allows:
                 self.show_error(token)
             if token.type == 'RSQUARE':
-                if self.playback > 0:
+                if self.playtrack > 0:
                     _id = self.queue.pop(0)
-                    if _id in self.result['playbacks']:
-                        p = self.result['playbacks'][_id]
+                    if _id in self.result['playtracks']:
+                        p = self.result['playtracks'][_id]
                         p = p.extend(self.queue)
                     else:
-                        self.result['playbacks'][_id] = list(self.queue)
+                        self.result['playtracks'][_id] = list(self.queue)
                 self.queue = []
                 self.in_square = 0
                 self.in_play = 0
@@ -446,9 +446,9 @@ class MyLexer(object):
             elif token.type == 'SEGMENT':
                 self.notation_segment(token)
             elif token.type in ['START']:
-                self.playback = 1
+                self.playtrack = 1
             elif token.type in ['STOP']:
-                self.playback = 0
+                self.playtrack = 0
                 self.notation_segment(token)
         else:
             print("[Warning]: Unknown states!")
