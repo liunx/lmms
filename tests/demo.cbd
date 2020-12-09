@@ -12,6 +12,7 @@ beats: (melody01, Percussion, 0, F)
 >>
 hpiano-> [ r2. e4 | g8 g8 g8 g4 g8 e8 f8 | g2. r4 | c'8 c'8 c'8 c'4 c'8 e8 a8 ]
 lpiano-> [ $$rock r1 | !I r1 | !V r1 | !IV r1 ]
+beats-> [!I ]
 --
 hpiano-> [ g2. r4 | a8 a4 a8 a8 a8 a8 a8 | g4 b4 c'2 | e'8 d'8 c'8 c'8 e'8 d'8 c'8 c'8 ]
 lpiano-> [ !V r1 | !IV r1 | !I r1 | !IV r1 !N ]

@@ -109,7 +109,10 @@ class Note(Param):
         else:
             alter = (60 - midi) // 12
             if alter > 0:
-                note_name = n[0].upper() * alter + n[1:]
+                if midi % 12 == 0:
+                    note_name = n[0].upper() * alter + n[1:]
+                else:
+                    note_name = n[0].upper() * (alter + 1) + n[1:]
             else:
                 note_name = n[0].upper() + n[1:]
         return note_name
