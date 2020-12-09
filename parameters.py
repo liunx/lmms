@@ -1,4 +1,12 @@
 
+NOTE_LEN_1ST = 192
+NOTE_LEN_2ND = 96
+NOTE_LEN_4TH = 48
+NOTE_LEN_8TH = 24
+NOTE_LEN_16TH = 12
+NOTE_LEN_32ND = 6
+NOTE_LEN_64TH = 3
+
 class Param:
 
     bar_length_table = {

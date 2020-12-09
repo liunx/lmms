@@ -8,14 +8,17 @@ hpiano: (melody01, Oboe, 0, F)
 lpiano: (melody01, BPiano, 0, F)
 beats: (melody01, Percussion, 0, F)
 
-@rhythm patterns
-C: [ C4 chord{E4 G4} chord{E4 G4} chord{E4 G4} ]
-G: [ G4 chord{B4 d4} chord{B4 d4} chord{B4 d4} ]
-F: [ F4 chord{A4 c4} chord{A4 c4} chord{A4 c4} ]
-Dm: []
-
 @playback
 >>
+hpiano-> [ r2. e4 | g8 g8 g8 g4 g8 e8 f8 | g2. r4 | c'8 c'8 c'8 c'4 c'8 e8 a8 ]
 lpiano-> [ $$rock r1 | !I r1 | !V r1 | !IV r1 ]
-hpiano-> [ r2. e4 c4 d4 f4 ]
+--
+hpiano-> [ g2. r4 | a8 a4 a8 a8 a8 a8 a8 | g4 b4 c'2 | e'8 d'8 c'8 c'8 e'8 d'8 c'8 c'8 ]
+lpiano-> [ !V r1 | !IV r1 | !I r1 | !IV r1 !N ]
+--
+hpiano-> [ d'2. e'4 | e'8 e'4 d'8 c'8 d'4 c'8 | g2. r4 | c'8 c'8 c'8 c'4 c'8 e8 a8 ]
+--
+hpiano-> [ g2. r4 | a8 a4 a8 a8 a8 a8 a8 | g4 b4 c'2 | e'8 d'8 c'8 c'8 e'8 d'8 c'8 c'8 ]
+--
+hpiano-> [ d'2. r4 ]
 <<
