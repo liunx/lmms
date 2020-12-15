@@ -262,6 +262,7 @@ class Beats:
                 if rns:
                     notes = self.expand_roman_numerals(rns)
                     noteset_ = []
+                    print(v['emotions'])
                     if v['noteset']:
                         noteset_.append(v['noteset'])
                         noteset_.append(notes)
