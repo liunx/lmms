@@ -31,7 +31,7 @@ class MCore(Note):
     instruments = {}
     track2notes = {}
     lmms_beatsbaselines = 1
-    def __init__(self, data):
+    def __init__(self, data={}):
         realpath = os.path.realpath(sys.argv[0])
         self.init_data = data
         self.basedir = os.path.dirname(realpath)
