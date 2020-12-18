@@ -18,6 +18,25 @@ class ChordState(tinyNotation.State):
         return ch
 
 
+class TripChordState(tinyNotation.State):
+    def affectTokenAfterParse(self, n):
+        super(TripChordState, self).affectTokenAfterParse(n)
+        return None  # do not append Note object
+
+    def end(self):
+        ch = chord.Chord(self.affectedTokens)
+        ch.duration = duration.Duration(
+            self.affectedTokens[0].duration.quarterLength * 2 / 3)
+        return ch
+
+
+class KeyToken(tinyNotation.Token):
+    def parse(self, parent):
+        keyName = self.token
+        print(keyName)
+        return note.Note(keyName)
+
+
 class Notation:
     def __init__(self, args):
         notation = ''
@@ -30,6 +49,9 @@ class Notation:
             notation = 'tinyNotation: 4/4 ' + sys.stdin.read()
         tnc = tinyNotation.Converter(notation)
         tnc.bracketStateMapping['chord'] = ChordState
+        tnc.bracketStateMapping['tripchord'] = TripChordState
+        keyMapping = (r'trip-(.*)', KeyToken)
+        tnc.tokenMap.append(keyMapping)
         self.staff = tnc.parse().stream
         if args.drumkit:
             inst = instrument.Percussion()
@@ -44,12 +66,15 @@ class Notation:
         self.staff.write('midi', fp=midfile)
         subprocess.run(
             ['timidity', '--quiet=2',
-            f'-A{self.args.vol}',
-            f'-T {self.args.tempo}',
-            f'-K {self.args.pitch}',
-            f'-Ei{self.args.program}',
-            midfile])
+             f'-A{self.args.vol}',
+             f'-T {self.args.tempo}',
+             f'-K {self.args.pitch}',
+             f'-Ei{self.args.program}',
+             midfile])
         os.remove(midfile)
+
+    def show(self):
+        self.staff.show('text')
 
 
 def addargs():
@@ -60,11 +85,13 @@ def addargs():
     parser.add_argument('-P', '--program', default=0, type=int)
     parser.add_argument('-d', '--drumkit', default=False, action='store_true')
     parser.add_argument('-f', '--file', type=str)
-    parser.add_argument('notation', type=str, nargs='?', help="if None, read from stdin")
+    parser.add_argument('notation', type=str, nargs='?',
+                        help="if None, read from stdin")
     args = parser.parse_args()
     return args
+
 
 if __name__ == '__main__':
     args = addargs()
     n = Notation(args)
-    n.play()
+    n.show()

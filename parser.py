@@ -40,8 +40,7 @@ class MyLexer(object):
     reserved = {
         'chord': 'CHORD',
         'trip': 'TRIP',
-        'up': 'UP',
-        'down': 'DOWN',
+        'tripchord': 'TRIPCHORD',
     }
 
     tokens = tokens + list(reserved.values())
@@ -340,7 +339,7 @@ class MyLexer(object):
                 self.queue.append(token.value)
         # LSQUARE [NOTE | REST | BAR | CHORD | TRIP | LBRACE | RBRACE | REF] RSQUARE
         elif self.states_compare(assign=1, square=1):
-            keywords = ['CHORD', 'TRIP']
+            keywords = ['CHORD', 'TRIP', 'TRIPCHORD']
             allows = ['NOTE', 'REST', 'RSQUARE', 'BAR'] + keywords
             if token.type not in allows:
                 self.show_error(token)
@@ -367,10 +366,9 @@ class MyLexer(object):
 
         # LSQUARE [NOTE | REST | BAR | CHORD | TRIP | LBRACE | REF | START | STOP ] RSQUARE
         elif self.states_compare(play=1, square=1):
-            keywords = ['CHORD', 'TRIP']
-            regulations = ['UP', 'DOWN']
+            keywords = ['CHORD', 'TRIP', 'TRIPCHORD']
             allows = ['NOTE', 'REST', 'RSQUARE', 'REF',
-                      'BAR', 'ROMAN', 'STYLE', 'INSTRUCT', 'EMOTION'] + keywords + regulations
+                      'BAR', 'ROMAN', 'STYLE', 'INSTRUCT', 'EMOTION'] + keywords
             if token.type not in allows:
                 self.show_error(token)
             if token.type == 'RSQUARE':
@@ -408,13 +406,11 @@ class MyLexer(object):
                     self.error_msg(token, "Unknown refer!")
             elif token.type in ['ROMAN', 'STYLE', 'INSTRUCT', 'EMOTION']:
                 self.queue.append(token.value)
-            elif token.type in regulations:
-                self.queue.append('~' + token.value)
             elif token.type in ['BAR']:
                 pass
         # LBRACE [NOTE] RBRACE
         elif self.in_brace > 0:
-            if token.type not in ['NOTE', 'RBRACE']:
+            if token.type not in ['REST', 'NOTE', 'RBRACE']:
                 self.show_error(token)
             if token.type == 'RBRACE':
                 if len(self._notes) == 1:

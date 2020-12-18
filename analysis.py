@@ -111,12 +111,20 @@ class Core:
                         d['len'] = _len
                         self.noteset.append(d)
                     offset += _len
-                elif n[0] == 'trip':
+                elif n[0] == 'tripchord':
                     _len = self.note_len(n[-1]) * 2 / 3
                     for _n in n[1:]:
                         d = self.to_note(_n, offset)
                         d['len'] = _len
                         self.noteset.append(d)
+                    offset += _len
+                elif n[0] == 'trip':
+                    _len = self.note_len(n[-1]) * 2 / 3
+                    for _n in n[1:]:
+                        if _n[0] != 'r':
+                            d = self.to_note(_n, offset)
+                            d['len'] = _len
+                            self.noteset.append(d)
                         offset += _len
                 else:
                     raise ValueError("Unknown keyword: {}!".format(n[0]))

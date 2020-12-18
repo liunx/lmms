@@ -8,7 +8,7 @@ from fractions import Fraction
 from  parameters import Param
 from common import Note
 from music21 import stream, chord, tinyNotation, instrument, \
-    converter, meter, note, metadata
+    converter, meter, note, metadata, duration
 
 
 class Struct:
@@ -24,6 +24,17 @@ class ChordState(tinyNotation.State):
     def end(self):
         ch = chord.Chord(self.affectedTokens)
         ch.duration = self.affectedTokens[0].duration
+        return ch
+
+
+class TripChordState(tinyNotation.State):
+    def affectTokenAfterParse(self, n):
+        super(TripChordState, self).affectTokenAfterParse(n)
+        return None  # do not append Note object
+
+    def end(self):
+        ch = chord.Chord(self.affectedTokens)
+        ch.duration = duration.Duration(self.affectedTokens[0].duration.quarterLength * 2 / 3)
         return ch
 
 
@@ -92,6 +103,7 @@ class MCore(Note):
     def tinynote(self, notation):
         tnc = tinyNotation.Converter(notation)
         tnc.bracketStateMapping['chord'] = ChordState
+        tnc.bracketStateMapping['tripchord'] = TripChordState
         return tnc.parse().stream
 
     def xml(self, fp):
@@ -142,10 +154,18 @@ class MCore(Note):
 
     def _tinynote(self, note, note_len):
         note_name = re.sub('\d+.*', '', note)
+        # quarter
         notes1, left_len1 = self.quarter_notes(note_name, note_len)
         if left_len1 == 0:
             return notes1
         notes2, left_len2 = self.quarter_notes(note_name, note_len)
+        if left_len2 == 0:
+            return notes2
+        # triple
+        notes1, left_len1 = self.triple_notes(note_name, note_len)
+        if left_len1 == 0:
+            return notes1
+        notes2, left_len2 = self.triple_notes(note_name, note_len)
         if left_len2 == 0:
             return notes2
         raise ValueError('Can not handle the note: {}!'.format(note_name))
@@ -181,6 +201,22 @@ class MCore(Note):
             r_chord += r_note
         return l_chord, r_chord
 
+    def divide_tripchord(self, chord, current_len, left_len):
+        if left_len == 0:
+            return chord, None
+        new_len = current_len - left_len
+        l_chord = ['tripchord']
+        r_chord = ['tripchord']
+        for note in chord:
+            l_note = self._tinynote(note, new_len)
+            r_note = self._tinynote(note, left_len)
+            l_note[-1] = '{}~'.format(l_note[-1])
+            if note.endswith('~'):
+                r_note[-1] = '{}~'.format(r_note[-1])
+            l_chord += l_note
+            r_chord += r_note
+        return l_chord, r_chord
+
     def divide_bars(self, track, bar_len):
         l = []
         ll = []
@@ -193,7 +229,25 @@ class MCore(Note):
                 break
             note = _track.pop(0)
             if type(note) == list:
-                if note[0] == 'chord':
+                if note[0] == 'tripchord':
+                    note_len = self.note_len(note[-1], triple=True)
+                    offset += note_len
+                    if offset == bar_len:
+                        ll.append(note)
+                        l.append(ll)
+                        offset = 0
+                        ll = []
+                    elif offset > bar_len:
+                        l_chord, r_chord = self.divide_tripchord(note[1:], note_len, offset - bar_len)
+                        ll += [l_chord]
+                        l.append(ll)
+                        offset = 0
+                        ll = []
+                        if r_chord:
+                            _track = [r_chord] + _track
+                    else:
+                        ll.append(note)
+                elif note[0] == 'chord':
                     note_len = self.note_len(note[-1])
                     offset += note_len
                     if offset == bar_len:
@@ -212,8 +266,24 @@ class MCore(Note):
                     else:
                         ll.append(note)
                 elif note[0] == 'trip':
-                    _track = note[1:] + _track
-                    continue
+                    # TODO divide triple notes
+                    note_len = self.note_len(note[-1], triple=True)
+                    offset += note_len
+                    if offset == bar_len:
+                        ll.append(note)
+                        l.append(ll)
+                        offset = 0
+                        ll = []
+                    elif offset > bar_len:
+                        l_note, r_note = self.divide_note(note, note_len, offset - bar_len)
+                        ll += l_note
+                        l.append(ll)
+                        ll = []
+                        offset = 0
+                        if r_note:
+                            _track = r_note + _track
+                    else:
+                        ll.append(note)
             else:
                 note_len = self.note_len(note)
                 offset += note_len
@@ -268,6 +338,12 @@ class MCore(Note):
                                     s += ss
                                 elif n[0] == 'trip':
                                     ss = ' trip{'
+                                    for nn in n[1:]:
+                                        ss += ' {}'.format(nn)
+                                    ss += ' }'
+                                    s += ss
+                                elif n[0] == 'tripchord':
+                                    ss = ' tripchord{'
                                     for nn in n[1:]:
                                         ss += ' {}'.format(nn)
                                     ss += ' }'

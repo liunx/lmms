@@ -30,6 +30,26 @@ class Note(Param):
             d[v] = ll
         return d
 
+    def add_chord(self, notes):
+        chord = ['chord']
+        for l in notes[1:]:
+            if type(l) == list:
+                for n in l[1:]:
+                    chord.append(n)
+            else:
+                chord.append(l)
+        return chord
+
+    def add_triple_chord(self, notes):
+        tripchord = ['tripchord']
+        for l in notes[1:]:
+            if type(l) == list:
+                for n in l[1:]:
+                    tripchord.append(n)
+            else:
+                tripchord.append(l)
+        return tripchord
+
     def to_tinynotes(self, noteset):
         l = []
         _noteset = self.reform_noteset(noteset)
@@ -43,9 +63,16 @@ class Note(Param):
                 rests = self.fill_rests(rest_len)
                 l += rests
             if len(notes) > 1:
-                ll = ['chord']
+                ll = []
+                type_ = 'chord'
                 for n in notes:
-                    ll += self.to_tinynote(n)
+                    note_ = self.to_tinynote(n)
+                    if type(note_[0]) == list and note_[0][0] == 'trip':
+                        type_ = 'tripchord'
+                        ll.append(note_[0][1])
+                    else:
+                        ll += note_
+                ll.insert(0, type_)
                 l.append(ll)
                 current_len = offset + n['len']
             else:
@@ -130,7 +157,7 @@ class Note(Param):
         l = [128, 64, 32, 16, 8, 4]
         n = [['trip', 'r1'], ['trip', 'r2'], ['trip', 'r4'],
              ['trip', 'r8'], ['trip', 'r16'], ['trip', 'r32']]
-        return self.rests_divide(l, n, note_len)
+        return self._rests_divide(l, n, note_len)
 
     def fill_rests(self, note_len):
         # prefer quarter rests
@@ -207,7 +234,7 @@ class Note(Param):
                     for i in range(quotient):
                         notes.append(['trip', f'{note_name}{_type}~'])
                     # strip out last ~
-                    notes[-1] = notes[-1].replace('~', '')
+                    notes[-1][-1] = notes[-1][-1].replace('~', '')
                 break
             current_len = reminder
         return notes, current_len
@@ -215,12 +242,12 @@ class Note(Param):
     def to_tinynote(self, note):
         note_len = note['len']
         note_name = self.midi_to_note_name(note['midi'])
-        notes1, left_len1 = self.quarter_notes(note_name, note_len)
-        if left_len1 == 0:
-            return notes1
-        notes2, left_len2 = self.quarter_notes(note_name, note_len)
-        if left_len2 == 0:
-            return notes2
+        _notes, left_len = self.quarter_notes(note_name, note_len)
+        if left_len == 0:
+            return _notes
+        _notes, left_len = self.triple_notes(note_name, note_len)
+        if left_len == 0:
+            return _notes
         raise ValueError('Can not handle the note: {}!'.format(note_name))
 
     def update_cbd_playtracks(self, staff, cbd):

@@ -14,6 +14,16 @@ dance = [
     [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
     [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0]]
 
+pattern01 = [
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
+    [1, 0, 1, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0]]
+
+triple01 = [
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0],
+    [1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0]]
+
 group01 = [
     Percussion.ClosedHiHat,
     Percussion.AcousticSnare,
@@ -25,8 +35,8 @@ group02 = [
     Percussion.BassDrum1]
 
 group03 = [
-    Percussion.ClosedHiHat,
-    Percussion.SideStick,
+    Percussion.PedalHiHat,
+    Percussion.AcousticSnare,
     Percussion.BassDrum1]
 
 staff = {
@@ -79,17 +89,18 @@ class Beats(Note):
 
     def algorithm01(self, b=0, m=0, h=0):
         _m = self.beats_pattern.copy()
+        _m_len = len(_m[0])
         high = _m[0]
         middle = _m[1]
         bass = _m[2]
-        if h > 0 and h < self.matrix_len:
-            for i in range(0, self.matrix_len, h):
+        if h > 0 and h < _m_len:
+            for i in range(0, _m_len, h):
                 high[i] = 1
-        if m > 0 and m < self.matrix_len:
-            for i in range(0, self.matrix_len, m):
+        if m > 0 and m < _m_len:
+            for i in range(0, _m_len, m):
                 middle[i] = 1
-        if b > 0 and b < self.matrix_len:
-            for i in range(0, self.matrix_len, b):
+        if b > 0 and b < _m_len:
+            for i in range(0, _m_len, b):
                 bass[i] = 1
         return _m
 
@@ -110,9 +121,8 @@ class Beats(Note):
     def generate_noteset(self, noteset, times, b=0, m=0, h=0):
         for i in range(times):
             beats = self.algorithm01(b, m, h)
-            noteset += self.matrix_to_noteset(beats,
-                                              NoteLen._1st * (i + self.offset))
-        self.offset += times
+            noteset += self.matrix_to_noteset(beats, self.offset)
+            self.offset += NoteLen._1st
 
     def process(self):
         self.offset = 0
@@ -122,12 +132,15 @@ class Beats(Note):
             if tracks[k][1] == 'Percussion':
                 noteset = []
                 self.generate_noteset(noteset, 2)
-                self.generate_noteset(noteset, 4, b=5, h=2)
-
-                self.beats_pattern = dance
-                self.instruments = group03
+                self.generate_noteset(noteset, 2, h=3)
+                self.beats_pattern = triple01
                 self.generate_noteset(noteset, 2)
-                self.generate_noteset(noteset, 4, b=3)
+                self.generate_noteset(noteset, 2, h=3)
+                self.generate_noteset(noteset, 2, b=2, h=1)
+                self.beats_pattern = dance
+                self.generate_noteset(noteset, 2)
+                self.generate_noteset(noteset, 2, h=3)
+                self.generate_noteset(noteset, 2, b=2, h=1)
 
                 v['noteset'] = noteset
 
