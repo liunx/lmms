@@ -266,7 +266,6 @@ class MCore(Note):
                     else:
                         ll.append(note)
                 elif note[0] == 'trip':
-                    # TODO divide triple notes
                     note_len = self.note_len(note[-1], triple=True)
                     offset += note_len
                     if offset == bar_len:
