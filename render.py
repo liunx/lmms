@@ -1,8 +1,10 @@
 import os
 import sys
+import numpy as np
 from mcore import MCore
 from common import Note
 from parameters import NoteLen, Percussion
+import algorithm
 
 rock = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -186,10 +188,23 @@ class Rhythm(Note):
         self.staff = staff
         self.pattern = pattern
 
-    def algorithm(self):
-        matrix = self.pattern.copy()
-        matrix = [i * 2 for i in matrix]
+    def horizon_flip(self, matrix):
+        return np.fliplr(matrix).tolist()
+
+    def vertical_flip(self, matrix):
+        return np.flipud(matrix).tolist()
+
+    def roll(self, matrix, shift, axis=None):
+        return np.roll(matrix, shift, axis)
+
+    def zoom_out(self, matrix, times):
+        matrix = [i * times for i in matrix]
         return matrix
+
+    def algorithm(self, callback=zoom_out):
+        matrix = self.pattern.copy()
+        # return self.zoom_out(matrix, 2)
+        return self.horizon_flip(matrix)
 
     def matrix_to_noteset(self, matrix, abs_offset=0):
         noteset = []
@@ -208,7 +223,7 @@ class Rhythm(Note):
                 if matrix[i][j] == 0b10:
                     _note = {'midi': _midi}
                     _note['offset'] = j * unit_size + abs_offset
-                    _note['len'] = _count * unit_size
+                    _note['len'] = (_count + 1) * unit_size
                     noteset.append(_note)
                     _count = 0
                 elif matrix[i][j] == 0b11:
@@ -261,7 +276,6 @@ class Rhythm(Note):
                     non_overlaps.append(note)
                     continue
                 if self.is_overlap(note, non_overlaps[-1]):
-                    print('overlaps {}'.format(note))
                     overlaps.append(note)
                 else:
                     non_overlaps.append(note)
@@ -276,11 +290,19 @@ class Rhythm(Note):
                 break
         return ll
 
-    def generate_noteset(self, noteset, times):
+    def generate_noteset(self, noteset, matrix, times):
         for i in range(times):
-            matrix = self.algorithm()
             noteset += self.matrix_to_noteset(matrix, self.offset)
             self.offset += NoteLen._1st
+
+    def generate_matrix(self, h, w):
+        return np.array([[0] * w] * h)
+
+    def get_from_matrix(self, matrix, index=[]):
+        m = []
+        for i in index:
+            m.append(matrix[i])
+        return m
 
     def process(self):
         self.offset = 0
@@ -289,9 +311,10 @@ class Rhythm(Note):
         for k, v in playtracks.items():
             if tracks[k][1] == 'APiano':
                 noteset = []
-                self.generate_noteset(noteset, 2)
-                self.base_midi = 53
-                self.generate_noteset(noteset, 2)
+                matrix = self.generate_matrix(25, 16)
+                m = self.get_from_matrix(matrix, [0, 4, 7, 12])
+                m = algorithm.sin(m, 1, 1)
+                self.generate_noteset(noteset, matrix, 4)
 
                 _noteset = self.arrange_noteset(noteset)
                 v['noteset'] = _noteset
@@ -324,18 +347,25 @@ def demo_beats(fp):
     mcore.writecbd(fp)
 
 
-def demo_rhythm(fp):
-    pattern = [[0] * 16] * 25
-    pattern[0] = [3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-    pattern[4] = [0, 0, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3]
-    pattern[7] = [0, 0, 0, 0, 3, 3, 0, 0, 0, 0, 0, 0, 3, 3, 0, 0]
-    pattern[12] = [0, 0, 0, 0, 0, 0, 3, 3, 0, 0, 3, 3, 0, 0, 0, 0]
-    pattern[16] = [0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 0, 0, 0, 0, 0, 0]
+pattern1 = [[0] * 16] * 25
+pattern1[0] = [3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+pattern1[4] = [0, 0, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3]
+pattern1[7] = [0, 0, 0, 0, 3, 3, 0, 0, 0, 0, 0, 0, 3, 3, 0, 0]
+pattern1[12] = [0, 0, 0, 0, 0, 0, 3, 3, 0, 0, 3, 3, 0, 0, 0, 0]
+pattern1[16] = [0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 0, 0, 0, 0, 0, 0]
 
+pattern2 = [[0] * 4] * 25
+pattern2[0] = [3, 3, 3, 2]
+pattern2[12] = [0, 2, 2, 2]
+pattern2[16] = [0, 2, 2, 2]
+pattern2[19] = [0, 2, 2, 2]
+
+
+def demo_rhythm(fp):
     cbd = cbd_rhythm.copy()
     staff = staff_rhythm.copy()
     render = Render()
-    render.render_rhythm(staff, cbd, pattern)
+    render.render_rhythm(staff, cbd, pattern1)
     mcore = MCore()
     mcore.cbd(cbd)
     mcore.writecbd(fp)

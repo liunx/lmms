@@ -274,7 +274,7 @@ class MCore(Note):
                         offset = 0
                         ll = []
                     elif offset > bar_len:
-                        l_note, r_note = self.divide_note(note, note_len, offset - bar_len)
+                        l_note, r_note = self.divide_note(note[-1], note_len, offset - bar_len)
                         ll += l_note
                         l.append(ll)
                         ll = []
