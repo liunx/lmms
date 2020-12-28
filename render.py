@@ -84,7 +84,7 @@ staff_rhythm = {
     'timesign': '4/4',
     'tracks': {'rhythm': [
         'rhythm',
-        'APiano',
+        'EFBass',
         '0',
         'F']},
     'playtracks': {
@@ -108,7 +108,7 @@ cbd_rhythm = {
     'tracks': {
         'rhythm': [
             'rhythm',
-            'APiano',
+            'EFBass',
             '0',
             'F']},
     'clips': {},
@@ -183,28 +183,11 @@ class Beats(Note):
 
 class Rhythm(Note):
     base_midi = 48
+    scales = 25
 
     def __init__(self, staff, pattern):
         self.staff = staff
         self.pattern = pattern
-
-    def horizon_flip(self, matrix):
-        return np.fliplr(matrix).tolist()
-
-    def vertical_flip(self, matrix):
-        return np.flipud(matrix).tolist()
-
-    def roll(self, matrix, shift, axis=None):
-        return np.roll(matrix, shift, axis)
-
-    def zoom_out(self, matrix, times):
-        matrix = [i * times for i in matrix]
-        return matrix
-
-    def algorithm(self, callback=zoom_out):
-        matrix = self.pattern.copy()
-        # return self.zoom_out(matrix, 2)
-        return self.horizon_flip(matrix)
 
     def matrix_to_noteset(self, matrix, abs_offset=0):
         noteset = []
@@ -295,28 +278,63 @@ class Rhythm(Note):
             noteset += self.matrix_to_noteset(matrix, self.offset)
             self.offset += NoteLen._1st
 
-    def generate_matrix(self, h, w):
-        return np.array([[0] * w] * h)
+    def generate_matrix(self, matrix, vectors):
+        w = len(matrix[0])
+        m = [[0] * w] * self.scales
+        i = 0
+        for v in vectors:
+            m[v] = matrix[i]
+            i += 1
+        return np.array(m)
 
-    def get_from_matrix(self, matrix, index=[]):
-        m = []
-        for i in index:
-            m.append(matrix[i])
-        return m
+    def demo01(self):
+        noteset = []
+        vectors = [0, 4, 7, 12, 16]
+        table = np.array([4, 4, 4, 4])
+        table = algorithm.fragment(table, 4 * 1, 4, 4 * 0)
+        m1 = algorithm.wave_sine(table, len(vectors))
+        m2 = algorithm.wave_saw(table, len(vectors))
+        m = m1 | m2
+        matrix = self.generate_matrix(m, vectors)
+        self.generate_noteset(noteset, matrix, 4)
+        _noteset = self.arrange_noteset(noteset)
+        return _noteset
+
+    def demo02(self):
+        noteset = []
+        vectors = [0, 4, 7, 12, 16]
+        tables = algorithm.table_demo01(np.array([2, 2, 2, 2, 2, 2, 2, 2]))
+        i = 0
+        for table in tables:
+            table = np.array(table)
+            m = algorithm.wave_saw(table, len(vectors))
+            matrix = self.generate_matrix(m, vectors)
+            self.generate_noteset(noteset, matrix, 1)
+            self.base_midi = 48 + vectors[i % 4]
+            i += 1
+        _noteset = self.arrange_noteset(noteset)
+        return _noteset
+
+    def demo03(self):
+        noteset = []
+        vectors = [0,]
+        tables = algorithm.table_demo02(np.array([3, 1, 2, 2]))
+        self.base_midi = 36 + 7
+        for table in tables:
+            table = np.array(table)
+            m = algorithm.wave_sawi(table, len(vectors))
+            matrix = self.generate_matrix(m, vectors)
+            self.generate_noteset(noteset, matrix, 2)
+        _noteset = self.arrange_noteset(noteset)
+        return _noteset
 
     def process(self):
         self.offset = 0
         playtracks = self.staff['playtracks']
         tracks = self.staff['tracks']
         for k, v in playtracks.items():
-            if tracks[k][1] == 'APiano':
-                noteset = []
-                matrix = self.generate_matrix(25, 16)
-                m = self.get_from_matrix(matrix, [0, 4, 7, 12])
-                m = algorithm.sin(m, 1, 1)
-                self.generate_noteset(noteset, matrix, 4)
-
-                _noteset = self.arrange_noteset(noteset)
+            if tracks[k][1] == 'EFBass':
+                _noteset = self.demo03()
                 v['noteset'] = _noteset
 
 

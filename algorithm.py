@@ -1,9 +1,10 @@
 import sys
+import inspect
 import numpy as np
 from parameters import NoteLen
 
 
-def sin(matrix, step=1, size=1):
+def sine(matrix, step=1, size=1):
     _m = cos(matrix, step, size)
     return np.flipud(_m)
 
@@ -106,15 +107,17 @@ def to_matrix(table):
     return _matrix
 
 
-def merge(matrix, step, shift=0):
+def merge(table, step, shift=0):
+    matrix = to_matrix(table)
     width = len(matrix)
     for i in range(shift, width, step):
         if matrix[i] == 0b10:
             matrix[i] = 0b11
-    return matrix
+    return to_table(matrix)
 
 
-def fragment(matrix, step, divisor=1, shift=0):
+def fragment(table, step, divisor=1, shift=0):
+    matrix = to_matrix(table)
     width = len(matrix)
     for i in range(shift, width, step):
         _len = get_len(matrix[i:])
@@ -122,7 +125,7 @@ def fragment(matrix, step, divisor=1, shift=0):
             d = _len // divisor
             for j in range(1, divisor):
                 matrix[i + d * j - 1] = 0b10
-    return matrix
+    return to_table(matrix)
 
 
 def wave_cos(table, height):
@@ -150,6 +153,10 @@ def wave_sine(table, height):
     return np.flipud(wave_cos(table, height))
 
 
+def wave_sawi(table, height):
+    return np.flipud(wave_saw(table, height))
+
+
 def wave_saw(table, height):
     width = abs(table).sum()
     matrix = np.array([[0] * width] * height)
@@ -167,15 +174,53 @@ def wave_saw(table, height):
 divisors = [1, 2, 3, 4, 6, 8, 12, 16, 24, 32, 48, 64, 96, 192]
 
 
+def table_demo01(table):
+    print('==== {} ===='.format(inspect.stack()[0][3]))
+    print(table)
+    steps = [1, 2, 3, 4, 5, 6, 7, 8]
+    shifts = [0, 2, 4, 6, 8]
+    divisor = 2
+    l = []
+    for step in steps:
+        for shift in shifts:
+            print('divisor={},step={},shift={}:'.format(divisor, step, shift))
+            _table = fragment(table, step, divisor, shift)
+            t = _table.tolist()
+            if t not in l:
+                l.append(t)
+            print(_table)
+    return l
+
+
+def table_demo02(table):
+    print('==== {} ===='.format(inspect.stack()[0][3]))
+    print(table)
+    steps = [1, 2, 3, 4, 5, 6, 7, 8]
+    shifts = [0, 2, 4, 6, 8]
+    divisor = 2
+    l = []
+    for step in steps:
+        for shift in shifts:
+            print('divisor={},step={},shift={}:'.format(divisor, step, shift))
+            _table = fragment(table, step, divisor, shift)
+            t = _table.tolist()
+            if t not in l:
+                l.append(t)
+            print(_table)
+    return l
+
+
+def matrix_demo01():
+    print('==== {} ===='.format(inspect.stack()[0][3]))
+    table = np.array([2, 2, 2, 2, 2, 2, 2, 2])
+    print(table)
+    m1 = wave_saw(table, 4)
+    m2 = wave_sine(table, 4)
+    m = m1 | m2
+    print(m)
+
+
 if __name__ == '__main__':
-    table = np.array([4, 4, -4, 4])
-    print(table)
-    if 0:
-        matrix = to_matrix(table)
-        m = fragment(matrix, 4 * 4, 2, 4 * 3)
-        table = to_table(m)
-    else:
-        matrix = to_matrix(table)
-        m = merge(matrix, 2 * 1, 11)
-        table = to_table(m)
-    print(table)
+    table = np.array([4, 4, 4, 4])
+    l = table_demo02(table)
+    print(len(l))
