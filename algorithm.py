@@ -171,6 +171,24 @@ def wave_saw(table, height):
     return matrix
 
 
+def algorithm01(matrix, b=0, m=0, h=0):
+    _m = matrix
+    _m_len = len(_m[0])
+    high = _m[0]
+    middle = _m[1]
+    bass = _m[2]
+    if h > 0 and h < _m_len:
+        for i in range(0, _m_len, h):
+            high[i] = 1
+    if m > 0 and m < _m_len:
+        for i in range(0, _m_len, m):
+            middle[i] = 1
+    if b > 0 and b < _m_len:
+        for i in range(0, _m_len, b):
+            bass[i] = 1
+    return _m
+
+
 divisors = [1, 2, 3, 4, 6, 8, 12, 16, 24, 32, 48, 64, 96, 192]
 
 

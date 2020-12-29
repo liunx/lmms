@@ -115,3 +115,11 @@ class Percussion:
     OpenCuica = 79
     MuteTriangle = 80
     OpenTriangle = 81
+
+
+modes = {
+    'C': 48, 'C#': 49, 'D-': 49, 'D': 50, 'D#': 51, 'E-': 51, 'E': 52, 'F': 53, 'F#': 54,
+    'G-': 54, 'G': 55, 'G#': 56, 'A-': 56, 'A': 57, 'A#': 58, 'B-': 58, 'B': 59}
+
+roman_numerals = {
+    'I': 0, 'II': 2, 'III': 4, 'IV': 5, 'V': 7, 'VI': 9, 'VII': 11}

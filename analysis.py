@@ -20,13 +20,15 @@ class Core:
         72: 'LongWhistle', 73: 'ShortGuiro', 74: 'LongGuiro', 75: 'Claves', 76: 'HiWoodBlock',
         77: 'LowWoodBlock', 78: 'MuteCuica', 79: 'OpenCuica', 80: 'MuteTriangle', 81: 'OpenTriangle'}
 
-    def __init__(self, data):
+    def __init__(self, staff, data):
         self.total_len = 0
         self.noteset = []
         self.roman_numerals = []
-        self.instructions = []
-        self.styles = []
-        self.emotions = []
+        self.instructions = {}
+        self.styles = {}
+        self.emotions = {}
+        self.time_signs = {0: staff['timesign']}
+        self.keys = {0: staff['key']}
         self.analysis(copy.deepcopy(data))
 
     def show_noteset(self):
@@ -85,16 +87,14 @@ class Core:
     def divide_keyword(self, n, offset):
         if n.startswith('!!'):
             d = {'offset': offset, 'instruction': n[2:]}
-            self.instructions.append(d)
+            self.instructions[offset] = n[2:]
         elif n.startswith('$$'):
-            d = {'offset': offset, 'style': n[2:]}
-            self.styles.append(d)
+            self.styles[offset] = n[2:]
         elif n.startswith('!'):
             d = {'offset': offset, 'roman_numeral': n[1:]}
             self.roman_numerals.append(d)
         elif n.startswith('*'):
-            d = {'offset': offset, 'emotion': n[1:]}
-            self.emotions.append(d)
+            self.emotions[offset] = n[1:]
         else:
             raise ValueError("Unknown keyword: {}!".format(n))
 
@@ -212,80 +212,15 @@ class Core:
         raise NotImplementedError
 
 
-class Beats(Core):
-    def __init__(self, data):
-        super().__init__(data)
-
-    def update_percussion(self):
-        for i in self.noteset:
-            if i['pitch'] not in self.percussion:
-                print(
-                    "[Err]: No matched percussion instrument for pitch {}!".format(i['pitch']))
-                continue
-            inst = self.percussion[i['pitch']]
-            i['instrument'] = inst
-            if inst in ['AcousticBassDrum', 'BassDrum1']:
-                i['freq'] = 'Bass'
-            elif inst in ['SideStick', 'AcousticSnare']:
-                i['freq'] = 'Middle'
-            elif inst in ['OpenHi-Hat', 'ClosedHiHat']:
-                i['freq'] = 'High'
-            else:
-                print(
-                    "[Err]: Unknown percussion instrument {} for freq!".format(inst))
-
-    def analysis(self, data):
-        self.to_noteset(data)
-        self.update_percussion()
-
-
-class Melody(Core):
-    def __init__(self, data):
-        super().__init__(data)
-
-    def analysis(self, data):
-        self.to_noteset(data)
-        self.update_tie()
-        self.update_roman_numeral()
-
-
-class Rhythm(Core):
-    def __init__(self, data):
-        super().__init__(data)
-
-    def update_rhythm(self):
-        pitches = []
-        inversions = {}
-        for i in self.noteset:
-            pitches.append(i['pitch'])
-        _chord = m21.chord.Chord(pitches)
-        if _chord.isTriad():
-            inversions[_chord.root().name] = '1st'
-            inversions[_chord.third.name] = '3rd'
-            inversions[_chord.fifth.name] = '5th'
-        elif _chord.isSeventh():
-            inversions[_chord.root().name] = '1st'
-            inversions[_chord.third.name] = '3rd'
-            inversions[_chord.fifth.name] = '5th'
-            inversions[_chord.seventh.name] = '7th'
-        else:
-            print("[Err]: Unknown chord {}".format(_chord.fullName))
-            return
-        min_pitch = min(pitches)
-        for i in self.noteset:
-            n = m21.note.Note(i['pitch'])
-            i['inversion'] = inversions[n.name]
-            i['pitch'] -= min_pitch
-
-    def analysis(self, data):
-        self.to_noteset(data)
-        self.update_tie()
-        self.update_rhythm()
-
-
 class Analysis(Core):
-    def __init__(self, data):
-        super().__init__(data)
+    def __init__(self, staff, data):
+        super().__init__(staff, data)
+
+    def reform_roman_numeral(self):
+        d = {}
+        for rn in self.roman_numerals:
+            d[rn['offset']] = rn
+        return d
 
     def analysis(self, data):
         self.to_noteset(data)
@@ -296,10 +231,12 @@ class Analysis(Core):
         d = {}
         d['noteset'] = self.noteset
         d['styles'] = self.styles
-        d['roman_numerals'] = self.roman_numerals
+        d['roman_numerals'] = self.reform_roman_numeral()
         d['emotions'] = self.emotions
         d['instructions'] = self.instructions
         d['total_len'] = self.total_len
+        d['time_signs'] = self.time_signs
+        d['keys'] = self.keys
         return d
 
 
@@ -319,5 +256,5 @@ if __name__ == "__main__":
              '!V7', '!i', '!Isus4', '!!ts_44', '!!to_D']
     #rym = Rhythm(data)
     #bt = Beats(data4)
-    ml = Melody(data7)
+    ml = Melody({}, data7)
     # ml.show_noteset()

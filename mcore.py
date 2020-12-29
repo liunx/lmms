@@ -372,7 +372,11 @@ class MCore(Note):
         lines.append('\n')
         lines.append('@Instruments\n')
         for k, v in self.tracks.items():
-            lines.append('{}: ({}, {}, {}, {})\n'.format(k, v[0], v[1], v[2], v[3]))
+            s = '{}: ('.format(k)
+            for i in range(len(v) - 1):
+                s += '{}, '.format(v[i])
+            s += '{})\n'.format(v[-1])
+            lines.append(s)
         lines.append('\n')
         # measure count
         offset = 1

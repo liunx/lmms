@@ -4,123 +4,16 @@ import numpy as np
 from mcore import MCore
 from common import Note
 from parameters import NoteLen, Percussion
+import parameters as param
 import algorithm
-
-rock = [
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
-    [1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0]]
-
-dance = [
-    [0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0],
-    [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
-    [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0]]
-
-pattern01 = [
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
-    [1, 0, 1, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0]]
-
-triple01 = [
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0],
-    [1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0]]
-
-group01 = [
-    Percussion.ClosedHiHat,
-    Percussion.AcousticSnare,
-    Percussion.AcousticBassDrum]
-
-group02 = [
-    Percussion.ClosedHiHat,
-    Percussion.HandClap,
-    Percussion.BassDrum1]
-
-group03 = [
-    Percussion.PedalHiHat,
-    Percussion.AcousticSnare,
-    Percussion.BassDrum1]
-
-staff_beats = {
-    'key': 'C',
-    'tempo': '90',
-    'timesign': '4/4',
-    'tracks': {'beats': [
-        'beat',
-        'Percussion',
-        '0',
-        'F']},
-    'playtracks': {
-        'beats': {
-            'noteset': [],
-            'styles': [],
-            'roman_numerals': [],
-            'emotions': [],
-            'instructions': [],
-            'total_len': 0}}}
-
-cbd_beats = {
-    'info': {
-        'key': 'C',
-        'title': 'Beats Templates',
-        'name': 'Beats Templates',
-        'composer': 'CoderBand',
-        'tempo': '90',
-        'style': 'rock',
-        'timesign': '4/4'},
-    'tracks': {
-        'beats': [
-            'beat',
-            'Percussion',
-            '0',
-            'F']},
-    'clips': {},
-    'playtracks': {
-        'beats': ['c1']}}
-
-staff_rhythm = {
-    'key': 'C',
-    'tempo': '90',
-    'timesign': '4/4',
-    'tracks': {'rhythm': [
-        'rhythm',
-        'EFBass',
-        '0',
-        'F']},
-    'playtracks': {
-        'rhythm': {
-            'noteset': [],
-            'styles': [],
-            'roman_numerals': [],
-            'emotions': [],
-            'instructions': [],
-            'total_len': 0}}}
-
-cbd_rhythm = {
-    'info': {
-        'key': 'C',
-        'title': 'Beats Templates',
-        'name': 'Beats Templates',
-        'composer': 'CoderBand',
-        'tempo': '90',
-        'style': 'rock',
-        'timesign': '4/4'},
-    'tracks': {
-        'rhythm': [
-            'rhythm',
-            'EFBass',
-            '0',
-            'F']},
-    'clips': {},
-    'playtracks': {
-        'rhythm': ['c1']}}
-
+import models
 
 class Beats(Note):
-    instruments = group01
-    beats_pattern = rock
+    instruments = models.group01
+    beats_pattern = models.rock
 
     def __init__(self, staff):
+        self.offset = 0
         self.staff = staff
 
     def algorithm01(self, b=0, m=0, h=0):
@@ -160,6 +53,30 @@ class Beats(Note):
             noteset += self.matrix_to_noteset(beats, self.offset)
             self.offset += NoteLen._1st
 
+    def matrix_to_noteset2(self, matrix, offset, len_):
+        noteset = []
+        w = len(matrix[0])
+        h = len(matrix)
+        unit_size = len_ // w
+        for i in range(h):
+            for j in range(w):
+                if matrix[i][j] > 0:
+                    _note = {'midi': self.instruments[i]}
+                    _note['offset'] = j * unit_size + offset
+                    _note['len'] = unit_size
+                    noteset.append(_note)
+        return noteset
+
+    def render(self, rn):
+        style = rn['style']
+        emotion = rn['emotion']
+        self.beats_pattern = models.beats_patterns[style]
+        if emotion == 'excited':
+            beats = self.algorithm01(h=2)
+        else:
+            beats = self.algorithm01()
+        return self.matrix_to_noteset2(beats, rn['offset'], rn['len'])
+
     def process(self):
         self.offset = 0
         playtracks = self.staff['playtracks']
@@ -169,11 +86,11 @@ class Beats(Note):
                 noteset = []
                 self.generate_noteset(noteset, 2)
                 self.generate_noteset(noteset, 2, h=3)
-                self.beats_pattern = triple01
+                self.beats_pattern = models.triple01
                 self.generate_noteset(noteset, 2)
                 self.generate_noteset(noteset, 2, h=3)
                 self.generate_noteset(noteset, 2, b=2, h=1)
-                self.beats_pattern = dance
+                self.beats_pattern = models.dance
                 self.generate_noteset(noteset, 2)
                 self.generate_noteset(noteset, 2, h=3)
                 self.generate_noteset(noteset, 2, b=2, h=1)
@@ -185,9 +102,8 @@ class Rhythm(Note):
     base_midi = 48
     scales = 25
 
-    def __init__(self, staff, pattern):
+    def __init__(self, staff):
         self.staff = staff
-        self.pattern = pattern
 
     def matrix_to_noteset(self, matrix, abs_offset=0):
         noteset = []
@@ -212,6 +128,50 @@ class Rhythm(Note):
                 elif matrix[i][j] == 0b11:
                     _note = {'midi': _midi}
                     _note['offset'] = j * unit_size + abs_offset
+                    while j < w:
+                        if matrix[i][j] == 0:
+                            _note['len'] = _count * unit_size
+                            noteset.append(_note)
+                            _count = 0
+                            break
+                        elif matrix[i][j] == 0b10:
+                            _note['len'] = (_count + 1) * unit_size
+                            noteset.append(_note)
+                            _count = 0
+                            break
+                        _count += 1
+                        j += 1
+                    if _count > 0:
+                        _note['len'] = _count * unit_size
+                        noteset.append(_note)
+                        _count = 0
+                j += 1
+
+        return noteset
+
+    def matrix_to_noteset2(self, matrix, offset, len_):
+        noteset = []
+        w = len(matrix[0])
+        h = len(matrix)
+        unit_size = len_ // w
+        for i in range(h):
+            row = matrix[i]
+            j = 0
+            _count = 0
+            _midi = self.base_midi + i
+            while j < w:
+                if matrix[i][j] == 0:
+                    j += 1
+                    continue
+                if matrix[i][j] == 0b10:
+                    _note = {'midi': _midi}
+                    _note['offset'] = j * unit_size + offset
+                    _note['len'] = (_count + 1) * unit_size
+                    noteset.append(_note)
+                    _count = 0
+                elif matrix[i][j] == 0b11:
+                    _note = {'midi': _midi}
+                    _note['offset'] = j * unit_size + offset
                     while j < w:
                         if matrix[i][j] == 0:
                             _note['len'] = _count * unit_size
@@ -317,7 +277,7 @@ class Rhythm(Note):
 
     def demo03(self):
         noteset = []
-        vectors = [0,]
+        vectors = [0, ]
         tables = algorithm.table_demo02(np.array([3, 1, 2, 2]))
         self.base_midi = 36 + 7
         for table in tables:
@@ -327,6 +287,18 @@ class Rhythm(Note):
             self.generate_noteset(noteset, matrix, 2)
         _noteset = self.arrange_noteset(noteset)
         return _noteset
+
+    def render(self, rn):
+        table = np.array([1, 1, 1, 1, 1, 1, 1, 1])
+        if rn['len'] < NoteLen._1st:
+            table = np.split(table, NoteLen._1st // rn['len'])[0]
+        vectors = [0, 4, 7, 12]
+        _key = param.modes[rn['key'].upper()]
+        _rn = param.roman_numerals[rn['roman_numeral'].upper()]
+        self.base_midi = _key + _rn
+        m = algorithm.wave_sawi(table, len(vectors))
+        matrix = self.generate_matrix(m, vectors)
+        return self.matrix_to_noteset2(matrix, rn['offset'], rn['len'])
 
     def process(self):
         self.offset = 0
@@ -348,16 +320,16 @@ class Render(Note):
         beats.process()
         self.update_cbd_playtracks(staff, cbd)
 
-    def render_rhythm(self, staff, cbd, pattern):
+    def render_rhythm(self, staff, cbd):
         self.segment_roman_numerals(staff)
-        rhythm = Rhythm(staff, pattern)
+        rhythm = Rhythm(staff)
         rhythm.process()
         self.update_cbd_playtracks(staff, cbd)
 
 
 def demo_beats(fp):
-    cbd = cbd_beats.copy()
-    staff = staff_beats.copy()
+    cbd = models.cbd_beats.copy()
+    staff = models.staff_beats.copy()
     render = Render()
     render.render_beats(staff, cbd)
     mcore = MCore()
@@ -365,25 +337,11 @@ def demo_beats(fp):
     mcore.writecbd(fp)
 
 
-pattern1 = [[0] * 16] * 25
-pattern1[0] = [3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-pattern1[4] = [0, 0, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3]
-pattern1[7] = [0, 0, 0, 0, 3, 3, 0, 0, 0, 0, 0, 0, 3, 3, 0, 0]
-pattern1[12] = [0, 0, 0, 0, 0, 0, 3, 3, 0, 0, 3, 3, 0, 0, 0, 0]
-pattern1[16] = [0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 0, 0, 0, 0, 0, 0]
-
-pattern2 = [[0] * 4] * 25
-pattern2[0] = [3, 3, 3, 2]
-pattern2[12] = [0, 2, 2, 2]
-pattern2[16] = [0, 2, 2, 2]
-pattern2[19] = [0, 2, 2, 2]
-
-
 def demo_rhythm(fp):
-    cbd = cbd_rhythm.copy()
-    staff = staff_rhythm.copy()
+    cbd = models.cbd_rhythm.copy()
+    staff = models.staff_rhythm.copy()
     render = Render()
-    render.render_rhythm(staff, cbd, pattern1)
+    render.render_rhythm(staff, cbd)
     mcore = MCore()
     mcore.cbd(cbd)
     mcore.writecbd(fp)
