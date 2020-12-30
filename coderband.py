@@ -62,7 +62,10 @@ def play(args):
             mid = os.path.basename(fp).replace('.cbd', '.mid')
             _, midfp = tempfile.mkstemp(suffix='.mid')
             mc.writemidi(midfp)
-            playmidi(midfp, args.vol, tempo)
+            try:
+                playmidi(midfp, args.vol, tempo)
+            except KeyboardInterrupt:
+                print("Exit from playing!")
             os.unlink(midfp)
         else:
             print("Don't support this file type!")

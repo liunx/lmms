@@ -5,8 +5,9 @@ from mcore import MCore
 from common import Note
 from parameters import NoteLen, Percussion
 import parameters as param
-import algorithm
+import algorithm as alg
 import models
+
 
 class Beats(Note):
     instruments = models.group01
@@ -14,6 +15,9 @@ class Beats(Note):
 
     def __init__(self, staff):
         self.offset = 0
+        self.style_history = []
+        self.emotion_history = []
+        self.instruction_history = []
         self.staff = staff
 
     def algorithm01(self, b=0, m=0, h=0):
@@ -67,16 +71,6 @@ class Beats(Note):
                     noteset.append(_note)
         return noteset
 
-    def render(self, rn):
-        style = rn['style']
-        emotion = rn['emotion']
-        self.beats_pattern = models.beats_patterns[style]
-        if emotion == 'excited':
-            beats = self.algorithm01(h=2)
-        else:
-            beats = self.algorithm01()
-        return self.matrix_to_noteset2(beats, rn['offset'], rn['len'])
-
     def process(self):
         self.offset = 0
         playtracks = self.staff['playtracks']
@@ -94,8 +88,22 @@ class Beats(Note):
                 self.generate_noteset(noteset, 2)
                 self.generate_noteset(noteset, 2, h=3)
                 self.generate_noteset(noteset, 2, b=2, h=1)
-
                 v['noteset'] = noteset
+
+    def render(self, rn):
+        style = rn['style']
+        matrix = np.array(models.beats_patterns[style])
+        instruction = rn['instruction']
+        emotion = rn['emotion']
+        params = [0, 0, 0]
+        if emotion == 'tender':
+            params = [0, 0, 0]
+        elif emotion == 'happy':
+            params = [0, 4, 0]
+        elif emotion == 'excited':
+            params = [0, 0, 2]
+        beats = alg.beats_algorithm01(matrix, *params)
+        return self.matrix_to_noteset2(beats, rn['offset'], rn['len'])
 
 
 class Rhythm(Note):
@@ -251,9 +259,9 @@ class Rhythm(Note):
         noteset = []
         vectors = [0, 4, 7, 12, 16]
         table = np.array([4, 4, 4, 4])
-        table = algorithm.fragment(table, 4 * 1, 4, 4 * 0)
-        m1 = algorithm.wave_sine(table, len(vectors))
-        m2 = algorithm.wave_saw(table, len(vectors))
+        table = alg.fragment(table, 4 * 1, 4, 4 * 0)
+        m1 = alg.wave_sine(table, len(vectors))
+        m2 = alg.wave_saw(table, len(vectors))
         m = m1 | m2
         matrix = self.generate_matrix(m, vectors)
         self.generate_noteset(noteset, matrix, 4)
@@ -263,11 +271,11 @@ class Rhythm(Note):
     def demo02(self):
         noteset = []
         vectors = [0, 4, 7, 12, 16]
-        tables = algorithm.table_demo01(np.array([2, 2, 2, 2, 2, 2, 2, 2]))
+        tables = alg.table_demo01(np.array([2, 2, 2, 2, 2, 2, 2, 2]))
         i = 0
         for table in tables:
             table = np.array(table)
-            m = algorithm.wave_saw(table, len(vectors))
+            m = alg.wave_saw(table, len(vectors))
             matrix = self.generate_matrix(m, vectors)
             self.generate_noteset(noteset, matrix, 1)
             self.base_midi = 48 + vectors[i % 4]
@@ -278,11 +286,11 @@ class Rhythm(Note):
     def demo03(self):
         noteset = []
         vectors = [0, ]
-        tables = algorithm.table_demo02(np.array([3, 1, 2, 2]))
+        tables = alg.table_demo02(np.array([3, 1, 2, 2]))
         self.base_midi = 36 + 7
         for table in tables:
             table = np.array(table)
-            m = algorithm.wave_sawi(table, len(vectors))
+            m = alg.wave_sawi(table, len(vectors))
             matrix = self.generate_matrix(m, vectors)
             self.generate_noteset(noteset, matrix, 2)
         _noteset = self.arrange_noteset(noteset)
@@ -296,7 +304,7 @@ class Rhythm(Note):
         _key = param.modes[rn['key'].upper()]
         _rn = param.roman_numerals[rn['roman_numeral'].upper()]
         self.base_midi = _key + _rn
-        m = algorithm.wave_sawi(table, len(vectors))
+        m = alg.wave_sawi(table, len(vectors))
         matrix = self.generate_matrix(m, vectors)
         return self.matrix_to_noteset2(matrix, rn['offset'], rn['len'])
 

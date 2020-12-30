@@ -15,7 +15,7 @@ class Maker(Note):
     def divide_roman_numeral(self, pos, rn):
         _start = rn['offset']
         _stop = rn['offset'] + rn['len']
-        _rn  = rn.copy()
+        _rn = rn.copy()
         _rn['len'] = pos - _start
         rn['offset'] = pos
         rn['len'] = _stop - pos
@@ -45,30 +45,30 @@ class Maker(Note):
             while i < total_len:
                 if i in time_signs:
                     meter_len = self.bar_length_table[time_signs[i]]
+                need_divide = False
                 if i in emotions:
                     emotion = emotions[i]
                     if rn and emotion != rn['emotion']:
-                        _rn, rn = self.divide_roman_numeral(i, rn)
-                        _rns.append(_rn)
-                        rn['emotion'] = emotion
+                        need_divide = True
                 if i in styles:
                     style = styles[i]
                     if rn and style != rn['style']:
-                        _rn, rn = self.divide_roman_numeral(i, rn)
-                        _rns.append(_rn)
-                        rn['style'] = style
+                        need_divide = True
                 if i in keys:
                     key = keys[i]
                     if rn and key != rn['key']:
-                        _rn, rn = self.divide_roman_numeral(i, rn)
-                        _rns.append(_rn)
-                        rn['key'] = key
+                        need_divide = True
                 if i in instructions:
                     instruction = instructions[i]
                     if rn and instruction != rn['instruction']:
-                        _rn, rn = self.divide_roman_numeral(i, rn)
-                        _rns.append(_rn)
-                        rn['instruction'] = instruction
+                        need_divide = True
+                if need_divide:
+                    _rn, rn = self.divide_roman_numeral(i, rn)
+                    _rns.append(_rn)
+                    rn['key'] = key
+                    rn['style'] = style
+                    rn['emotion'] = emotion
+                    rn['instruction'] = instruction
                 if i in rns:
                     rn = rns[i]
                     rn['emotion'] = emotion

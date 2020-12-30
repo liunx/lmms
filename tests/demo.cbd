@@ -13,16 +13,19 @@ beats: (beats, Percussion, 0, F, B)
 >>
 melody-> [ r2. e4 | g8 g8 g8 g4 g8 e8 f8 | g2. r4 | c'8 c'8 c'8 c'4 c'8 e8 a8 ]
 rhythm-> [ $$pop r1 | !I r1 |  !V r1 | !IV r1 ]
-beats-> [$$dance  r1 | !I *happy r1 | *sad r1 | *excited r1 ]
+beats-> [ $$dance *tender !I  r1]
 --
 melody-> [ g2. r4 | a8 a4 a8 a8 a8 a8 a8 | g4 b4 c'2 | e'8 d'8 c'8 c'8 e'8 d'8 c'8 c'8 ]
 rhythm-> [ !V r1 | !IV r1 | !V r2 !I r2 | !IV r1 ]
+beats-> [  r1 | !I *happy r1 | *sad r1 | *excited r1 ]
 --
 melody-> [ d'2. e'4 | e'8 e'4 d'8 c'8 d'4 c'8 | g2. r4 | c'8 c'8 c'8 c'4 c'8 e8 a8 ]
 rhythm-> [ !V r1 | !I r1 | !V r1 | !I r1 ]
+beats-> [ !I *tender r1 | *excited r1 | r1 | r1 !!end *tender ]
 --
 melody-> [ g2. r4 | a8 a4 a8 a8 a8 a8 a8 | g4 b4 c'2 | e'8 d'8 c'8 c'8 e'8 d'8 c'8 c'8 ]
 rhythm-> [ !V r1 | !IV r1 | !V r2 !I r2 | !I r1 ]
+beats-> [ r1 ]
 --
 melody-> [ d'2. r4 ]
 rhythm-> [ !V r1 | !I r1 ]

@@ -171,8 +171,8 @@ def wave_saw(table, height):
     return matrix
 
 
-def algorithm01(matrix, b=0, m=0, h=0):
-    _m = matrix
+def beats_algorithm01(matrix, b=0, m=0, h=0):
+    _m = matrix.copy()
     _m_len = len(_m[0])
     high = _m[0]
     middle = _m[1]
