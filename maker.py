@@ -33,6 +33,7 @@ class Maker(Note):
             time_signs = v['time_signs']
             emotions = v['emotions']
             instructions = v['instructions']
+            instruction_offset = 0
             i = 0
             _rns = []
             time_sign = staff['timesign']
@@ -59,6 +60,7 @@ class Maker(Note):
                     if rn and key != rn['key']:
                         need_divide = True
                 if i in instructions:
+                    instruction_offset = i
                     instruction = instructions[i]
                     if rn and instruction != rn['instruction']:
                         need_divide = True
@@ -74,6 +76,7 @@ class Maker(Note):
                     rn['emotion'] = emotion
                     rn['style'] = style
                     rn['key'] = key
+                    instruction = None
                     rn['instruction'] = instruction
                     rn['timesign'] = time_sign
                     rn['meter_len'] = meter_len
@@ -82,6 +85,8 @@ class Maker(Note):
                     _start = rn['offset']
                     _stop = rn['offset'] + rn['len']
                     if i == _stop - 1:
+                        if rn['offset'] != instruction_offset:
+                            rn['instruction'] = None
                         _rns.append(rn)
                         rn = None
                         i += 1
@@ -89,6 +94,8 @@ class Maker(Note):
                     if i > 0 and i % meter_len == 0:
                         if i > _start and i < _stop:
                             _rn, rn = self.divide_roman_numeral(i, rn)
+                            if rn['offset'] != instruction_offset:
+                                rn['instruction'] = None
                             _rns.append(_rn)
                 i += 1
             v['roman_numerals'] = _rns

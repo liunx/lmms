@@ -7,6 +7,9 @@ from parameters import NoteLen, Percussion
 import parameters as param
 import algorithm as alg
 import models
+import pkgutil
+import importlib
+import mods.beats
 
 
 class Beats(Note):
@@ -18,7 +21,11 @@ class Beats(Note):
         self.style_history = []
         self.emotion_history = []
         self.instruction_history = []
+        self.handlers = {}
         self.staff = staff
+        for m in pkgutil.iter_modules(mods.beats.__path__):
+            l = importlib.import_module('mods.beats.' + m.name)
+            self.handlers[m.name] = l.callback
 
     def algorithm01(self, b=0, m=0, h=0):
         _m = self.beats_pattern.copy()
@@ -57,7 +64,7 @@ class Beats(Note):
             noteset += self.matrix_to_noteset(beats, self.offset)
             self.offset += NoteLen._1st
 
-    def matrix_to_noteset2(self, matrix, offset, len_):
+    def matrix_to_noteset2(self, matrix, instruments, offset, len_):
         noteset = []
         w = len(matrix[0])
         h = len(matrix)
@@ -65,7 +72,7 @@ class Beats(Note):
         for i in range(h):
             for j in range(w):
                 if matrix[i][j] > 0:
-                    _note = {'midi': self.instruments[i]}
+                    _note = {'midi': instruments[i]}
                     _note['offset'] = j * unit_size + offset
                     _note['len'] = unit_size
                     noteset.append(_note)
@@ -92,18 +99,9 @@ class Beats(Note):
 
     def render(self, rn):
         style = rn['style']
-        matrix = np.array(models.beats_patterns[style])
-        instruction = rn['instruction']
-        emotion = rn['emotion']
-        params = [0, 0, 0]
-        if emotion == 'tender':
-            params = [0, 0, 0]
-        elif emotion == 'happy':
-            params = [0, 4, 0]
-        elif emotion == 'excited':
-            params = [0, 0, 2]
-        beats = alg.beats_algorithm01(matrix, *params)
-        return self.matrix_to_noteset2(beats, rn['offset'], rn['len'])
+        callback = self.handlers[style]
+        beats, instruments = callback(rn)
+        return self.matrix_to_noteset2(beats, instruments, rn['offset'], rn['len'])
 
 
 class Rhythm(Note):
