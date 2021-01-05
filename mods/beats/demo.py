@@ -86,7 +86,7 @@ def add_accent(staff, rn):
     return matrix
 
 
-def callback(staff, rn):
+def callback(staff, track, rn):
     _instruments = instruments.copy()
     matrix = np.array(basic_pattern)
     emotion = rn['emotion']

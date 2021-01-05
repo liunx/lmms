@@ -10,6 +10,8 @@ import models
 import pkgutil
 import importlib
 import mods.beats
+import mods.rhythm
+import mods.melody
 
 
 class Beats(Note):
@@ -97,10 +99,10 @@ class Beats(Note):
                 self.generate_noteset(noteset, 2, b=2, h=1)
                 v['noteset'] = noteset
 
-    def render(self, rn):
+    def render(self, track, rn):
         style = rn['style']
         callback = self.handlers[style]
-        beats, instruments = callback(self.staff, rn)
+        beats, instruments = callback(self.staff, track, rn)
         return self.matrix_to_noteset2(beats, instruments, rn['offset'], rn['len'])
 
 
@@ -110,6 +112,10 @@ class Rhythm(Note):
 
     def __init__(self, staff):
         self.staff = staff
+        self.handlers = {}
+        for m in pkgutil.iter_modules(mods.rhythm.__path__):
+            l = importlib.import_module('mods.rhythm.' + m.name)
+            self.handlers[m.name] = l.callback
 
     def matrix_to_noteset(self, matrix, abs_offset=0):
         noteset = []
@@ -155,7 +161,7 @@ class Rhythm(Note):
 
         return noteset
 
-    def matrix_to_noteset2(self, matrix, offset, len_):
+    def matrix_to_noteset2(self, matrix, base_midi, offset, len_):
         noteset = []
         w = len(matrix[0])
         h = len(matrix)
@@ -164,7 +170,7 @@ class Rhythm(Note):
             row = matrix[i]
             j = 0
             _count = 0
-            _midi = self.base_midi + i
+            _midi = base_midi + i
             while j < w:
                 if matrix[i][j] == 0:
                     j += 1
@@ -294,17 +300,11 @@ class Rhythm(Note):
         _noteset = self.arrange_noteset(noteset)
         return _noteset
 
-    def render(self, rn):
-        table = np.array([1, 1, 1, 1, 1, 1, 1, 1])
-        if rn['len'] < NoteLen._1st:
-            table = np.split(table, NoteLen._1st // rn['len'])[0]
-        vectors = [0, 4, 7, 12]
-        _key = param.modes[rn['key'].upper()]
-        _rn = param.roman_numerals[rn['roman_numeral'].upper()]
-        self.base_midi = _key + _rn
-        m = alg.wave_sawi(table, len(vectors))
-        matrix = self.generate_matrix(m, vectors)
-        return self.matrix_to_noteset2(matrix, rn['offset'], rn['len'])
+    def render(self, track, rn):
+        style = rn['style']
+        callback = self.handlers[style]
+        base_midi, matrix = callback(self.staff, track, rn)
+        return self.matrix_to_noteset2(matrix, base_midi, rn['offset'], rn['len'])
 
     def process(self):
         self.offset = 0

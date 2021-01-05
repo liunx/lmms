@@ -27,12 +27,12 @@ class Rhythm(Note):
         f_meter = Fraction(_len, meter_len)
         note['meter'] = str(f_meter)
 
-    def expand_roman_numerals(self, roman_numerals):
+    def expand_roman_numerals(self, track, roman_numerals):
         notes = []
         rhythm = render.Rhythm(self.staff)
         for rn in roman_numerals:
             self.time_measure(rn)
-            notes += rhythm.render(rn)
+            notes += rhythm.render(track, rn)
         return notes
 
     def process(self):
@@ -44,7 +44,7 @@ class Rhythm(Note):
                 rns = v['roman_numerals']
                 if not rns:
                     continue
-                v['noteset'] = self.expand_roman_numerals(rns)
+                v['noteset'] = self.expand_roman_numerals(track, rns)
 
 
 class Melody:
@@ -83,12 +83,12 @@ class Beats:
         f_meter = Fraction(_len, meter_len)
         rn['meter'] = str(f_meter)
 
-    def expand_roman_numerals(self, roman_numerals):
+    def expand_roman_numerals(self, track, roman_numerals):
         noteset = []
         beats = render.Beats(self.staff)
         for rn in roman_numerals:
             self.time_measure(rn)
-            noteset += beats.render(rn)
+            noteset += beats.render(track, rn)
         return noteset
 
     def process(self):
@@ -100,4 +100,4 @@ class Beats:
                 rns = v['roman_numerals']
                 if not rns:
                     continue
-                v['noteset'] = self.expand_roman_numerals(rns)
+                v['noteset'] = self.expand_roman_numerals(track, rns)
