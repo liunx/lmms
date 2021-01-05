@@ -100,7 +100,7 @@ class Beats(Note):
     def render(self, rn):
         style = rn['style']
         callback = self.handlers[style]
-        beats, instruments = callback(rn)
+        beats, instruments = callback(self.staff, rn)
         return self.matrix_to_noteset2(beats, instruments, rn['offset'], rn['len'])
 
 

@@ -1,7 +1,6 @@
 import re
 import copy
 import sys
-import music21 as m21
 from analysis import Analysis
 from common import Note
 from creator import Rhythm, Melody, Beats
@@ -76,8 +75,11 @@ class Maker(Note):
                     rn['emotion'] = emotion
                     rn['style'] = style
                     rn['key'] = key
-                    instruction = None
-                    rn['instruction'] = instruction
+                    if i == instruction_offset:
+                        rn['instruction'] = instruction
+                    else:
+                        instruction = None
+                        rn['instruction'] = instruction
                     rn['timesign'] = time_sign
                     rn['meter_len'] = meter_len
                 # divide meters
@@ -93,9 +95,9 @@ class Maker(Note):
                         continue
                     if i > 0 and i % meter_len == 0:
                         if i > _start and i < _stop:
-                            _rn, rn = self.divide_roman_numeral(i, rn)
                             if rn['offset'] != instruction_offset:
                                 rn['instruction'] = None
+                            _rn, rn = self.divide_roman_numeral(i, rn)
                             _rns.append(_rn)
                 i += 1
             v['roman_numerals'] = _rns
