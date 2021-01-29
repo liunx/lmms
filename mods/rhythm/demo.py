@@ -32,8 +32,8 @@ def keyboard(staff, rn):
 
 
 def bass(staff, rn):
-    #table = np.array([2, -3, 1, 2])
-    table = np.array([1, 1, 1, 1, 1, 1, -1, 1])
+    table = np.array([3, 1, 2, -1, 1])
+    #table = np.array([1, 1, 1, 1, 1, 1, -1, 1])
     if rn['meter'] == '1/2':
         table = np.array([3, -1])
     vectors = [0]
