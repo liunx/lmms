@@ -6,9 +6,9 @@ key: "C"
 
 @ <track name>: (name, instrument, pitch, muted, ([B]eats | [M]elody | [R]hythm))
 melody: (melody, Oboe, 0, F, M)
-rhythm: (rhythm, BPiano, 0, F, R)
-bass: (rhythm, EFBass, 0, F, R)
-beats: (beats, Percussion, 0, F, B)
+rhythm: (rhythm, BPiano, 0, T, R)
+bass: (rhythm, ETBass, 0, T, R)
+beats: (beats, Violin, 0, T, B)
 
 @playback
 >>

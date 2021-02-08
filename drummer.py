@@ -260,4 +260,4 @@ def demo02():
 
 
 if __name__ == '__main__':
-    demo02()
+    demo01()
