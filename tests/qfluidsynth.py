@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 import sys
 import time
+import socket
 import threading
+import subprocess
 import jack
 import mido
 from mido import MidiFile
@@ -307,16 +309,58 @@ def demo06():
 
 
 def demo07():
-    seq = Sequencer(driver='jack')
-    seq.add_remote_track('qsynth', 'work:midi')
-    seq.add_remote_track('yoshimi', 'yoshimi:midi in')
-    mid = seq.load_midi('demo.mid')
+    seq = Sequencer()
+    name = 'calf'
+    port = 'Calf Studio Gear:fluidsynth MIDI In'
+    mid = seq.load_midi('GM_kit_demo1.mid')
     msgs = seq.merge_tracks(mid)
-    #seq.add_messages('qsynth', msgs)
-    seq.add_messages('yoshimi', msgs)
+    seq.add_remote_track(name, port)
+    seq.add_messages(name, msgs)
     seq.play(bpm=120)
-    #time.sleep(100)
+
+
+def demo08():
+    seq = Sequencer()
+    with mido.open_input() as port:
+        for msg in port:
+            print(msg)
+
+
+class Effect:
+    def __init__(self, host='localhost', port=10086):
+        self.host = host
+        self.port = port
+        self.proc = subprocess.Popen(["mod-host", "-v", '-p', f'{port}'])
+        time.sleep(1)
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+    def __del__(self):
+        self.proc.kill()
+        self.proc.wait()
+
+    def send(self, data):
+        self.sock.connect((self.host, self.port))
+        self.sock.send(bytes(data, "utf-8"))
+        resp = self.sock.recv(64).decode("utf-8")
+        self.sock.close()
+        return resp
+
+
+def demo09():
+    effect = Effect()
+    for i in range(20):
+        s = f'add http://calf.sourceforge.net/plugins/Compressor {i}'
+        effect.send(s)
+        time.sleep(1)
+    time.sleep(10)
+
+
+def demo10():
+    proc = subprocess.Popen(["mod-host", "-i"], stdin=subprocess.PIPE,
+                            stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    print(proc.stdout.read())
+    proc.kill()
 
 
 if __name__ == '__main__':
-    demo07()
+    demo10()
