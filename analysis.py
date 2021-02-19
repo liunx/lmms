@@ -238,23 +238,3 @@ class Analysis(Core):
         d['time_signs'] = self.time_signs
         d['keys'] = self.keys
         return d
-
-
-if __name__ == "__main__":
-    data = ['C4~', ['chord', 'E4~', 'G4~'], [
-        'chord', 'E4~', 'G4~'], ['chord', 'E4', 'G4']]
-    data2 = ['C4', ['trip', 'C4', 'E4', 'G4']]
-    data3 = ['C4~', 'C4', 'E4~', 'E4']
-    data4 = ['CC8', 'r8', 'DD8', 'CC8', 'CC8', 'r8', 'DD8', 'r8']
-    data5 = [
-        'c2', '!up', '!good', 'c4.', 'c8', 'c2', '!happy', 'c2', 'c1~', 'c1', 'G2', 'c4.', 'c8', 'c1', 'G2', 'd4.',
-        'B8', 'c1', 'G2', 'c4.', 'e8', 'g2', 'e4', 'c4', 'd2', 'c4.', 'd8', 'd1', 'G2', 'c4.',
-        'c8', 'c1', 'G2', 'd4.', 'B8', 'c1', 'G2', 'c4.', 'e8', 'g2', 'e4', 'c4', 'f2', 'e4.',
-        'd8', 'c1', 'r1', 'r1', 'r1', 'r1']
-    data6 = ['!I', 'R1', '!II', 'R1', '!III', '!IV', '!V', '!VI', '!VII']
-    data7 = ['$$pop', 'r1', '!I', 'r1', '*happy', '!IV',
-             '!V7', '!i', '!Isus4', '!!ts_44', '!!to_D']
-    #rym = Rhythm(data)
-    #bt = Beats(data4)
-    ml = Melody({}, data7)
-    # ml.show_noteset()
