@@ -18,6 +18,7 @@ try:
 except ImportError:
     import Queue as queue  # Python 2.x
 import sys
+import time
 import threading
 
 parser = argparse.ArgumentParser(description=__doc__)
@@ -66,7 +67,6 @@ def process(frames):
         stop_callback('blocksize must not be changed, I quit!')
     try:
         data = q.get_nowait()
-        print(data.shape)
     except queue.Empty:
         stop_callback('Buffer is empty: increase buffersize?')
     if data is None:
@@ -102,7 +102,7 @@ try:
                     client.outports[0].connect(target_ports[0])
                     client.outports[0].connect(target_ports[1])
                 else:
-                    for source, target in zip(client.outports, target_ports[2:]):
+                    for source, target in zip(client.outports, target_ports):
                         source.connect(target)
             timeout = blocksize * args.buffersize / samplerate
             for data in block_generator:

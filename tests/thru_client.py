@@ -17,7 +17,6 @@ import wave
 import numpy as np
 import threading
 import PyWave
-from scipy.io.wavfile import write
 
 if sys.version_info < (3, 0):
     # In Python 2.x, event.wait() cannot be interrupted with Ctrl+C.
