@@ -4,6 +4,7 @@ import importlib
 import numpy as np
 from parser import MyLexer
 from analysis import Analysis
+from convert import Midi
 import mods.beats
 import mods.rhythm
 import mods.melody
@@ -164,9 +165,12 @@ class CoderBand:
                     self.full_matrix = np.append(
                         self.full_matrix, input_matrix.reshape([1, total_len, self.key_range]))
                     v['matrix_index'] = self.full_matrix.shape[0] - 1
+        return self.full_matrix
 
 
 if __name__ == '__main__':
     cb = CoderBand()
     data = cb.parse(sys.argv[1])
-    cb.render(data)
+    full_matrix = cb.render(data)
+    mid = Midi(data, full_matrix)
+    mid.save('main.mid')
