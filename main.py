@@ -3,8 +3,6 @@ import pkgutil
 import importlib
 import numpy as np
 from parser import MyLexer
-
-from numpy.core.numeric import full
 from analysis import Analysis
 import mods.beats
 import mods.rhythm
@@ -12,12 +10,18 @@ import mods.melody
 
 
 class Matrix:
-    def __init__(self):
-        pass
+    key_range = 88
+    key_start = 21
+    key_stop = 108
+
+    def __init__(self, full_matrix, input_matrix):
+        self._full_matrix = full_matrix
+        self._input_matrix = input_matrix
 
 
 class CoderBand:
     # 88 keyboard
+    key_range = 88
     key_start = 21
     key_stop = 108
 
@@ -87,7 +91,7 @@ class CoderBand:
 
     def convert_matrix(self, data):
         _len = int(data['total_len'])
-        matrix = np.zeros([1, _len, 88], dtype=np.int8)
+        matrix = np.zeros([1, _len, self.key_range], dtype=np.int8)
         notes = data['noteset']
         for n in notes:
             self.fill_note(n, matrix)
@@ -113,8 +117,7 @@ class CoderBand:
                     full_matrix = m
                 else:
                     full_matrix = np.append(full_matrix, m, axis=0)
-                idx, _, _ = full_matrix.shape
-                _data['matrix_index'] = idx - 1
+                _data['matrix_index'] = full_matrix.shape[0] - 1
             playtracks[k] = _data
         staff['playtracks'] = playtracks
         self.full_matrix = full_matrix
@@ -122,7 +125,7 @@ class CoderBand:
 
     def render(self, staff):
         for k, v in staff['playtracks'].items():
-            total_len = v['total_len']
+            total_len = int(v['total_len'])
             rns = v['roman_numerals']
             styles = v['styles']
             keys = v['keys']
@@ -139,21 +142,28 @@ class CoderBand:
                 raise ValueError
             i = 0
             callbacks = None
+            input_matrix = np.zeros([total_len, self.key_range], dtype=np.int8)
+            matrix_obj = Matrix(self.full_matrix, input_matrix)
             while i < total_len:
                 # step1. check styles and load handler
                 if i in styles:
-                    callbacks = handlers[styles[i]]
+                    style = styles[i]
+                    callbacks = handlers[style]
                 if callbacks:
-                    if i in keys:
-                        callbacks.handle_key(keys[i])
-                    if i in emotions:
-                        callbacks.handle_emotion(emotions[i])
                     if i in instructions:
-                        callbacks.handle_instruction(instructions[i])
+                        callbacks.handle_instruction(
+                            i, instructions[i], matrix_obj)
+                    if i in keys:
+                        callbacks.handle_key(i, keys[i], matrix_obj)
+                    if i in emotions:
+                        callbacks.handle_emotion(i, emotions[i], matrix_obj)
                     if i in rns:
-                        callbacks.handle_rn(rns[i])
+                        callbacks.handle_rn(i, rns[i], matrix_obj)
                 i += 1
-
+                if input_matrix.any():
+                    self.full_matrix = np.append(
+                        self.full_matrix, input_matrix.reshape([1, total_len, self.key_range]))
+                    v['matrix_index'] = self.full_matrix.shape[0] - 1
 
 
 if __name__ == '__main__':
