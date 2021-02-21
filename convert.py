@@ -19,24 +19,36 @@ class Midi:
         staff = self._staff
         meta_track = MidiTrack()
         self.mid.tracks.append(meta_track)
+        meta_track.append(MetaMessage(
+            'copyright', text='(C) Coderband <liunx163@163.com> {}'.format(time.strftime("%Y"))))
+        meta_track.append(MetaMessage('track_name', name=staff['title']))
+        meta_track.append(MetaMessage(
+            'text', text='Composer: {}'.format(staff['composer'])))
         meta_track.append(MetaMessage('key_signature', key=staff['key']))
         ts = staff['timesign'].split('/')
         meta_track.append(MetaMessage('time_signature',
                                       numerator=int(ts[0]), denominator=int(ts[1])))
         tempo = mido.bpm2tempo(int(staff['tempo']))
         meta_track.append(MetaMessage('set_tempo', tempo=tempo))
-        meta_track.append(MetaMessage(
-            'copyright', text='(C) Coderband <liunx163@163.com> {}'.format(time.strftime("%Y"))))
-        meta_track.append(MetaMessage('track_name', name=staff['title']))
-        meta_track.append(MetaMessage(
-            'text', text='Composer: {}'.format(staff['composer'])))
         meta_track.append(MetaMessage('end_of_track'))
 
     def add_track(self, ch, midis, track):
         keys = list(midis.keys())
         keys.sort()
+        offset = 0
         for k in keys:
             _midis = midis[k]
+            _midi = _midis[0]
+            _time = k - offset
+            # note on
+            track.append(Message('note_on', channel=ch, note=_midi[0], velocity=64, time=_time))
+            for _midi in _midis[1:]:
+                track.append(Message('note_on', channel=ch, note=_midi[0], velocity=64, time=0))
+            # note off
+            track.append(Message('note_off', channel=ch, note=_midi[0], velocity=64, time=_midi[1]))
+            offset = k + _midi[1]
+            for _midi in _midis[1:]:
+                track.append(Message('note_off', channel=ch, note=_midi[0], velocity=64, time=0))
 
     def add_tracks(self):
         channels = [i for i in range(16)]
@@ -46,7 +58,7 @@ class Midi:
             # ignore empty tracks
             if 'matrix_index' not in v:
                 continue
-            ch = channels.pop()
+            ch = channels.pop(0)
             idx = v['matrix_index']
             matrix = self._matrix[idx]
             track = MidiTrack()
