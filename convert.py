@@ -12,7 +12,7 @@ class Midi:
     def __init__(self, staff, matrix):
         self._staff = staff
         self._matrix = matrix
-        self.mid = MidiFile()
+        self.mid = MidiFile(ticks_per_beat=192)
         self.process()
 
     def add_header(self):
@@ -98,6 +98,9 @@ class Midi:
     def process(self):
         self.add_header()
         self.add_tracks()
+
+    def data(self):
+        return self.mid
 
     def save(self, filename):
         self.mid.save(filename)

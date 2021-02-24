@@ -3,11 +3,23 @@ import pkgutil
 import importlib
 import numpy as np
 from parser import MyLexer
+
 from analysis import Analysis
 from convert import Midi
+from midi import Synth, Sequencer, TimebaseMaster
 import mods.beats
 import mods.rhythm
 import mods.melody
+import xmlrpc.client
+from xmlrpc.server import SimpleXMLRPCServer
+from xmlrpc.server import SimpleXMLRPCRequestHandler
+import jack
+from mido import MidiFile
+import tempfile
+
+
+class RequestHandler(SimpleXMLRPCRequestHandler):
+    rpc_paths = ('/RPC2',)
 
 
 class Matrix:
@@ -168,9 +180,126 @@ class CoderBand:
         return self.full_matrix
 
 
-if __name__ == '__main__':
+class RPC:
+    def __init__(self):
+        self.nodes = {}
+        self.jack_master = jack.Client('jack_master')
+        self.tbm = TimebaseMaster()
+        self.tbm.activate()
+        if not self.tbm.become_timebase_master():
+            raise RuntimeError('time mater failed!')
+
+    def close(self):
+        self.jack_master.close()
+        self.tbm.close()
+        for n in self.nodes.values():
+            n.close()
+
+    def play(self, bpm=120):
+        self.tbm.bpm = bpm
+        self.tbm.transport_start()
+
+    def pause(self):
+        self.tbm.transport_stop()
+
+    def stop(self):
+        self.tbm.transport_stop()
+        self.tbm.transport_locate(0)
+
+    def jack_ports(self):
+        _ports = []
+        ports = self.jack_master.get_ports()
+        for port in ports:
+            d = {'aliases': port.aliases, 'name': port.name,
+                 'is_audio': port.is_audio, 'is_input': port.is_input,
+                 'is_output': port.is_output, 'is_midi': port.is_midi,
+                 'is_physical': port.is_physical, 'is_terminal': port.is_terminal}
+            _ports.append(d)
+        return _ports
+
+    def add_synth(self, name):
+        if name in self.nodes:
+            return False
+        synth = Synth(name, self.jack_master.samplerate)
+        self.nodes[name] = synth
+        return True
+
+    def del_synth(self, name):
+        if name not in self.nodes:
+            return False
+        synth = self.nodes[name]
+        synth.close()
+        del self.nodes[name]
+
+    def add_seq(self, name):
+        if name in self.nodes:
+            return False
+        seq = Sequencer(name)
+        self.nodes[name] = seq
+        return True
+
+    def del_seq(self, name):
+        if name not in self.nodes:
+            return False
+        seq = self.nodes[name]
+        seq.close()
+        del self.nodes[name]
+
+    def load_midi(self, name, data):
+        if not isinstance(data, xmlrpc.client.Binary):
+            return False
+        if name not in self.nodes:
+            return False
+        fp = tempfile.TemporaryFile()
+        fp.write(data.data)
+        fp.seek(0)
+        mid = MidiFile(file=fp)
+        node = self.nodes[name]
+        node.load_midi(mid)
+        fp.close()
+        return True
+
+    def load_audio(self, data):
+        if not isinstance(data, xmlrpc.client.Binary):
+            return False
+        fp = tempfile.TemporaryFile()
+        fp.write(data.data)
+        fp.seek(0)
+        fp.close()
+        return True
+
+    def get_params(self, params):
+        pass
+
+    def set_params(self, params):
+        pass
+
+
+def demo01():
     cb = CoderBand()
     data = cb.parse(sys.argv[1])
     full_matrix = cb.render(data)
     mid = Midi(data, full_matrix)
-    mid.save('main.mid')
+    data = mid.data()
+    data.save('main.mid')
+
+
+def demo02():
+    rpc = RPC()
+    # mid.save('main.mid')
+    print("Press <Ctrl+C> to exit...")
+    try:
+        with SimpleXMLRPCServer(('localhost', 8000),
+                                allow_none=True, requestHandler=RequestHandler) as server:
+            server.register_introspection_functions()
+            server.register_multicall_functions()
+            server.register_instance(rpc)
+            # Run the server's main loop
+            server.serve_forever()
+    except KeyboardInterrupt:
+        rpc.close()
+        print("Exit!")
+
+
+if __name__ == '__main__':
+    demo02()
