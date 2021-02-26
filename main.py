@@ -268,6 +268,17 @@ class RPC:
         fp.close()
         return True
 
+    def connect(self, src, dst):
+        self.jack_master.connect(src, dst)
+
+    def disconnect(self, src, dst):
+        self.jack_master.disconnect(src, dst)
+
+    def disconnect_all(self, src):
+        ports = self.jack_master.get_all_connections(src)
+        for p in ports:
+            self.jack_master.disconnect(p, src)
+
     def get_params(self, params):
         pass
 

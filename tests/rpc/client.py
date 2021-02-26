@@ -19,8 +19,9 @@ def load_audio(s, name, filename):
 
 if __name__ == '__main__':
     s = xmlrpc.client.ServerProxy('http://localhost:8000')
-    # s.add_synth('synth_01')
-    s.add_seq('seq')
-    s.play(90)
-    time.sleep(10)
-    s.stop()
+    s.add_synth('synth_01')
+    if 0:
+        s.add_seq('seq')
+        s.play(90)
+        time.sleep(10)
+        s.stop()
