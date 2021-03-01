@@ -206,7 +206,7 @@ class RPC:
         self.tbm.transport_stop()
         self.tbm.transport_locate(0)
 
-    def jack_ports(self):
+    def get_all_ports(self):
         _ports = []
         ports = self.jack_master.get_ports()
         for port in ports:
@@ -216,6 +216,40 @@ class RPC:
                  'is_physical': port.is_physical, 'is_terminal': port.is_terminal}
             _ports.append(d)
         return _ports
+
+    def _get_ports(self, ports):
+        _ports = {}
+        for port in ports:
+            n, p = port.name.split(':')
+            if n not in _ports:
+                _ports[n] = {'input': [], 'output': []}
+            if port.is_input:
+                _ports[n]['input'].append(p)
+            elif port.is_output:
+                _ports[n]['output'].append(p)
+        return _ports
+
+    def get_midi_ports(self):
+        ports = self.jack_master.get_ports(is_midi=True)
+        return self._get_ports(ports)
+
+    def get_audio_ports(self):
+        ports = self.jack_master.get_ports(is_audio=True)
+        return self._get_ports(ports)
+
+    def get_ports_info(self, names):
+        ports = []
+        for n in names:
+            ports.append(self.get_port_info)
+        return ports
+
+    def get_port_info(self, name):
+        port = self.jack_master.get_port_by_name(name)
+        d = {'aliases': port.aliases, 'name': port.name,
+             'is_audio': port.is_audio, 'is_input': port.is_input,
+             'is_output': port.is_output, 'is_midi': port.is_midi,
+             'is_physical': port.is_physical, 'is_terminal': port.is_terminal}
+        return d
 
     def add_synth(self, name):
         if name in self.nodes:
