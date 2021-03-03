@@ -3,6 +3,7 @@ import time
 import curses
 from curses import wrapper
 import xmlrpc.client
+import sys
 
 
 def load_midi(s, name, filename):
@@ -22,27 +23,37 @@ def load_audio(s, name, filename):
 class Shell:
     pad_height = 4000
     pad_width = 4000
-    input_len = 16
+    title_height = 2
+    status_height = 2
 
     def __init__(self, url):
-        self.running = True
-        self.mods = {}
-        self.midi_ports = {}
-        self.audio_ports = {}
-        self.actions = {}
-        self.frame_handler = self.frame_main
         self.proxy = xmlrpc.client.ServerProxy(url)
+        self.node_coords = []
         self.curses_init()
+        self.windows_init()
 
     def curses_init(self):
-        self.stdscr = curses.initscr()
+        stdscr = curses.initscr()
         curses.noecho()
         curses.cbreak()
         curses.start_color()
         curses.use_default_colors()
         curses.curs_set(0)
-        self.stdscr.keypad(True)
+        stdscr.keypad(True)
+        self.stdscr = stdscr
+
+    def windows_init(self):
+        height, width = self.stdscr.getmaxyx()
+        self.title_win = curses.newwin(self.title_height, width, 0, 0)
+        self.content_win = curses.newwin(
+            height - (self.title_height + self.status_height), width, self.title_height, 0)
+        self.status_win = curses.newwin(
+            self.status_height, width, height - self.status_height, 0)
         self.pad = curses.newpad(self.pad_height, self.pad_width)
+        self.stdscr_height = height
+        self.stdscr_width = width
+        self.pad_y = 0
+        self.pad_x = 0
 
     def close(self):
         curses.nocbreak()
@@ -50,165 +61,109 @@ class Shell:
         curses.echo()
         curses.endwin()
 
-    def _fill_ports(self, ports):
-        l = []
-        for k, v in ports.items():
-            data = v['input']
-            if len(data) > 0:
-                s = f'{k}:in:{{'
-                l.append(s)
-                i = 0
-                while i < len(data) - 1:
-                    s = f'{data[i]},'
-                    l.append(s)
-                    i += 1
-                s = f'{data[i]}}}'
-                l.append(s)
-            data = v['output']
-            if len(data) > 0:
-                s = f'{k}:out:{{'
-                l.append(s)
-                i = 0
-                while i < len(data) - 1:
-                    s = f'{data[i]},'
-                    l.append(s)
-                    i += 1
-                s = f'{data[i]}}}'
-                l.append(s)
-        return l
-
-    def dialog(self, title):
-        stdscr = self.stdscr
-        _len = len(title)
-        x = int((self.stdscr_x - _len) / 2)
-        stdscr.hline(0, x, '-', _len)
-        stdscr.addstr(1, x, title)
-        curses.echo()
-        curses.curs_set(1)
-        prompt = '> '
-        x = int((self.stdscr_x - (self.input_len + len(prompt))) / 2)
-        # clear action line
-        stdscr.hline(self.stdscr_y - 2, 0, ' ', self.stdscr_x)
-        stdscr.addstr(self.stdscr_y - 2, x, prompt)
-        ans = stdscr.getstr(self.stdscr_y - 2, x + len(prompt), self.input_len)
-        curses.noecho()
-        curses.curs_set(0)
-        stdscr.refresh()
-        return ans.decode()
-
-    def fill_content(self, content):
-        pad = self.pad
-        pad.clear()
-        self._layout(pad, 2, content)
-        pad.refresh(self.pos_y, self.pos_x, 2, 0,
-                    self.stdscr_y - 3, self.stdscr_x - 1)
-
-    def frame_main(self):
-        content = {'layout': 'vertical', 'align': 'left', 'data': []}
-        self.frame = {
-            'title': 'Welcome to Coderband!!!',
-            'content': content,
-            'actions': ['(a)dd', '(c)onnect', '(d)isconnect',  '(r)efresh', '(q)uit'],
-        }
-        self.actions = {'a': self.frame_add, 'c': self.frame_connect,
-                        'd': self.frame_disconnect, 'r': self.frame_main, 'q': self.frame_quit}
-        # fill content
-        ports = self.get_audio_ports()
-        l = ['Audio Ports:']
-        content['data'].append(l + self._fill_ports(ports))
-        ports = self.get_midi_ports()
-        l = ['Midi Ports:']
-        content['data'].append(l + self._fill_ports(ports))
-        # only clear the pad when update
-        self.pad.clear()
-
-    def frame_add(self):
-        self.frame = {
-            'title': 'Add Synth/Effect',
-            'content': [],
-            'actions': ['(s)ynth', '(e)ffect', '(b)ack']
-        }
-        self.actions = {'b': self.frame_main}
-
-    def frame_audio_connect(self):
-        content = {'layout': 'vertical', 'align': 'left', 'data': []}
-        out_ports = ['out ports:']
-        out_idx = 0
-        in_ports = ['in ports:']
-        in_idx = 0
-        ports = self.get_audio_ports()
-        for k, v in ports.items():
-            for p in v['input']:
-                in_idx += 1
-                in_ports.append(f'{in_idx}.{k}:{p}')
-            for p in v['output']:
-                out_idx += 1
-                out_ports.append(f'{out_idx}.{k}:{p}')
-        content['data'] = [out_ports, in_ports]
-        self.fill_content(content)
-        res = self.dialog('Please input your selection!!!')
-        try:
-            _out, _in = res.split(',')
-            _outp, _inp = out_ports[int(_out)], in_ports[int(_in)]
-            self.connect(_outp, _inp)
-        except:
-            pass
-        # return back to frame connect
-        self.frame_connect()
-
-    def frame_midi_connect(self):
-        # return back to frame connect
-        self.frame_connect()
-
-    def frame_connect(self):
-        content = {'layout': 'vertical', 'align': 'left', 'data': []}
-        self.frame = {
-            'title': 'Do jack connect',
-            'content': content,
-            'actions': ['(a)udio', '(m)idi', '(b)ack']
-        }
-        self.actions = {'a': self.frame_audio_connect,
-                        'm': self.frame_midi_connect, 'b': self.frame_main}
-
-    def frame_disconnect(self):
-        self.frame = {
-            'title': 'Do jack disconnect',
-            'content': [],
-            'actions': ['(a)udio', '(m)idi', '(b)ack']
-        }
-        self.actions = {'b': self.frame_main}
-
-    def frame_quit(self):
-        self.frame = {
-            'title': 'Exit from the program, are you sure?',
-            'content': [],
-            'actions': ['(y)es', '(n)o']
-        }
-        self.actions = {'y': self._frame_quit, 'n': self.frame_main}
-
-    def _frame_quit(self):
-        self.running = False
-
-    def get_all_ports(self):
-        l = []
-        ports = self.proxy.get_all_ports()
-        for p in ports:
-            l.append(p['name'])
-        return l
-
-    def get_audio_ports(self):
-        ports = self.proxy.get_audio_ports()
-        return ports
-
-    def get_midi_ports(self):
-        ports = self.proxy.get_midi_ports()
-        return ports
-
-    def connect(self, out_p, in_p):
-        self.proxy.connect(out_p, in_p)
-
-    def get_mods(self):
+    def _fill_with_underline(self, win, data, align, sign='-'):
+        _, mx = win.getmaxyx()
+        _len = len(data)
+        if align == 'center':
+            x = int((mx - _len) / 2)
+            win.addstr(0, x, data)
+            win.hline(1, x, sign, _len)
+        elif align == 'left':
+            win.addstr(0, 0, data)
+            win.hline(1, 0, sign, _len)
+        elif align == 'right':
+            x = mx - _len
+            win.addstr(0, x, data)
+            win.hline(1, x, sign, _len)
+        else:
+            raise ValueError
         pass
+
+    def update_title(self, data, align='center'):
+        win = self.title_win
+        win.clear()
+        self._fill_with_underline(win, data, align)
+        win.refresh()
+
+    def update_status(self, data, align='center'):
+        win = self.status_win
+        win.clear()
+        self._fill_with_underline(win, data, align, sign=' ')
+        win.refresh()
+
+    def tree_format(self, data, l, branch, coords=[], padding=3):
+        if isinstance(data, dict):
+            ll = []
+            for k, v in data.items():
+                coords.append(k)
+                if branch:
+                    ll.append(branch + '-' * padding + k)
+                    _branch = branch + ' ' * padding + '|'
+                else:
+                    ll.append(k)
+                    _branch = ' ' * padding + '|'
+                self.tree_format(v, ll, _branch, coords=coords)
+            l += ll
+        elif isinstance(data, list):
+            ll = []
+            for dat in data:
+                self.tree_format(dat, ll, branch, coords=coords)
+            l += ll
+        else:
+            coords.append(data)
+            l.append(branch + '-' * padding + data)
+
+    def fill_pad(self, pad, data, padding=4):
+        height = self.stdscr_height - self.title_height - self.status_height
+        width = self.stdscr_width
+        lines = []
+        node_coords = []
+        if isinstance(data, dict):
+            l = []
+            coords = []
+            self.tree_format(data, l, None, coords=coords)
+            lines.append(l)
+            node_coords.append({'coords': coords})
+        elif isinstance(data, list):
+            for dat in data:
+                l = []
+                coords = []
+                self.tree_format(dat, l, None, coords=coords)
+                lines.append(l)
+                node_coords.append({'coords': coords})
+        x, y = 0, 0
+        max_y = 0
+        pad.clear()
+        for line, coords in zip(lines, node_coords):
+            max_len = self._max_len(line)
+            if x + max_len > width:
+                x = 0
+                y = max_y
+            pad.hline(y, x, ' ', 1)
+            y += 1
+            #pad.addstr(y, x, '==>')
+            coords['y'] = y
+            coords['x'] = x
+            for s in line:
+                pad.addstr(y, x + padding, s)
+                y += 1
+            x += max_len + padding
+            if max_y < y:
+                max_y = y
+            y = 0
+        # end for loop
+        self.node_coords = node_coords
+        self.node_index = 0
+
+    def update_content(self, data):
+        win = self.content_win
+        pad = self.pad
+        win.clear()
+        pad.clear()
+        self.fill_pad(pad, data)
+        win.refresh()
+        pad.refresh(self.pad_y, self.pad_x, self.title_height, 0,
+                    self.stdscr_height - self.status_height - 1, self.stdscr_width - 1)
 
     def _max_len(self, data):
         _max = 0
@@ -217,124 +172,123 @@ class Shell:
                 _max = len(dat)
         return _max
 
-    def _layout(self, pad, y, content, padding=0, gap=4):
-        pad_y, pad_x = pad.getmaxyx()
-        align = content['align']
-        layout = content['layout']
-        data = content['data']
-        max_len = 0
-        if layout == 'vertical':
-            for dat in data:
-                max_len += self._max_len(dat)
-                max_len += padding
-        elif layout == 'horizon':
-            for dat in data:
-                m = self._max_len(dat)
-                if max_len < m:
-                    max_len = m
-            max_len += padding
-        else:
-            raise ValueError('Unknown layout: {}!'.format(layout))
-        x = int((pad_x - max_len + gap) / 2)
-        for dat in data:
-            _y = y
-            title = dat[0]
-            pad.addstr(_y, x, title)
-            _y += 1
-            pad.hline(_y, x, '-', len(title))
-            x += padding
-            _y += 1
-            _max = 0
-            for _dat in dat[1:]:
-                if _max < len(_dat):
-                    _max = len(_dat)
-                pad.addstr(_y, x, _dat)
-                _y += 1
-            x += _max
-            x += gap
+    def on_resize(self, ch):
+        if ch == curses.KEY_RESIZE:
+            self.windows_init()
+            return True
+        return False
 
-    def draw(self, padding, gap):
+    def frame_quit(self):
         stdscr = self.stdscr
-        pad = self.pad
-        frame = self.frame
-        title = frame['title']
-        x = int((self.stdscr_x - len(title)) / 2)
-        y = 1
-        stdscr.addstr(y, x, title)
-        stdscr.hline(0, x, '-', len(title))
-        y += 2
-        # content
-        content = frame['content']
-        if content:
-            self._layout(pad, 1, content, padding=padding, gap=gap)
-        # actions
-        actions = frame['actions']
-        s = ''
-        i = 0
-        while i < len(actions) - 1:
-            s += actions[i]
-            s += ', '
-            i += 1
-        s += actions[i]
-        x = int((self.stdscr_x - len(s)) / 2)
-        stdscr.addstr(self.stdscr_y - 2, x, s)
-        stdscr.hline(self.stdscr_y - 3, x, '-', len(s))
-
-    def action_handler(self, ch):
-        if ch in self.actions:
-            self.frame_handler = self.actions[ch]
-
-    def process(self):
-        stdscr = self.stdscr
-        gap = 8
-        padding = 2
-        pad = self.pad
-        self.stdscr_y, self.stdscr_x = stdscr.getmaxyx()
-        self.pad_y, self.pad_x = pad.getmaxyx()
-        self.pos_y = 0
-        self.pos_x = int((self.pad_x + gap - self.stdscr_x) / 2)
-        stepping = 3
+        self.update_title('Exit from the program?')
+        self.update_status('(y)es (n)o')
+        stdscr.refresh()
         while True:
-            if self.frame_handler:
-                self.frame_handler()
-                self.frame_handler = None
-            if not self.running:
-                break
-            stdscr.clear()
-            self.draw(padding, gap)
-            stdscr.refresh()
-            # leave 2 for title, 2 for actions
-            pad.refresh(self.pos_y, self.pos_x, 2, 0, self.stdscr_y -
-                        3, self.stdscr_x - 1)
             ch = stdscr.getch()
-            if ch == curses.KEY_RESIZE:
-                self.stdscr_y, self.stdscr_x = stdscr.getmaxyx()
-                self.pos_x = int((self.pad_x + gap - self.stdscr_x) / 2)
-                continue
-            self.action_handler(chr(ch))
-            # navigate
-            if ch == curses.KEY_UP:
-                self.pos_y -= stepping
-                if self.pos_y < 0:
-                    self.pos_y = 0
-            elif ch == curses.KEY_DOWN:
-                self.pos_y += stepping
-                if self.pos_y > self.pad_y:
-                    self.pos_y = self.pad_y - 1
-            elif ch == curses.KEY_LEFT:
-                self.pos_x -= stepping
-                if self.pos_x < 0:
-                    self.pos_x = 0
-            elif ch == curses.KEY_RIGHT:
-                self.pos_x += stepping
-                if self.pos_x > self.pad_x:
-                    self.pos_x = self.pad_x - 1
+            if self.on_resize(ch):
+                self.main()
+            if ch == ord('y'):
+                sys.exit(0)
+                self.running = False
+                break
+            elif ch == ord('n'):
+                self.main()
 
-    def run(self):
-        pass
+    def draw_arrow(self, index, old):
+        sign = '==>'
+        pad = self.pad
+        nodes_len = len(self.node_coords)
+        coord = self.node_coords[old % nodes_len]
+        pad.addstr(coord['y'], coord['x'], ' ' * len(sign))
+        coord = self.node_coords[index % nodes_len]
+        self.update_title(coord['coords'][0])
+        pad.addstr(coord['y'], coord['x'], sign)
+        pad.refresh(self.pad_y, self.pad_x, self.title_height, 0,
+                    self.stdscr_height - self.status_height - 1, self.stdscr_width - 1)
+
+    def frame_connection(self):
+        stdscr = self.stdscr
+        stdscr.refresh()
+        self.update_title('Create a connection!!!')
+        self.update_status('(b)ack')
+        index = len(self.node_coords) * 1000
+        old = index
+        while True:
+            self.draw_arrow(index, old)
+            old = index
+            ch = stdscr.getch()
+            if self.on_resize(ch):
+                self.main()
+            if ch == ord('b'):
+                self.main()
+            if ch == curses.KEY_UP:
+                pass
+            elif ch == curses.KEY_DOWN:
+                pass
+            elif ch == curses.KEY_LEFT:
+                index += 1
+                pass
+            elif ch == curses.KEY_RIGHT:
+                index -= 1
+                pass
+
+    def main(self):
+        stdscr = self.stdscr
+        data = self.proxy.get_all_nodes()
+        stdscr.clear()
+        stdscr.refresh()
+        self.update_title('Welcome to Coderband!!!')
+        self.update_content(data)
+        self.update_status('(a)dd (c)onnect (d)isconnect (r)efresh (q)uit')
+        self.running = True
+        while self.running:
+            ch = stdscr.getch()
+            if self.on_resize(ch):
+                self.main()
+            if ch == ord('r'):
+                self.main()
+            if ch == ord('c'):
+                self.frame_connection()
+            elif ch == ord('q'):
+                self.frame_quit()
+
+
+'''
+Nodes:
+~~~~~
+==> Calf Studio Gear:
+        |----Audio (a)
+        |     |----Input (i)
+        |     |     |----flanger In #1 (1)
+        |     |     |----flanger In #2 (2)
+        |     |----Output (o)
+        |     |     |----monosynth Out #1 (1)
+        |     |     |----monosynth Out #2 (2)
+        |     |     |----flanger In #1 (3)
+        |     |     |----flanger In #2 (4)
+        |----MIDI (m)
+        |     |----Input (i)
+        |     |     |----Automation MIDI In (1)
+        |     |     |----monosynth MIDI In (2)
+        |     |----Output (o)
+        |     |     |----Automation MIDI Out (1)
+        |     |     |----monosynth MIDI Out (2)
+
+Connections:
+~~~~~~~~~~
+
+==> Calf Studio Gear:A:O:monosynth Out #1 ==> Calf Studio Gear:A:I:flanger In #1
+        Calf Studio Gear:A:O:monosynth Out #1 ==> Calf Studio Gear:A:I:flanger In #1
+
+'''
 
 
 if __name__ == '__main__':
-    shell = Shell('http://localhost:8000')
-    shell.process()
-    shell.close()
+    host = 'http://localhost:8000'
+    shell = Shell(host)
+    try:
+        shell.main()
+    except KeyboardInterrupt:
+        shell.close()
+    finally:
+        shell.close()
