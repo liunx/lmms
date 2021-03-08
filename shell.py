@@ -4,6 +4,8 @@ import curses
 from curses import wrapper
 import xmlrpc.client
 import sys
+from anytree.importer import DictImporter
+from anytree import RenderTree, AsciiStyle
 
 
 def load_midi(s, name, filename):
@@ -18,6 +20,11 @@ def load_audio(s, name, filename):
         t = timeit.default_timer()
         s.load_audio(name, xmlrpc.client.Binary(f.read()))
         print(timeit.default_timer() - t)
+
+
+class Coord:
+    x = 0
+    y = 0
 
 
 class Shell:
@@ -194,13 +201,13 @@ class Shell:
             elif ch == ord('n'):
                 self.main()
 
-    def draw_arrow(self, index, old):
+    def draw_arrow(self, new, old):
         sign = '==>'
         pad = self.pad
         nodes_len = len(self.node_coords)
-        coord = self.node_coords[old % nodes_len]
+        coord = self.node_coords[old.y % nodes_len]
         pad.addstr(coord['y'], coord['x'], ' ' * len(sign))
-        coord = self.node_coords[index % nodes_len]
+        coord = self.node_coords[new.y % nodes_len]
         self.update_title(coord['coords'][0])
         pad.addstr(coord['y'], coord['x'], sign)
         pad.refresh(self.pad_y, self.pad_x, self.title_height, 0,
@@ -211,26 +218,24 @@ class Shell:
         stdscr.refresh()
         self.update_title('Create a connection!!!')
         self.update_status('(b)ack')
-        index = len(self.node_coords) * 1000
-        old = index
+        _new = Coord()
+        _old = Coord()
         while True:
-            self.draw_arrow(index, old)
-            old = index
+            self.draw_arrow(_new, _old)
+            _old.y, _old.x = _new.y, _new.x
             ch = stdscr.getch()
             if self.on_resize(ch):
                 self.main()
             if ch == ord('b'):
                 self.main()
             if ch == curses.KEY_UP:
-                pass
+                _new.y -= 1
             elif ch == curses.KEY_DOWN:
-                pass
+                _new.y += 1
             elif ch == curses.KEY_LEFT:
-                index += 1
-                pass
+                _new.x -= 1
             elif ch == curses.KEY_RIGHT:
-                index -= 1
-                pass
+                _new.x += 1
 
     def main(self):
         stdscr = self.stdscr
@@ -283,8 +288,7 @@ Connections:
 '''
 
 
-if __name__ == '__main__':
-    host = 'http://localhost:8000'
+def main(host):
     shell = Shell(host)
     try:
         shell.main()
@@ -292,3 +296,42 @@ if __name__ == '__main__':
         shell.close()
     finally:
         shell.close()
+
+
+def to_anytree(data, node):
+    if isinstance(data, list):
+        children = []
+        for dat in data:
+            to_anytree(dat, children)
+        node['children'] = children
+    elif isinstance(data, dict):
+        for k, v in data.items():
+            d = {'name': k}
+            to_anytree(v, d)
+            node.append(d)
+    else:
+        node.append({'name': data})
+
+
+def debug(url):
+    #proxy = xmlrpc.client.ServerProxy(url)
+    #nodes = proxy.get_all_nodes()
+    nodes = [{'system': [{'audio': [{'input': ['playback_1', 'playback_2']},
+                                    {'output': ['capture_1', 'monitor_1', 'monitor_2']}]}]}]
+
+    #nodes = [{'system': [{'audio': []}]}]
+    root = {'name': 'nodes'}
+    to_anytree(nodes, root)
+    print(root)
+    if 1:
+        importer = DictImporter()
+        tree = importer.import_(root)
+        print(RenderTree(tree, style=AsciiStyle))
+
+
+if __name__ == '__main__':
+    host = 'http://localhost:8000'
+    if 0:
+        main(host)
+    else:
+        debug(host)
