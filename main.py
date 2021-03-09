@@ -257,25 +257,24 @@ class RPC:
         for port in ports:
             node_name, port_name = port.name.split(':')
             if node_name not in nodes:
-                nodes[node_name] = {
-                    'audio': {'input': [], 'output': []},
-                    'midi': {'input': [], 'output': []}}
+                nodes[node_name] = [
+                    {'audio': [{'input': []}, {'output': []}]},
+                    {'midi': [{'input': []}, {'output': []}]}]
             node = nodes[node_name]
             if port.is_audio:
                 if port.is_input:
-                    node['audio']['input'].append(port.shortname)
+                    node[0]['audio'][0]['input'].append(port.shortname)
                 elif port.is_output:
-                    node['audio']['output'].append(port.shortname)
+                    node[0]['audio'][1]['output'].append(port.shortname)
             elif port.is_midi:
                 if port.is_input:
-                    node['midi']['input'].append(port.shortname)
+                    node[1]['midi'][0]['input'].append(port.shortname)
                 elif port.is_output:
-                    node['midi']['output'].append(port.shortname)
+                    node[1]['midi'][1]['output'].append(port.shortname)
             _nodes = []
             for k, v in nodes.items():
                 _nodes.append({k: v})
         return _nodes
-
 
     def add_synth(self, name):
         if name in self.nodes:

@@ -5,7 +5,8 @@ from curses import wrapper
 import xmlrpc.client
 import sys
 from anytree.importer import DictImporter
-from anytree import RenderTree, AsciiStyle
+from anytree import RenderTree, AsciiStyle, ContRoundStyle
+from anytree import Walker, find_by_attr
 
 
 def load_midi(s, name, filename):
@@ -25,6 +26,8 @@ def load_audio(s, name, filename):
 class Coord:
     x = 0
     y = 0
+    height = 0
+    width = 0
 
 
 class Shell:
@@ -32,6 +35,7 @@ class Shell:
     pad_width = 4000
     title_height = 2
     status_height = 2
+    sign = ' ' * 2 + '==>'
 
     def __init__(self, url):
         self.proxy = xmlrpc.client.ServerProxy(url)
@@ -98,79 +102,82 @@ class Shell:
         self._fill_with_underline(win, data, align, sign=' ')
         win.refresh()
 
-    def tree_format(self, data, l, branch, coords=[], padding=3):
-        if isinstance(data, dict):
-            ll = []
-            for k, v in data.items():
-                coords.append(k)
-                if branch:
-                    ll.append(branch + '-' * padding + k)
-                    _branch = branch + ' ' * padding + '|'
-                else:
-                    ll.append(k)
-                    _branch = ' ' * padding + '|'
-                self.tree_format(v, ll, _branch, coords=coords)
-            l += ll
-        elif isinstance(data, list):
-            ll = []
-            for dat in data:
-                self.tree_format(dat, ll, branch, coords=coords)
-            l += ll
-        else:
-            coords.append(data)
-            l.append(branch + '-' * padding + data)
+    def anytree_convert(self, data):
+        def to_anytree(data, node):
+            if isinstance(data, list):
+                children = []
+                for dat in data:
+                    to_anytree(dat, children)
+                node['children'] = children
+            elif isinstance(data, dict):
+                for k, v in data.items():
+                    d = {'name': k}
+                    to_anytree(v, d)
+                    node.append(d)
+            else:
+                if isinstance(node, list):
+                    node.append({'name': data})
+                elif isinstance(node, dict):
+                    node['children'] = [{'name': data}]
+        nodes = []
+        root = {'name': 'nodes'}
+        to_anytree(data, root)
+        for child in root['children']:
+            importer = DictImporter()
+            tree = importer.import_(child)
+            rendered_tree = []
+            for pre, _, node in RenderTree(tree, style=ContRoundStyle()):
+                rendered_tree.append([pre, node])
+            nodes.append([tree, rendered_tree])
+        return nodes
 
-    def fill_pad(self, pad, data, padding=4):
-        height = self.stdscr_height - self.title_height - self.status_height
-        width = self.stdscr_width
-        lines = []
-        node_coords = []
-        if isinstance(data, dict):
-            l = []
-            coords = []
-            self.tree_format(data, l, None, coords=coords)
-            lines.append(l)
-            node_coords.append({'coords': coords})
-        elif isinstance(data, list):
-            for dat in data:
-                l = []
-                coords = []
-                self.tree_format(dat, l, None, coords=coords)
-                lines.append(l)
-                node_coords.append({'coords': coords})
-        x, y = 0, 0
-        max_y = 0
-        pad.clear()
-        for line, coords in zip(lines, node_coords):
-            max_len = self._max_len(line)
-            if x + max_len > width:
-                x = 0
-                y = max_y
-            pad.hline(y, x, ' ', 1)
-            y += 1
-            #pad.addstr(y, x, '==>')
-            coords['y'] = y
-            coords['x'] = x
-            for s in line:
-                pad.addstr(y, x + padding, s)
-                y += 1
-            x += max_len + padding
-            if max_y < y:
-                max_y = y
-            y = 0
-        # end for loop
-        self.node_coords = node_coords
-        self.node_index = 0
+    def get_tree_width(self, tree):
+        _max_len = 0
+        for pre, node in tree:
+            s = ''.join([pre, node.name])
+            if _max_len < len(s):
+                _max_len = len(s)
+        return _max_len
 
-    def update_content(self, data):
-        win = self.content_win
+    def fill_pad(self, nodes, horizon_padding=2, vertical_padding=6):
         pad = self.pad
-        win.clear()
+        stdscr_width = self.stdscr_width
         pad.clear()
-        self.fill_pad(pad, data)
+        x, y = 0, 0
+        title = 'Nodes:'
+        pad.addstr(y, x + horizon_padding, title)
+        y += 1
+        pad.hline(y, x + horizon_padding, '~', len(title))
+        y += 1
+        _height = 0
+        for node in nodes:
+            coord = Coord()
+            _, rendered_tree = node
+            _width = self.get_tree_width(rendered_tree)
+            coord.width = _width
+            # exceed the stdscr_width, new line
+            if x + _width > stdscr_width:
+                x = 0
+                y += _height + horizon_padding
+            coord.x, coord.y = x, y
+            for prefix, _node in rendered_tree:
+                s = ''.join([prefix, _node.name])
+                pad.addstr(y, x + vertical_padding, s)
+                y += 1
+            coord.height = y
+            node.append(coord)
+            if _height < y:
+                _height = y
+            x += _width + vertical_padding
+            y = horizon_padding
+
+    def update_content(self, nodes):
+        win = self.content_win
+        win.clear()
+        self.fill_pad(nodes)
         win.refresh()
-        pad.refresh(self.pad_y, self.pad_x, self.title_height, 0,
-                    self.stdscr_height - self.status_height - 1, self.stdscr_width - 1)
+        self.pad.refresh(self.pad_y, self.pad_x, self.title_height, 0,
+                         self.stdscr_height - self.status_height - 1, self.stdscr_width - 1)
 
     def _max_len(self, data):
         _max = 0
@@ -201,49 +208,103 @@ class Shell:
             elif ch == ord('n'):
                 self.main()
 
-    def draw_arrow(self, new, old):
-        sign = '==>'
+    def full_path(self, node):
+        s = ''
+        n = node
+        while n:
+            if s:
+                s = n.name  + ':' + s
+            else:
+                s = n.name
+            n = n.parent
+        return s
+
+    def get_leaf(self, tree, y):
+        i = 0
+        _len = len(tree)
+        while True:
+            node = tree[(y + i) % _len]
+            if node.is_leaf:
+                break
+            i += 1
+        return y + i
+
+    def draw_arrow(self, y, x):
         pad = self.pad
-        nodes_len = len(self.node_coords)
-        coord = self.node_coords[old.y % nodes_len]
-        pad.addstr(coord['y'], coord['x'], ' ' * len(sign))
-        coord = self.node_coords[new.y % nodes_len]
-        self.update_title(coord['coords'][0])
-        pad.addstr(coord['y'], coord['x'], sign)
+        nodes = self.nodes
+        _len = len(nodes)
+        node = nodes[x % _len]
+        tree, rendered_tree, coord = node
+        _len = len(rendered_tree)
+        idx = y % _len
+        _y, _x = coord.y + idx, coord.x
+        _, _node = rendered_tree[idx]
+        s = self.full_path(_node)
+        self.update_title(s)
+        pad.addstr(_y, _x, self.sign)
         pad.refresh(self.pad_y, self.pad_x, self.title_height, 0,
                     self.stdscr_height - self.status_height - 1, self.stdscr_width - 1)
+        return tree, _node
+
+    def clear_arrow(self, y, x):
+        pad = self.pad
+        nodes = self.nodes
+        _len = len(nodes)
+        node = nodes[x % _len]
+        tree, rendered_tree, coord = node
+        _len = len(rendered_tree)
+        _y, _x = coord.y + y % _len, coord.x
+        pad.hline(_y, _x, ' ', len(self.sign))
+
+    def select(self, tree, node):
+        pass
 
     def frame_connection(self):
         stdscr = self.stdscr
         stdscr.refresh()
         self.update_title('Create a connection!!!')
-        self.update_status('(b)ack')
-        _new = Coord()
-        _old = Coord()
+        self.update_status('(k)up (j)down (h)left (l)right (b)ack')
+        y, x = 0, 0
+        y1, x1 = 0, 0
+        connect = []
         while True:
-            self.draw_arrow(_new, _old)
-            _old.y, _old.x = _new.y, _new.x
+            if x != x1:
+                y = 0
+            self.clear_arrow(y1, x1)
+            tree, node = self.draw_arrow(y, x)
+            y1, x1 = y, x
             ch = stdscr.getch()
             if self.on_resize(ch):
                 self.main()
             if ch == ord('b'):
                 self.main()
-            if ch == curses.KEY_UP:
-                _new.y -= 1
-            elif ch == curses.KEY_DOWN:
-                _new.y += 1
-            elif ch == curses.KEY_LEFT:
-                _new.x -= 1
-            elif ch == curses.KEY_RIGHT:
-                _new.x += 1
+            elif ch == ord(' '):
+                if len(connect) == 2:
+                    src, dst = connect
+                    src_p = f'{src.root.name}:{src.name}'
+                    dst_p = f'{dst.root.name}:{dst.name}'
+                    self.update_title(f'{src.root.name}:{src.name} --> {dst.root.name}:{dst.name}')
+                    time.sleep(3)
+                    self.proxy.connect(src_p, dst_p)
+                    connect = []
+                connect.append(node)
+            if ch == ord('k'):
+                y -= 1
+            elif ch == ord('j'):
+                y += 1
+            elif ch == ord('h'):
+                x -= 1
+            elif ch == ord('l'):
+                x += 1
 
     def main(self):
         stdscr = self.stdscr
         data = self.proxy.get_all_nodes()
+        self.nodes = self.anytree_convert(data)
         stdscr.clear()
         stdscr.refresh()
         self.update_title('Welcome to Coderband!!!')
-        self.update_content(data)
+        self.update_content(self.nodes)
         self.update_status('(a)dd (c)onnect (d)isconnect (r)efresh (q)uit')
         self.running = True
         while self.running:
@@ -310,28 +371,32 @@ def to_anytree(data, node):
             to_anytree(v, d)
             node.append(d)
     else:
-        node.append({'name': data})
+        if isinstance(node, list):
+            node.append({'name': data})
+        elif isinstance(node, dict):
+            node['children'] = [{'name': data}]
 
 
 def debug(url):
-    #proxy = xmlrpc.client.ServerProxy(url)
-    #nodes = proxy.get_all_nodes()
-    nodes = [{'system': [{'audio': [{'input': ['playback_1', 'playback_2']},
-                                    {'output': ['capture_1', 'monitor_1', 'monitor_2']}]}]}]
-
-    #nodes = [{'system': [{'audio': []}]}]
+    proxy = xmlrpc.client.ServerProxy(url)
+    nodes = proxy.get_all_nodes()
+    #nodes = [{'a': [1,2,3,4], 'b': 200, 'c': 300}]
     root = {'name': 'nodes'}
     to_anytree(nodes, root)
-    print(root)
-    if 1:
+    for child in root['children']:
         importer = DictImporter()
-        tree = importer.import_(root)
-        print(RenderTree(tree, style=AsciiStyle))
+        tree = importer.import_(child)
+        for pre, mid, node in RenderTree(tree, style=ContRoundStyle()):
+            print(pre, node.name)
+        print()
+        n = find_by_attr(tree, 'playback_1')
+        print(n, n.depth)
+        break
 
 
 if __name__ == '__main__':
     host = 'http://localhost:8000'
-    if 0:
+    if 1:
         main(host)
     else:
         debug(host)
