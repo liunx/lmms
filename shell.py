@@ -35,6 +35,10 @@ class Shell:
     pad_width = 4000
     title_height = 2
     status_height = 2
+    title_connect = 'Add/Remove a connection!!!'
+    OP_NULL = 0
+    OP_ADD = 1
+    OP_DEL = 2
     sign = ' ' * 2 + '==>'
 
     def __init__(self, url):
@@ -171,10 +175,12 @@ class Shell:
             x += _width + vertical_padding
             y = horizon_padding
 
-    def update_content(self, nodes):
+    def update_content(self):
         win = self.content_win
+        data = self.proxy.get_all_nodes()
+        self.nodes = self.anytree_convert(data)
         win.clear()
-        self.fill_pad(nodes)
+        self.fill_pad(self.nodes)
         win.refresh()
         self.pad.refresh(self.pad_y, self.pad_x, self.title_height, 0,
                          self.stdscr_height - self.status_height - 1, self.stdscr_width - 1)
@@ -213,7 +219,7 @@ class Shell:
         n = node
         while n:
             if s:
-                s = n.name  + ':' + s
+                s = n.name + ':' + s
             else:
                 s = n.name
             n = n.parent
@@ -239,12 +245,10 @@ class Shell:
         idx = y % _len
         _y, _x = coord.y + idx, coord.x
         _, _node = rendered_tree[idx]
-        s = self.full_path(_node)
-        self.update_title(s)
         pad.addstr(_y, _x, self.sign)
         pad.refresh(self.pad_y, self.pad_x, self.title_height, 0,
                     self.stdscr_height - self.status_height - 1, self.stdscr_width - 1)
-        return tree, _node
+        return _node
 
     def clear_arrow(self, y, x):
         pad = self.pad
@@ -256,38 +260,68 @@ class Shell:
         _y, _x = coord.y + y % _len, coord.x
         pad.hline(_y, _x, ' ', len(self.sign))
 
-    def select(self, tree, node):
-        pass
-
     def frame_connection(self):
+        title = 'Add/Remove a connection!!!'
         stdscr = self.stdscr
         stdscr.refresh()
-        self.update_title('Create a connection!!!')
-        self.update_status('(k)up (j)down (h)left (l)right (b)ack')
+        self.update_title(title)
+        self.update_status('(a)dd (d)el (c)ancel (b)ack')
         y, x = 0, 0
         y1, x1 = 0, 0
-        connect = []
+        pair = []
         while True:
             if x != x1:
                 y = 0
+            if self._operation == self.OP_ADD:
+                self.update_title(title)
+            elif self._operation == self.OP_DEL:
+                self.update_title(title)
             self.clear_arrow(y1, x1)
-            tree, node = self.draw_arrow(y, x)
+            _node = self.draw_arrow(y, x)
+            title = self.full_path(_node)
             y1, x1 = y, x
             ch = stdscr.getch()
             if self.on_resize(ch):
                 self.main()
             if ch == ord('b'):
                 self.main()
-            elif ch == ord(' '):
-                if len(connect) == 2:
-                    src, dst = connect
-                    src_p = f'{src.root.name}:{src.name}'
-                    dst_p = f'{dst.root.name}:{dst.name}'
-                    self.update_title(f'{src.root.name}:{src.name} --> {dst.root.name}:{dst.name}')
-                    time.sleep(3)
-                    self.proxy.connect(src_p, dst_p)
-                    connect = []
-                connect.append(node)
+            elif ch == ord('a'):
+                s = self.full_path(_node)
+                self._operation = self.OP_ADD
+                if _node.depth == 3:
+                    pair.append(_node)
+                    if len(pair) == 2:
+                        n1, n2 = pair
+                        src = ':'.join([n1.root.name, n1.name])
+                        dst = ':'.join([n2.root.name, n2.name])
+                        try:
+                            self.proxy.connect(src, dst)
+                            self.update_content()
+                            title = f"Connect: {src} ==> {dst} SUCCESS!!!"
+                        except:
+                            title = f"Connect: {src} ==> {dst} FAILED!!!"
+                        pair.clear()
+                    else:
+                        title = s
+                else:
+                    title = f'[{title}] not a port!!!'
+            elif ch == ord('d'):
+                self._operation = self.OP_DEL
+                if _node.depth != 4:
+                    title = f'{_node.name} not a connection!!!'
+                    continue
+                src = _node.name
+                dst = f'{_node.root.name}:{_node.parent.name}'
+                try:
+                    self.proxy.disconnect(src, dst)
+                    title = f"Disconnect: {src} ==> {dst} SUCCESS!!!"
+                    self.update_content()
+                except:
+                    title = f"Disconnect: {src} ==> {dst} FAILED!!!"
+            elif ch == ord('c'):
+                self.update_title(self.title_connect)
+                self._operation = self.OP_NULL
+            # navigation
             if ch == ord('k'):
                 y -= 1
             elif ch == ord('j'):
@@ -299,13 +333,12 @@ class Shell:
 
     def main(self):
         stdscr = self.stdscr
-        data = self.proxy.get_all_nodes()
-        self.nodes = self.anytree_convert(data)
+        self._operation = self.OP_NULL
         stdscr.clear()
         stdscr.refresh()
         self.update_title('Welcome to Coderband!!!')
-        self.update_content(self.nodes)
-        self.update_status('(a)dd (c)onnect (d)isconnect (r)efresh (q)uit')
+        self.update_content()
+        self.update_status('(a)dd (c)onnect (r)efresh (q)uit')
         self.running = True
         while self.running:
             ch = stdscr.getch()
@@ -317,36 +350,6 @@ class Shell:
                 self.frame_connection()
             elif ch == ord('q'):
                 self.frame_quit()
-
-
-'''
-Nodes:
-~~~~~
-==> Calf Studio Gear:
-        |----Audio (a)
-        |     |----Input (i)
-        |     |     |----flanger In #1 (1)
-        |     |     |----flanger In #2 (2)
-        |     |----Output (o)
-        |     |     |----monosynth Out #1 (1)
-        |     |     |----monosynth Out #2 (2)
-        |     |     |----flanger In #1 (3)
-        |     |     |----flanger In #2 (4)
-        |----MIDI (m)
-        |     |----Input (i)
-        |     |     |----Automation MIDI In (1)
-        |     |     |----monosynth MIDI In (2)
-        |     |----Output (o)
-        |     |     |----Automation MIDI Out (1)
-        |     |     |----monosynth MIDI Out (2)
-
-Connections:
-~~~~~~~~~~
-
-==> Calf Studio Gear:A:O:monosynth Out #1 ==> Calf Studio Gear:A:I:flanger In #1
-        Calf Studio Gear:A:O:monosynth Out #1 ==> Calf Studio Gear:A:I:flanger In #1
-
-'''
 
 
 def main(host):

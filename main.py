@@ -251,10 +251,15 @@ class RPC:
              'is_physical': port.is_physical, 'is_terminal': port.is_terminal}
         return d
 
+    def _get_all_connections(self, port):
+        l = self.jack_master.get_all_connections(port)
+        return [p.name for p in l]
+
     def get_all_nodes(self):
         nodes = {}
         ports = self.jack_master.get_ports()
         for port in ports:
+            conn = self._get_all_connections(port.name)
             node_name, port_name = port.name.split(':')
             if node_name not in nodes:
                 nodes[node_name] = [
@@ -263,14 +268,14 @@ class RPC:
             node = nodes[node_name]
             if port.is_audio:
                 if port.is_input:
-                    node[0]['audio'][0]['input'].append(port.shortname)
+                    node[0]['audio'][0]['input'].append({port.shortname: conn})
                 elif port.is_output:
-                    node[0]['audio'][1]['output'].append(port.shortname)
+                    node[0]['audio'][1]['output'].append({port.shortname: conn})
             elif port.is_midi:
                 if port.is_input:
-                    node[1]['midi'][0]['input'].append(port.shortname)
+                    node[1]['midi'][0]['input'].append({port.shortname: conn})
                 elif port.is_output:
-                    node[1]['midi'][1]['output'].append(port.shortname)
+                    node[1]['midi'][1]['output'].append({port.shortname: conn})
             _nodes = []
             for k, v in nodes.items():
                 _nodes.append({k: v})
