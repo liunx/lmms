@@ -94,6 +94,28 @@ class Shell:
             raise ValueError
         pass
 
+    def _input_with_underline(self, win, align, sign='-', letter_len=16):
+        _, mx = win.getmaxyx()
+        prompt = 'name: '
+        _len1 = len(prompt)
+        _len = letter_len + _len1
+        if align == 'center':
+            x = int((mx - _len) / 2)
+            win.hline(1, x, sign, _len)
+            win.addstr(0, x, prompt)
+            return win.getstr(0, x + _len1, _len)
+        elif align == 'left':
+            win.hline(1, 0, sign, _len)
+            win.addstr(0, 0, prompt)
+            return win.getstr(0, 0 + _len1, _len)
+        elif align == 'right':
+            x = mx - _len
+            win.hline(1, x, sign, _len)
+            win.addstr(0, x, prompt)
+            return win.getstr(0, x + _len1, _len)
+        else:
+            raise ValueError
+
     def update_title(self, data, align='center'):
         win = self.title_win
         win.clear()
@@ -105,6 +127,15 @@ class Shell:
         win.clear()
         self._fill_with_underline(win, data, align, sign=' ')
         win.refresh()
+
+    def input_status(self, align='center'):
+        win = self.status_win
+        win.clear()
+        curses.echo(True)
+        _input = self._input_with_underline(win, align)
+        curses.noecho()
+        win.refresh()
+        return _input.decode()
 
     def anytree_convert(self, data):
         def to_anytree(data, node):
@@ -331,6 +362,16 @@ class Shell:
             elif ch == ord('l'):
                 x += 1
 
+    def frame_add(self):
+        self.update_title('Add Synth')
+        name = self.input_status()
+        try:
+            self.proxy.add_synth(name)
+            self.update_title(f'Add {name} SUCCESS!!!')
+        except:
+            self.update_title(f'Add {name} FAILED!!!')
+        self.main()
+
     def main(self):
         stdscr = self.stdscr
         self._operation = self.OP_NULL
@@ -346,6 +387,8 @@ class Shell:
                 self.main()
             if ch == ord('r'):
                 self.main()
+            elif ch == ord('a'):
+                self.frame_add()
             if ch == ord('c'):
                 self.frame_connection()
             elif ch == ord('q'):
