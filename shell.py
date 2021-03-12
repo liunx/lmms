@@ -143,7 +143,8 @@ class Shell:
                 children = []
                 for dat in data:
                     to_anytree(dat, children)
-                node['children'] = children
+                if children:
+                    node['children'] = children
             elif isinstance(data, dict):
                 for k, v in data.items():
                     d = {'name': k}
@@ -206,16 +207,6 @@ class Shell:
             x += _width + vertical_padding
             y = horizon_padding
 
-    def update_content(self):
-        win = self.content_win
-        data = self.proxy.get_all_nodes()
-        self.nodes = self.anytree_convert(data)
-        win.clear()
-        self.fill_pad(self.nodes)
-        win.refresh()
-        self.pad.refresh(self.pad_y, self.pad_x, self.title_height, 0,
-                         self.stdscr_height - self.status_height - 1, self.stdscr_width - 1)
-
     def _max_len(self, data):
         _max = 0
         for dat in data:
@@ -237,13 +228,11 @@ class Shell:
         while True:
             ch = stdscr.getch()
             if self.on_resize(ch):
-                self.main()
+                return self.main()
             if ch == ord('y'):
                 sys.exit(0)
-                self.running = False
-                break
             elif ch == ord('n'):
-                self.main()
+                return self.main()
 
     def full_path(self, node):
         s = ''
@@ -291,67 +280,158 @@ class Shell:
         _y, _x = coord.y + y % _len, coord.x
         pad.hline(_y, _x, ' ', len(self.sign))
 
-    def frame_connection(self):
-        title = 'Add/Remove a connection!!!'
+    def frame_add(self):
+        self.update_title('Add Sequencer')
+        name = self.input_status()
+        try:
+            self.proxy.add_seq(name)
+            self.update_title(f'Add {name} SUCCESS!!!')
+        except:
+            self.update_title(f'Add {name} FAILED!!!')
+        self.main()
+
+    def update_content(self, nodes):
+        win = self.content_win
+        win.clear()
+        self.fill_pad(nodes)
+        win.refresh()
+        self.pad.refresh(self.pad_y, self.pad_x, self.title_height, 0,
+                         self.stdscr_height - self.status_height - 1, self.stdscr_width - 1)
+
+    def frame_exception(self, err):
         stdscr = self.stdscr
+        self.update_title(err)
+        self.update_status('(r)try (q)uit')
+        while True:
+            ch = stdscr.getch()
+            if self.on_resize(ch):
+                self.main(err)
+            if ch == ord('r'):
+                self.main()
+            elif ch == ord('q'):
+                self.frame_quit()
+
+    def frame_connect(self, node):
+        stdscr = self.stdscr
+        self.pair.append(f'{node.root.name}:{node.name}')
+        if len(self.pair) < 2:
+            return
+        src, dst = self.pair
+        self.pair = []
+        s = f'Link: {src} ==> {dst} ?'
+        self.update_title(s)
+        self.update_status('(y)es (n)o')
+        while True:
+            ch = stdscr.getch()
+            if ch == ord('y'):
+                try:
+                    self.proxy.connect(src, dst)
+                    s = f'Link: {src} ==> {dst} Succeed !!!'
+                    self.need_update = True
+                except:
+                    s = f'Link: {src} ==> {dst} Failed !!!'
+                self.update_title(s)
+                self.update_status('Press any key ...')
+                stdscr.getch()
+                break
+            elif ch == ord('n'):
+                break
+
+    def rm_node(self, node):
+        stdscr = self.stdscr
+        self.update_title(f'Remove the {node.name} node ?')
+        self.update_status('(y)es (n)o')
+        while True:
+            ch = stdscr.getch()
+            if ch == ord('y'):
+                try:
+                    self.proxy.del_seq(node.name)
+                    s = f'Remove the {node.name} node Succeed !!!'
+                except:
+                    s = f'Remove the {node.name} node Failed !!!'
+                self.update_title(s)
+                self.update_status('Press any key ...')
+                self.need_update = True
+                stdscr.getch()
+                break
+            elif ch == ord('n'):
+                break
+
+    def rm_link(self, node):
+        stdscr = self.stdscr
+        p = node.parent
+        src = f'{p.root.name}:{p.name}'
+        dst = node.name
+        self.update_title(f'Remove {src} ==> {dst} ?')
+        self.update_status('(y)es (n)o')
+        while True:
+            ch = stdscr.getch()
+            if ch == ord('y'):
+                try:
+                    self.proxy.disconnect(src, dst)
+                    s = f'Remove {src} ==> {dst} Succeed !!!'
+                    self.need_update = True
+                except:
+                    s = f'Remove {src} ==> {dst} Failed !!!'
+                self.update_title(s)
+                self.update_status('Press any key ...')
+                stdscr.getch()
+                break
+            elif ch == ord('n'):
+                break
+
+    def frame_disconnect(self, node):
+        if node.is_root:
+            self.rm_node(node)
+        elif node.is_leaf and node.depth == 4:
+            self.rm_link(node)
+
+    def reload_main(self):
+        try:
+            data = self.proxy.get_all_nodes()
+        except ConnectionRefusedError:
+            self.frame_exception('[Error] Connection refused!!!')
+        except xmlrpc.client.Fault as err:
+            err = 'Fault: {}, {}'.format(err.faultCode, err.faultString)
+            self.frame_exception(err)
+        self.update_title('Welcome to Coderband!!!')
+        self.update_status('(c)onnect (d)isconnect (n)ew (r)load (q)uit')
+        self.nodes = self.anytree_convert(data)
+        self.update_content(self.nodes)
+        self.need_update = False
+
+    def main(self):
+        stdscr = self.stdscr
+        stdscr.clear()
         stdscr.refresh()
-        self.update_title(title)
-        self.update_status('(a)dd (d)el (c)ancel (b)ack')
+        self.pair = []
+        self.reload_main()
+        # arrow new, old pos
         y, x = 0, 0
         y1, x1 = 0, 0
-        pair = []
         while True:
-            if x != x1:
-                y = 0
-            if self._operation == self.OP_ADD:
-                self.update_title(title)
-            elif self._operation == self.OP_DEL:
-                self.update_title(title)
+            if self.need_update:
+                self.reload_main()
+                y, x = 0, 0
+                y1, x1 = 0, 0
             self.clear_arrow(y1, x1)
-            _node = self.draw_arrow(y, x)
-            title = self.full_path(_node)
+            node = self.draw_arrow(y, x)
+            info = self.full_path(node)
+            self.update_title(info)
             y1, x1 = y, x
             ch = stdscr.getch()
             if self.on_resize(ch):
                 self.main()
-            if ch == ord('b'):
+            if ch == ord('r'):
                 self.main()
-            elif ch == ord('a'):
-                s = self.full_path(_node)
-                self._operation = self.OP_ADD
-                if _node.depth == 3:
-                    pair.append(_node)
-                    if len(pair) == 2:
-                        n1, n2 = pair
-                        src = ':'.join([n1.root.name, n1.name])
-                        dst = ':'.join([n2.root.name, n2.name])
-                        try:
-                            self.proxy.connect(src, dst)
-                            self.update_content()
-                            title = f"Connect: {src} ==> {dst} SUCCESS!!!"
-                        except:
-                            title = f"Connect: {src} ==> {dst} FAILED!!!"
-                        pair.clear()
-                    else:
-                        title = s
-                else:
-                    title = f'[{title}] not a port!!!'
-            elif ch == ord('d'):
-                self._operation = self.OP_DEL
-                if _node.depth != 4:
-                    title = f'{_node.name} not a connection!!!'
-                    continue
-                src = _node.name
-                dst = f'{_node.root.name}:{_node.parent.name}'
-                try:
-                    self.proxy.disconnect(src, dst)
-                    title = f"Disconnect: {src} ==> {dst} SUCCESS!!!"
-                    self.update_content()
-                except:
-                    title = f"Disconnect: {src} ==> {dst} FAILED!!!"
+            elif ch == ord('n'):
+                self.frame_add()
+            elif ch == ord('q'):
+                self.frame_quit()
             elif ch == ord('c'):
-                self.update_title(self.title_connect)
-                self._operation = self.OP_NULL
+                self.frame_connect(node)
+            elif ch == ord('d'):
+                self.frame_disconnect(node)
             # navigation
             if ch == ord('k'):
                 y -= 1
@@ -361,38 +441,8 @@ class Shell:
                 x -= 1
             elif ch == ord('l'):
                 x += 1
-
-    def frame_add(self):
-        self.update_title('Add Synth')
-        name = self.input_status()
-        try:
-            self.proxy.add_synth(name)
-            self.update_title(f'Add {name} SUCCESS!!!')
-        except:
-            self.update_title(f'Add {name} FAILED!!!')
-        self.main()
-
-    def main(self):
-        stdscr = self.stdscr
-        self._operation = self.OP_NULL
-        stdscr.clear()
-        stdscr.refresh()
-        self.update_title('Welcome to Coderband!!!')
-        self.update_content()
-        self.update_status('(a)dd (c)onnect (r)efresh (q)uit')
-        self.running = True
-        while self.running:
-            ch = stdscr.getch()
-            if self.on_resize(ch):
-                self.main()
-            if ch == ord('r'):
-                self.main()
-            elif ch == ord('a'):
-                self.frame_add()
-            if ch == ord('c'):
-                self.frame_connection()
-            elif ch == ord('q'):
-                self.frame_quit()
+            if x != x1:
+                y = 0
 
 
 def main(host):

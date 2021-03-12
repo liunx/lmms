@@ -183,6 +183,9 @@ class CoderBand:
 class RPC:
     def __init__(self):
         self.nodes = {}
+        self.sequencers = {}
+        self.synths = {}
+        self.effects = {}
         self.jack_master = jack.Client('jack_master')
         self.tbm = TimebaseMaster()
         self.tbm.activate()
@@ -206,108 +209,102 @@ class RPC:
         self.tbm.transport_stop()
         self.tbm.transport_locate(0)
 
-    def get_all_ports(self):
-        _ports = []
-        ports = self.jack_master.get_ports()
-        for port in ports:
-            d = {'aliases': port.aliases, 'name': port.name,
-                 'is_audio': port.is_audio, 'is_input': port.is_input,
-                 'is_output': port.is_output, 'is_midi': port.is_midi,
-                 'is_physical': port.is_physical, 'is_terminal': port.is_terminal}
-            _ports.append(d)
-        return _ports
-
-    def _get_ports(self, ports):
-        _ports = {}
-        for port in ports:
-            n, p = port.name.split(':')
-            if n not in _ports:
-                _ports[n] = {'input': [], 'output': []}
-            if port.is_input:
-                _ports[n]['input'].append(p)
-            elif port.is_output:
-                _ports[n]['output'].append(p)
-        return _ports
-
-    def get_midi_ports(self):
-        ports = self.jack_master.get_ports(is_midi=True)
-        return self._get_ports(ports)
-
-    def get_audio_ports(self):
-        ports = self.jack_master.get_ports(is_audio=True)
-        return self._get_ports(ports)
-
-    def get_ports_info(self, names):
-        ports = []
-        for n in names:
-            ports.append(self.get_port_info)
-        return ports
-
-    def get_port_info(self, name):
-        port = self.jack_master.get_port_by_name(name)
-        d = {'aliases': port.aliases, 'name': port.name,
-             'is_audio': port.is_audio, 'is_input': port.is_input,
-             'is_output': port.is_output, 'is_midi': port.is_midi,
-             'is_physical': port.is_physical, 'is_terminal': port.is_terminal}
-        return d
-
     def _get_all_connections(self, port):
         l = self.jack_master.get_all_connections(port)
         return [p.name for p in l]
 
-    def get_all_nodes(self):
-        nodes = {}
-        ports = self.jack_master.get_ports()
+    def _get_ports(self, name, port_type):
+        ports = []
+        if port_type == 'audio':
+            ports = self.jack_master.get_ports(name, is_audio=True)
+        elif port_type == 'midi':
+            ports = self.jack_master.get_ports(name, is_midi=True)
+        if not ports:
+            return None
+        _input = []
+        _output = []
         for port in ports:
             conn = self._get_all_connections(port.name)
-            node_name, port_name = port.name.split(':')
-            if node_name not in nodes:
-                nodes[node_name] = [
-                    {'audio': [{'input': []}, {'output': []}]},
-                    {'midi': [{'input': []}, {'output': []}]}]
-            node = nodes[node_name]
-            if port.is_audio:
-                if port.is_input:
-                    node[0]['audio'][0]['input'].append({port.shortname: conn})
-                elif port.is_output:
-                    node[0]['audio'][1]['output'].append({port.shortname: conn})
-            elif port.is_midi:
-                if port.is_input:
-                    node[1]['midi'][0]['input'].append({port.shortname: conn})
-                elif port.is_output:
-                    node[1]['midi'][1]['output'].append({port.shortname: conn})
-            _nodes = []
-            for k, v in nodes.items():
-                _nodes.append({k: v})
-        return _nodes
+            dat = port.shortname
+            if conn:
+                dat = {port.shortname: conn}
+            if port.is_input:
+                _input.append(dat)
+            elif port.is_output:
+                _output.append(dat)
+        ports = []
+        if _input:
+            ports.append({'input': _input})
+        if _output:
+            ports.append({'output': _output})
+        return ports
+
+    def get_node_attrib(self, name):
+        if name in self.synths:
+            return '*synth'
+        if name in self.sequencers:
+            return '*sequencer'
+        if name in self.effects:
+            return '*effect'
+        # physical port ? no delete
+        ports = self.jack_master.get_ports(name, is_physical=True)
+        if ports:
+            return '*physical'
+        ports = self.jack_master.get_ports(name, is_physical=False, is_midi=True)
+        if ports:
+            return '*synth'
+        return None
+
+    def get_all_nodes(self):
+        nodes = []
+        names = []
+        ports = self.jack_master.get_ports()
+        for port in ports:
+            node_name, _ = port.name.split(':')
+            if node_name not in names:
+                names.append(node_name)
+        for name in names:
+            l = []
+            attrib = self.get_node_attrib(name)
+            if attrib:
+                l.append(attrib)
+            ports = self._get_ports(name, 'audio')
+            if ports:
+                l.append({'audio': ports})
+            ports = self._get_ports(name, 'midi')
+            if ports:
+                l.append({'midi': ports})
+            nodes.append({name: l})
+        return nodes
 
     def add_synth(self, name):
-        if name in self.nodes:
+        if name in self.synths:
             return False
         synth = Synth(name, self.jack_master.samplerate)
-        self.nodes[name] = synth
+        self.synths[name] = synth
         return True
 
     def del_synth(self, name):
-        if name not in self.nodes:
+        if name not in self.synths:
             return False
-        synth = self.nodes[name]
+        synth = self.synths[name]
         synth.close()
-        del self.nodes[name]
+        del self.synths[name]
+        return True
 
     def add_seq(self, name):
-        if name in self.nodes:
+        if name in self.sequencers:
             return False
         seq = Sequencer(name)
-        self.nodes[name] = seq
+        self.sequencers[name] = seq
         return True
 
     def del_seq(self, name):
-        if name not in self.nodes:
+        if name not in self.sequencers:
             return False
-        seq = self.nodes[name]
+        seq = self.sequencers[name]
         seq.close()
-        del self.nodes[name]
+        del self.sequencers[name]
 
     def load_midi(self, name, data):
         if not isinstance(data, xmlrpc.client.Binary):
@@ -337,17 +334,6 @@ class RPC:
 
     def disconnect(self, src, dst):
         self.jack_master.disconnect(src, dst)
-
-    def disconnect_all(self, src):
-        ports = self.jack_master.get_all_connections(src)
-        for p in ports:
-            self.jack_master.disconnect(p, src)
-
-    def get_params(self, params):
-        pass
-
-    def set_params(self, params):
-        pass
 
 
 def demo01():
