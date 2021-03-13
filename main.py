@@ -260,7 +260,7 @@ class RPC:
         names = []
         ports = self.jack_master.get_ports()
         for port in ports:
-            node_name, _ = port.name.split(':')
+            node_name = port.name.replace(f':{port.shortname}', '')
             if node_name not in names:
                 names.append(node_name)
         for name in names:

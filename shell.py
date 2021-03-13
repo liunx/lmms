@@ -185,27 +185,28 @@ class Shell:
         y += 1
         pad.hline(y, x + horizon_padding, '~', len(title))
         y += 1
-        _height = 0
+        max_height = 0
         for node in nodes:
             coord = Coord()
             _, rendered_tree = node
             _width = self.get_tree_width(rendered_tree)
             coord.width = _width
+            coord.height = len(rendered_tree)
+            if max_height < coord.height:
+                max_height = coord.height
             # exceed the stdscr_width, new line
-            if x + _width > stdscr_width:
+            if x > 0 and x + _width + vertical_padding > stdscr_width:
                 x = 0
-                y += _height + horizon_padding
+                y += max_height + horizon_padding
+                max_height = 0
             coord.x, coord.y = x, y
+            _y = y
             for prefix, _node in rendered_tree:
                 s = ''.join([prefix, _node.name])
-                pad.addstr(y, x + vertical_padding, s)
-                y += 1
-            coord.height = y
+                pad.addstr(_y, x + vertical_padding, s)
+                _y += 1
             node.append(coord)
-            if _height < y:
-                _height = y
             x += _width + vertical_padding
-            y = horizon_padding
 
     def _max_len(self, data):
         _max = 0
@@ -266,6 +267,10 @@ class Shell:
         _y, _x = coord.y + idx, coord.x
         _, _node = rendered_tree[idx]
         pad.addstr(_y, _x, self.sign)
+        content_height = self.stdscr_height - self.status_height
+        self.pad_y, self.pad_x = 0, 0
+        if coord.y + coord.height > content_height:
+            self.pad_y = int(content_height / 2)
         pad.refresh(self.pad_y, self.pad_x, self.title_height, 0,
                     self.stdscr_height - self.status_height - 1, self.stdscr_width - 1)
         return _node
@@ -304,10 +309,8 @@ class Shell:
         self.update_status('(r)try (q)uit')
         while True:
             ch = stdscr.getch()
-            if self.on_resize(ch):
-                self.main(err)
             if ch == ord('r'):
-                self.main()
+                return self.main()
             elif ch == ord('q'):
                 self.frame_quit()
 
@@ -327,14 +330,15 @@ class Shell:
                 try:
                     self.proxy.connect(src, dst)
                     s = f'Link: {src} ==> {dst} Succeed !!!'
-                    self.need_update = True
                 except:
                     s = f'Link: {src} ==> {dst} Failed !!!'
                 self.update_title(s)
                 self.update_status('Press any key ...')
                 stdscr.getch()
+                self.need_update = True
                 break
             elif ch == ord('n'):
+                self.need_update = True
                 break
 
     def rm_node(self, node):
@@ -351,10 +355,11 @@ class Shell:
                     s = f'Remove the {node.name} node Failed !!!'
                 self.update_title(s)
                 self.update_status('Press any key ...')
-                self.need_update = True
                 stdscr.getch()
+                self.need_update = True
                 break
             elif ch == ord('n'):
+                self.need_update = True
                 break
 
     def rm_link(self, node):
@@ -370,14 +375,15 @@ class Shell:
                 try:
                     self.proxy.disconnect(src, dst)
                     s = f'Remove {src} ==> {dst} Succeed !!!'
-                    self.need_update = True
                 except:
                     s = f'Remove {src} ==> {dst} Failed !!!'
                 self.update_title(s)
                 self.update_status('Press any key ...')
                 stdscr.getch()
+                self.need_update = True
                 break
             elif ch == ord('n'):
+                self.need_update = True
                 break
 
     def frame_disconnect(self, node):
