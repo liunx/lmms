@@ -4,23 +4,11 @@ import curses
 from curses import wrapper
 import xmlrpc.client
 import sys
+import os
 from anytree.importer import DictImporter
 from anytree import RenderTree, AsciiStyle, ContRoundStyle
 from anytree import Walker, find_by_attr
-
-
-def load_midi(s, name, filename):
-    with open(filename, 'rb') as f:
-        t = timeit.default_timer()
-        s.load_midi(name, xmlrpc.client.Binary(f.read()))
-        print(timeit.default_timer() - t)
-
-
-def load_audio(s, name, filename):
-    with open(filename, 'rb') as f:
-        t = timeit.default_timer()
-        s.load_audio(name, xmlrpc.client.Binary(f.read()))
-        print(timeit.default_timer() - t)
+from anytree import Node
 
 
 class Coord:
@@ -46,6 +34,14 @@ class Shell:
         self.node_coords = []
         self.curses_init()
         self.windows_init()
+
+    def load_midi(self, name, filename):
+        with open(filename, 'rb') as f:
+            self.proxy.load_midi(name, xmlrpc.client.Binary(f.read()))
+
+    def load_audio(self, name, filename):
+        with open(filename, 'rb') as f:
+            self.proxy.load_audio(name, xmlrpc.client.Binary(f.read()))
 
     def curses_init(self):
         stdscr = curses.initscr()
@@ -285,16 +281,6 @@ class Shell:
         _y, _x = coord.y + y % _len, coord.x
         pad.hline(_y, _x, ' ', len(self.sign))
 
-    def frame_add(self):
-        self.update_title('Add Sequencer')
-        name = self.input_status()
-        try:
-            self.proxy.add_seq(name)
-            self.update_title(f'Add {name} SUCCESS!!!')
-        except:
-            self.update_title(f'Add {name} FAILED!!!')
-        self.main()
-
     def update_content(self, nodes):
         win = self.content_win
         win.clear()
@@ -392,6 +378,109 @@ class Shell:
         elif node.is_leaf and node.depth == 4:
             self.rm_link(node)
 
+    def list_files(self, startpath):
+        startpath = os.path.abspath(startpath)
+        node = None
+        last_level = 0
+        for root, _, files in os.walk(startpath):
+            level = root.replace(startpath, '').count(os.sep)
+            _dir = os.path.basename(root)
+            if not node:
+                node = Node(_dir, type='directory')
+            else:
+                if level > last_level:
+                    node = Node(_dir, parent=node, type='directory')
+                if level < last_level:
+                    node = Node(_dir, parent=node.parent.parent,
+                                type='directory')
+                else:
+                    if node.name != _dir:
+                        node = Node(_dir, parent=node.parent, type='directory')
+            last_level = level
+            children = []
+            for f in files:
+                children.append(Node(f, type='file', filepath=f'{root}/{f}'))
+            if children:
+                node.children = children
+        nodes = []
+        rendered_tree = []
+        tree = node.root
+        for pre, _, node in RenderTree(tree, style=ContRoundStyle()):
+            rendered_tree.append([pre, node])
+        nodes.append([tree, rendered_tree])
+        return nodes
+
+    def browser(self, path):
+        stdscr = self.stdscr
+        nodes = self.list_files(path)
+        self.update_content(nodes)
+        self.nodes = nodes
+        y, x = 0, 0
+        y1, x1 = 0, 0
+        while True:
+            self.clear_arrow(y1, x1)
+            node = self.draw_arrow(y, x)
+            info = self.full_path(node)
+            self.update_title(info)
+            y1, x1 = y, x
+            ch = stdscr.getch()
+            if ch == ord(' '):
+                return node.filepath
+            # navigation
+            if ch == ord('k'):
+                y -= 1
+            elif ch == ord('j'):
+                y += 1
+            elif ch == ord('h'):
+                x -= 1
+            elif ch == ord('l'):
+                x += 1
+            if x != x1:
+                y = 0
+
+    def frame_add(self):
+        stdscr = self.stdscr
+        self.update_title('Adding new Node...')
+        self.update_status('(a)udio (m)idi (r)ecorder (s)yth (b)ack')
+        while True:
+            ch = stdscr.getch()
+            if ch == ord('a'):
+                filepath = self.browser('tests')
+                name = self.input_status()
+                self.load_audio(name, filepath)
+                self.update_status('Press any key ...')
+                stdscr.getch()
+                self.need_update = True
+                break
+            elif ch == ord('m'):
+                filepath = self.browser('tests')
+                name = self.input_status()
+                self.load_midi(name, filepath)
+                self.update_status('Press any key ...')
+                stdscr.getch()
+                self.need_update = True
+                break
+            elif ch == ord('r'):
+                name = self.input_status()
+                self.update_status('Press any key ...')
+                stdscr.getch()
+                self.need_update = True
+                break
+            elif ch == ord('s'):
+                name = self.input_status()
+                try:
+                    self.proxy.add_seq(name)
+                    self.update_title(f'Add {name} SUCCESS!!!')
+                except:
+                    self.update_title(f'Add {name} FAILED!!!')
+                self.update_status('Press any key ...')
+                stdscr.getch()
+                self.need_update = True
+                break
+            elif ch == ord('b'):
+                self.need_update = True
+                return
+
     def reload_main(self):
         try:
             data = self.proxy.get_all_nodes()
@@ -401,7 +490,7 @@ class Shell:
             err = 'Fault: {}, {}'.format(err.faultCode, err.faultString)
             self.frame_exception(err)
         self.update_title('Welcome to Coderband!!!')
-        self.update_status('(c)onnect (d)isconnect (n)ew (r)load (q)uit')
+        self.update_status('(c)onnect (d)isconnect (n)ew (r)load (p)lay (s)top (q)uit')
         self.nodes = self.anytree_convert(data)
         self.update_content(self.nodes)
         self.need_update = False
@@ -427,9 +516,9 @@ class Shell:
             y1, x1 = y, x
             ch = stdscr.getch()
             if self.on_resize(ch):
-                self.main()
+                self.need_update = True
             if ch == ord('r'):
-                self.main()
+                self.need_update = True
             elif ch == ord('n'):
                 self.frame_add()
             elif ch == ord('q'):
@@ -438,6 +527,10 @@ class Shell:
                 self.frame_connect(node)
             elif ch == ord('d'):
                 self.frame_disconnect(node)
+            elif ch == ord('p'):
+                self.proxy.play()
+            elif ch == ord('s'):
+                self.proxy.stop()
             # navigation
             if ch == ord('k'):
                 y -= 1
@@ -461,39 +554,39 @@ def main(host):
         shell.close()
 
 
-def to_anytree(data, node):
-    if isinstance(data, list):
-        children = []
-        for dat in data:
-            to_anytree(dat, children)
-        node['children'] = children
-    elif isinstance(data, dict):
-        for k, v in data.items():
-            d = {'name': k}
-            to_anytree(v, d)
-            node.append(d)
-    else:
-        if isinstance(node, list):
-            node.append({'name': data})
-        elif isinstance(node, dict):
-            node['children'] = [{'name': data}]
-
-
-def debug(url):
-    proxy = xmlrpc.client.ServerProxy(url)
-    nodes = proxy.get_all_nodes()
-    #nodes = [{'a': [1,2,3,4], 'b': 200, 'c': 300}]
-    root = {'name': 'nodes'}
-    to_anytree(nodes, root)
-    for child in root['children']:
-        importer = DictImporter()
-        tree = importer.import_(child)
-        for pre, mid, node in RenderTree(tree, style=ContRoundStyle()):
-            print(pre, node.name)
-        print()
-        n = find_by_attr(tree, 'playback_1')
-        print(n, n.depth)
-        break
+def demo(url):
+    #proxy = xmlrpc.client.ServerProxy(url)
+    #nodes = proxy.get_all_nodes()
+    def list_files(startpath):
+        startpath = os.path.abspath(startpath)
+        node = None
+        last_level = 0
+        for root, _, files in os.walk(startpath):
+            level = root.replace(startpath, '').count(os.sep)
+            _dir = os.path.basename(root)
+            if not node:
+                node = Node(_dir, type='directory')
+            else:
+                if level > last_level:
+                    node = Node(_dir, parent=node, type='directory')
+                if level < last_level:
+                    node = Node(_dir, parent=node.parent.parent,
+                                type='directory')
+                else:
+                    if node.name != _dir:
+                        node = Node(_dir, parent=node.parent, type='directory')
+            last_level = level
+            children = []
+            for f in files:
+                children.append(Node(f, type='file', filepath=f'{root}/{f}'))
+            if children:
+                node.children = children
+        return node.root
+    root = list_files(sys.argv[1])
+    for pre, _, node in RenderTree(root, style=ContRoundStyle):
+        # print(f'{pre}{node.name}')
+        if node.is_leaf and node.type == 'file':
+            print(node.filepath)
 
 
 if __name__ == '__main__':
@@ -501,4 +594,4 @@ if __name__ == '__main__':
     if 1:
         main(host)
     else:
-        debug(host)
+        demo(host)

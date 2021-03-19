@@ -1,4 +1,5 @@
 import sys
+import time
 import pkgutil
 import importlib
 import numpy as np
@@ -309,13 +310,13 @@ class RPC:
     def load_midi(self, name, data):
         if not isinstance(data, xmlrpc.client.Binary):
             return False
-        if name not in self.nodes:
+        if name not in self.sequencers:
             return False
         fp = tempfile.TemporaryFile()
         fp.write(data.data)
         fp.seek(0)
         mid = MidiFile(file=fp)
-        node = self.nodes[name]
+        node = self.sequencers[name]
         node.load_midi(mid)
         fp.close()
         return True
@@ -345,9 +346,8 @@ def demo01():
     data.save('main.mid')
 
 
-def demo02():
+def main():
     rpc = RPC()
-    # mid.save('main.mid')
     print("Press <Ctrl+C> to exit...")
     try:
         with SimpleXMLRPCServer(('localhost', 8000),
@@ -361,6 +361,20 @@ def demo02():
         rpc.close()
         print("Exit!")
 
+def debug():
+    seq = Sequencer('seq01')
+    seq.connect('work:midi')
+    mid = MidiFile('tests/GM_kit_demo1.mid')
+    seq.load_midi(mid)
+    try:
+        while True:
+            time.sleep(1)
+    except KeyboardInterrupt:
+        seq.close()
+
 
 if __name__ == '__main__':
-    demo02()
+    if 1:
+        debug()
+    else:
+        main()

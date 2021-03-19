@@ -32,11 +32,12 @@ class Synth:
 class Sequencer:
     def __init__(self, name):
         self.pos = 0
-        self.bpm = 120
+        self.bpm = 90
         self.bpm_rate = Fraction(1, 1)
+        self.msgs = {}
         self.cli = jack.Client(name)
         self.time_per_frame = Fraction(1, self.cli.samplerate)
-        self.cli.midi_outports.register(f'midi_out')
+        self.midi_port = self.cli.midi_outports.register(f'midi_out')
         self.cli.set_process_callback(self.process)
         self.cli.set_samplerate_callback(self.samplerate)
         self.cli.activate()
@@ -44,10 +45,14 @@ class Sequencer:
     def close(self):
         self.cli.close()
 
+    def connect(self, port):
+        self.midi_port.connect(port)
+
     def load_midi(self, mid):
         msgs = {}
         offset = 0
         _msgs = mido.merge_tracks(mid.tracks)
+        self.mid = mid
         i = 0
         while i < len(_msgs):
             msg = _msgs[i]
@@ -59,7 +64,7 @@ class Sequencer:
                 msgs[offset] = [msg]
             i += 1
         self.msgs = msgs
-        self.msgs_keys = msgs.keys()
+        self.msgs_keys = list(msgs.keys())
         self.msgs_keys.sort()
 
     def seek_msgs(self, pos):
@@ -77,13 +82,18 @@ class Sequencer:
         stat = self.cli.transport_state
         if stat == jack.STOPPED:
             return
-        pos = self.cli.transport_query_struct()[1]
-        # tempo may changed during playing
-        if self.bpm != pos.beats_per_minute:
-            self.bpm_rate = Fraction(pos.beats_per_minute, self.bpm)
         # follow transport_frame
+        self.midi_port.clear_buffer()
         if stat == jack.STARTING or stat == jack.ROLLING:
             start_pos = self.cli.transport_frame
+            i = 0
+            while i < frames:
+                offset = start_pos + i
+                if offset in self.msgs_keys:
+                    msgs = self.msgs[offset]
+                    for msg in msgs:
+                        self.midi_port.write_midi_event(i, msg.bytes())
+                i += 1
 
     def samplerate(self, samplerate):
         self.time_per_frame = Fraction(1, samplerate)
@@ -112,7 +122,7 @@ class TimebaseMaster(jack.Client):
             pos.beats_per_minute = self.bpm
             pos.beat_type = self.beat_type
             pos.ticks_per_beat = self.ticks_per_beat
-            #pos.valid = jack.POSITION_BBT
+            pos.valid = jack.POSITION_BBT
 
             minutes = pos.frame / (pos.frame_rate * 60.0)
             abs_tick = minutes * self.bpm * self.ticks_per_beat
