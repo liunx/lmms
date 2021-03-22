@@ -31,10 +31,11 @@ class Synth:
 
 class Sequencer:
     def __init__(self, name):
-        self.pos = 0
-        self.bpm = 90
+        self.builtin_bpm = 120
+        self.bpm = 120
         self.bpm_rate = Fraction(1, 1)
         self.msgs = {}
+        self.msgs_keys = []
         self.cli = jack.Client(name)
         self.time_per_frame = Fraction(1, self.cli.samplerate)
         self.midi_port = self.cli.midi_outports.register(f'midi_out')
@@ -67,33 +68,38 @@ class Sequencer:
         self.msgs_keys = list(msgs.keys())
         self.msgs_keys.sort()
 
-    def seek_msgs(self, pos):
-        idx = bisect_left(self.msgs_keys, pos)
-        _pos = self.msgs_keys[idx]
+    def seek_msgs(self, pos_begin, pos_end):
+        begin = bisect_left(self.msgs_keys, pos_begin)
+        end = bisect_left(self.msgs_keys, pos_end)
+        return self.msgs_keys[begin:end]
 
     def time_to_frames(self, time_):
         time_per_beat = Fraction(60, self.bpm)
         frames_per_beat = time_per_beat / self.time_per_frame
         rate = Fraction(time_, self.mid.ticks_per_beat)
-        frames = frames_per_beat * rate
+        frames = frames_per_beat * rate * self.bpm_rate
         return round(frames)
 
     def process(self, frames):
         stat = self.cli.transport_state
         if stat == jack.STOPPED:
             return
+        if not bool(self.msgs_keys):
+            return
+        pos = self.cli.transport_query_struct()[1]
+        # tempo may changed during playing
+        if self.bpm != pos.beats_per_minute:
+            self.bpm = pos.beats_per_minute
+            self.bpm_rate = Fraction(pos.beats_per_minute, self.builtin_bpm)
         # follow transport_frame
         self.midi_port.clear_buffer()
         if stat == jack.STARTING or stat == jack.ROLLING:
             start_pos = self.cli.transport_frame
-            i = 0
-            while i < frames:
-                offset = start_pos + i
-                if offset in self.msgs_keys:
-                    msgs = self.msgs[offset]
-                    for msg in msgs:
-                        self.midi_port.write_midi_event(i, msg.bytes())
-                i += 1
+            offsets = self.seek_msgs(start_pos, start_pos + frames)
+            for offset in offsets:
+                msgs = self.msgs[offset]
+                for msg in msgs:
+                    self.midi_port.write_midi_event(offset - start_pos, msg.bytes())
 
     def samplerate(self, samplerate):
         self.time_per_frame = Fraction(1, samplerate)
