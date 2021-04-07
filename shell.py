@@ -481,6 +481,40 @@ class Shell:
                 self.need_update = True
                 return
 
+    def frame_player(self):
+        stdscr = self.stdscr
+        bpm = self.proxy.get_bpm()
+        state = self.proxy.get_transport_state()
+        self.update_status('(p)lay (s)top (b)ack')
+        need_update = True
+        while True:
+            if need_update:
+                self.update_title(f'BPM: {bpm}, STATUS: {state}')
+                need_update = False
+
+            ch = stdscr.getch()
+            if ch == ord('p'):
+                self.proxy.play()
+                time.sleep(0.5)
+                state = self.proxy.get_transport_state()
+                need_update = True
+            elif ch == ord('s'):
+                self.proxy.stop()
+                time.sleep(0.5)
+                state = self.proxy.get_transport_state()
+                need_update = True
+            elif ch == ord('b'):
+                self.need_update = True
+                break
+            elif ch == ord('j'):
+                bpm -= 1
+                self.proxy.change_bpm(bpm)
+                need_update = True
+            elif ch == ord('k'):
+                bpm += 1
+                self.proxy.change_bpm(bpm)
+                need_update = True
+
     def reload_main(self):
         try:
             data = self.proxy.get_all_nodes()
@@ -490,7 +524,7 @@ class Shell:
             err = 'Fault: {}, {}'.format(err.faultCode, err.faultString)
             self.frame_exception(err)
         self.update_title('Welcome to Coderband!!!')
-        self.update_status('(c)onnect (d)isconnect (n)ew (r)load (p)lay (s)top (q)uit')
+        self.update_status('(c)onnect (d)isconnect (n)ew (r)load (p)layer (q)uit')
         self.nodes = self.anytree_convert(data)
         self.update_content(self.nodes)
         self.need_update = False
@@ -528,9 +562,7 @@ class Shell:
             elif ch == ord('d'):
                 self.frame_disconnect(node)
             elif ch == ord('p'):
-                self.proxy.play()
-            elif ch == ord('s'):
-                self.proxy.stop()
+                self.frame_player()
             # navigation
             if ch == ord('k'):
                 y -= 1

@@ -33,6 +33,8 @@ class Sequencer:
     def __init__(self, name):
         self.builtin_bpm = 120
         self.bpm = 120
+        self.cursor_pos = 0
+        self.last_pos = 0
         self.bpm_rate = Fraction(1, 1)
         self.msgs = {}
         self.msgs_keys = []
@@ -71,14 +73,26 @@ class Sequencer:
     def seek_msgs(self, pos_begin, pos_end):
         begin = bisect_left(self.msgs_keys, pos_begin)
         end = bisect_left(self.msgs_keys, pos_end)
+        if begin >= end:
+            return []
         return self.msgs_keys[begin:end]
 
     def time_to_frames(self, time_):
-        time_per_beat = Fraction(60, self.bpm)
+        time_per_beat = Fraction(60, self.builtin_bpm)
         frames_per_beat = time_per_beat / self.time_per_frame
         rate = Fraction(time_, self.mid.ticks_per_beat)
         frames = frames_per_beat * rate * self.bpm_rate
         return round(frames)
+
+    def get_cursor_pos(self, start_pos, frames):
+        pos = self.cursor_pos
+        if self.last_pos == start_pos:
+            pos = start_pos
+        elif abs(self.last_pos + frames - start_pos) > 23:
+            print('rewind! {}'.format(start_pos - self.last_pos))
+            pos = start_pos
+        self.last_pos = start_pos
+        return pos
 
     def process(self, frames):
         stat = self.cli.transport_state
@@ -86,20 +100,26 @@ class Sequencer:
             return
         if not bool(self.msgs_keys):
             return
-        pos = self.cli.transport_query_struct()[1]
+        start_pos = self.cli.transport_frame
         # tempo may changed during playing
-        if self.bpm != pos.beats_per_minute:
-            self.bpm = pos.beats_per_minute
-            self.bpm_rate = Fraction(pos.beats_per_minute, self.builtin_bpm)
+        # https://jackaudio.org/api/structjack__position__t.html
+        pos = self.cli.transport_query_struct()[1]
+        bpm = int(pos.beats_per_minute)
+        if bpm > 0 and self.bpm != bpm:
+            self.bpm = bpm
+            self.bpm_rate = Fraction(bpm, self.builtin_bpm)
+        cursor_pos = self.get_cursor_pos(start_pos, frames)
+        _frames = int(frames * self.bpm_rate)
+        self.cursor_pos = cursor_pos + _frames
         # follow transport_frame
         self.midi_port.clear_buffer()
-        if stat == jack.STARTING or stat == jack.ROLLING:
-            start_pos = self.cli.transport_frame
-            offsets = self.seek_msgs(start_pos, start_pos + frames)
+        if stat in [jack.STARTING, jack.ROLLING]:
+            offsets = self.seek_msgs(cursor_pos, cursor_pos + _frames)
             for offset in offsets:
                 msgs = self.msgs[offset]
+                _offset = int((offset - cursor_pos) / self.bpm_rate)
                 for msg in msgs:
-                    self.midi_port.write_midi_event(offset - start_pos, msg.bytes())
+                    self.midi_port.write_midi_event(_offset, msg.bytes())
 
     def samplerate(self, samplerate):
         self.time_per_frame = Fraction(1, samplerate)
@@ -113,7 +133,6 @@ class TimebaseMaster(jack.Client):
         self.beat_type = beat_type
         self.bpm = bpm
         self.conditional = conditional
-        self.debug = debug
         self.ticks_per_beat = ticks_per_beat
         self.stop_event = Event()
         self.set_shutdown_callback(self.shutdown_callback)
@@ -123,7 +142,8 @@ class TimebaseMaster(jack.Client):
         self.stop_event.set()
 
     def timebase_callback(self, state, nframes, pos, new_pos):
-        if new_pos:
+        if new_pos or self.need_update:
+            self.need_update = False
             pos.beats_per_bar = self.beats_per_bar
             pos.beats_per_minute = self.bpm
             pos.beat_type = self.beat_type
@@ -141,7 +161,6 @@ class TimebaseMaster(jack.Client):
                 pos.bar * self.beats_per_bar * self.ticks_per_beat)
             pos.bar += 1  # adjust start to bar 1
         else:
-            assert pos.valid & jack.POSITION_BBT
             # Compute BBT info based on previous period.
             pos.tick += int(nframes * pos.ticks_per_beat *
                             pos.beats_per_minute / (pos.frame_rate * 60))
@@ -157,3 +176,10 @@ class TimebaseMaster(jack.Client):
 
     def become_timebase_master(self):
         return self.set_timebase_callback(self.timebase_callback, True)
+
+    def change_bpm(self, bpm):
+        self.bpm = bpm
+        self.need_update = True
+
+    def get_bpm(self):
+        return self.bpm

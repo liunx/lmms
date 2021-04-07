@@ -187,8 +187,9 @@ class RPC:
         self.sequencers = {}
         self.synths = {}
         self.effects = {}
+        self.bpm = 120
         self.jack_master = jack.Client('jack_master')
-        self.tbm = TimebaseMaster()
+        self.tbm = TimebaseMaster(bpm=self.bpm)
         self.tbm.activate()
         if not self.tbm.become_timebase_master():
             raise RuntimeError('time mater failed!')
@@ -199,16 +200,32 @@ class RPC:
         for n in self.nodes.values():
             n.close()
 
-    def play(self, bpm=120):
-        self.tbm.bpm = bpm
+    ## player {
+    def play(self):
         self.tbm.transport_start()
 
     def pause(self):
         self.tbm.transport_stop()
 
+    def get_bpm(self):
+        return self.tbm.get_bpm()
+
+    def get_transport_state(self):
+        state = self.tbm.transport_state
+        if state in [jack.STARTING, jack.ROLLING]:
+            return 'Playing'
+        else:
+            return 'Stopped'
+
+    def change_bpm(self, bpm):
+        _bpm = int(bpm)
+        if _bpm > 0:
+            self.tbm.change_bpm(_bpm)
+
     def stop(self):
         self.tbm.transport_stop()
-        self.tbm.transport_locate(0)
+        #self.tbm.transport_locate(0)
+    ## } player
 
     def _get_all_connections(self, port):
         l = self.jack_master.get_all_connections(port)
@@ -374,7 +391,7 @@ def debug():
 
 
 if __name__ == '__main__':
-    if 1:
+    if 0:
         debug()
     else:
         main()
