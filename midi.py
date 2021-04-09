@@ -85,11 +85,11 @@ class Sequencer:
         return round(frames)
 
     def get_cursor_pos(self, start_pos, frames):
+        if start_pos == 0:
+            return start_pos
         pos = self.cursor_pos
-        if self.last_pos == start_pos:
-            pos = start_pos
-        elif abs(self.last_pos + frames - start_pos) > 23:
-            print('rewind! {}'.format(start_pos - self.last_pos))
+        if abs(self.last_pos + frames - start_pos) > frames:
+            # rewind the track
             pos = start_pos
         self.last_pos = start_pos
         return pos

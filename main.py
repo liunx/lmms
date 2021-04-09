@@ -200,7 +200,7 @@ class RPC:
         for n in self.nodes.values():
             n.close()
 
-    ## player {
+    # player {
     def play(self):
         self.tbm.transport_start()
 
@@ -210,12 +210,24 @@ class RPC:
     def get_bpm(self):
         return self.tbm.get_bpm()
 
+    def get_location(self):
+        return int(self.tbm.transport_frame / self.tbm.samplerate)
+
+    def rewind(self, time_):
+        location = self.tbm.transport_frame + int(self.tbm.samplerate * time_)
+        if location < 0:
+            location = 0
+        self.tbm.transport_locate(location)
+
     def get_transport_state(self):
         state = self.tbm.transport_state
         if state in [jack.STARTING, jack.ROLLING]:
             return 'Playing'
         else:
-            return 'Stopped'
+            if self.tbm.transport_frame > 0:
+                return 'Paused'
+            else:
+                return 'Stopped'
 
     def change_bpm(self, bpm):
         _bpm = int(bpm)
@@ -224,8 +236,8 @@ class RPC:
 
     def stop(self):
         self.tbm.transport_stop()
-        #self.tbm.transport_locate(0)
-    ## } player
+        self.tbm.transport_locate(0)
+    # } player
 
     def _get_all_connections(self, port):
         l = self.jack_master.get_all_connections(port)
@@ -268,7 +280,8 @@ class RPC:
         ports = self.jack_master.get_ports(name, is_physical=True)
         if ports:
             return '*physical'
-        ports = self.jack_master.get_ports(name, is_physical=False, is_midi=True)
+        ports = self.jack_master.get_ports(
+            name, is_physical=False, is_midi=True)
         if ports:
             return '*synth'
         return None
@@ -367,7 +380,7 @@ def main():
     rpc = RPC()
     print("Press <Ctrl+C> to exit...")
     try:
-        with SimpleXMLRPCServer(('localhost', 8000),
+        with SimpleXMLRPCServer(('localhost', 8000), logRequests=False,
                                 allow_none=True, requestHandler=RequestHandler) as server:
             server.register_introspection_functions()
             server.register_multicall_functions()
@@ -377,6 +390,7 @@ def main():
     except KeyboardInterrupt:
         rpc.close()
         print("Exit!")
+
 
 def debug():
     seq = Sequencer('seq01')

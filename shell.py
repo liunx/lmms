@@ -225,11 +225,13 @@ class Shell:
         while True:
             ch = stdscr.getch()
             if self.on_resize(ch):
-                return self.main()
+                self.need_update = True
+                break
             if ch == ord('y'):
                 sys.exit(0)
             elif ch == ord('n'):
-                return self.main()
+                self.need_update = True
+                break
 
     def full_path(self, node):
         s = ''
@@ -485,16 +487,23 @@ class Shell:
         stdscr = self.stdscr
         bpm = self.proxy.get_bpm()
         state = self.proxy.get_transport_state()
-        self.update_status('(p)lay (s)top (b)ack')
+        self.update_status('(p)lay (p)ause (s)top (b)ack')
         need_update = True
+        step = 3
         while True:
             if need_update:
                 self.update_title(f'BPM: {bpm}, STATUS: {state}')
                 need_update = False
-
             ch = stdscr.getch()
+            if self.on_resize(ch):
+                self.need_update = True
+                break
             if ch == ord('p'):
-                self.proxy.play()
+                state = self.proxy.get_transport_state()
+                if state in ['Paused', 'Stopped']:
+                    self.proxy.play()
+                else:
+                    self.proxy.pause()
                 time.sleep(0.5)
                 state = self.proxy.get_transport_state()
                 need_update = True
@@ -514,6 +523,10 @@ class Shell:
                 bpm += 1
                 self.proxy.change_bpm(bpm)
                 need_update = True
+            elif ch == ord('h'):
+                self.proxy.rewind(-step)
+            elif ch == ord('l'):
+                self.proxy.rewind(step)
 
     def reload_main(self):
         try:
@@ -540,6 +553,8 @@ class Shell:
         y1, x1 = 0, 0
         while True:
             if self.need_update:
+                stdscr.clear()
+                stdscr.refresh()
                 self.reload_main()
                 y, x = 0, 0
                 y1, x1 = 0, 0
@@ -551,6 +566,7 @@ class Shell:
             ch = stdscr.getch()
             if self.on_resize(ch):
                 self.need_update = True
+                continue
             if ch == ord('r'):
                 self.need_update = True
             elif ch == ord('n'):
